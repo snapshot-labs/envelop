@@ -1,0 +1,8 @@
+{
+  "subscribe": {
+    "from": "notify@snapshot.org",
+    "subject": "Don't miss out on these proposals {{ name }}",
+    "text": "Hi {{ name }} don't miss out on proposals!",
+    "html": "Hi {{ name }} don't miss out on proposals for {{ address }}!"
+  }
+}
