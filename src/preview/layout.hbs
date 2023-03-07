@@ -12,12 +12,17 @@
 
       #container {
         margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
       }
+
       #message_headers {
         background: #fff;
         font-size: 12px;
         font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
         overflow: auto;
+        flex: 0 0 auto;
       }
 
       #message_headers dl {
@@ -47,13 +52,19 @@
         border-bottom: 1px solid #dedede;
         border-top: 1px solid #dedede;
 
-        margin: 0 0 16px;
+        margin: 0;
         padding: 8px 16px;
+        flex: 0 0 auto;
       }
 
-      pre#message_body {
+      pre#message_text_body {
         padding: 8px 16px;
         white-space: pre-wrap;
+        flex: 0 0 auto;
+      }
+
+      #message_html_body {
+        flex-grow: 1;
       }
 
       iframe {
@@ -110,12 +121,14 @@
 
       {{#if text}}
         <h2>Text version</h2>
-        <pre id="message_body">{{text}}</pre>
+        <pre id="message_text_body">{{text}}</pre>
       {{/if}}
 
       {{#if html}}
         <h2>HTML version</h2>
-        <iframe seamless="seamless" srcdoc="<base target='_top'>{{html}}"></iframe>
+        <div id="message_html_body">
+          <iframe seamless="seamless" srcdoc="<base target='_top'>{{html}}"></iframe>
+        </div>
       {{/if}}
     </div>
   </body>
