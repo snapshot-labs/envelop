@@ -1,7 +1,7 @@
 import express from 'express';
 import { subscribe, rpcError, rpcSuccess } from './helpers/utils';
 import { send } from './helpers/mail';
-import buildSubscribe from './builders/subscribe';
+import prepare from './templates/subscribe';
 
 const router = express.Router();
 
@@ -12,7 +12,7 @@ router.post('/', async (req, res) => {
     if (method === 'snapshot.subscribe') {
       await subscribe(params.email, params.address);
 
-      await send(await buildSubscribe({ to: params.email, address: params.address }));
+      await send(await prepare({ to: params.email, address: params.address }));
 
       return rpcSuccess(res, 'OK', id);
     }

@@ -1,8 +1,8 @@
 import { compile } from 'handlebars';
-import templates from '../templates';
+import templates from './';
 import styles from '../helpers/styles.json';
 
-export default function buildMail(id: string, params: any) {
+export default function buildMessage(id: string, params: any) {
   const template = templates[id];
   params.styles = styles;
 
