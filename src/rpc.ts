@@ -1,6 +1,7 @@
 import express from 'express';
 import { subscribe, rpcError, rpcSuccess } from './helpers/utils';
 import { send } from './helpers/mail';
+import constants from './helpers/constants.json';
 
 const router = express.Router();
 
@@ -14,7 +15,7 @@ router.post('/', async (req, res) => {
       await send('subscribe', {
         to: params.email,
         address: params.address,
-        name: 'Fabien'
+        name: constants.example.name
       });
 
       return rpcSuccess(res, 'OK', id);

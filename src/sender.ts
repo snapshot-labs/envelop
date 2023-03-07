@@ -1,10 +1,10 @@
 import { getProposals } from './helpers/snapshot';
 import { send } from './helpers/mail';
 import styles from './helpers/styles.json';
+import constants from './helpers/constants.json';
 
 async function start() {
-  const to = 'fabien@bonustrack.co';
-  const address = '0xeF8305E140ac520225DAf050e2f71d5fBcC543e7';
+  const { to, address } = constants.example;
 
   const proposals = await getProposals(address);
 
