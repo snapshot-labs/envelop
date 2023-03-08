@@ -1,35 +1,25 @@
 import fs from 'fs';
 import { compile } from 'handlebars';
-import templates from '../templates';
-import { getProposals } from '../helpers/snapshot';
-import styles from '../helpers/styles.json';
+import prepareSubscribe from '../templates/subscribe';
+import prepareSummary from '../templates/summary';
 
 export default async function preview(req, res) {
-  const template = templates[req.params.template];
-
-  if (!template) {
-    return res.sendStatus(404);
-  }
-
   const params = {
     to: req.query.to || 'fabien@bonustrack.co',
-    name: req.query.name || 'Fabien',
-    address: req.query.address || '0xeF8305E140ac520225DAf050e2f71d5fBcC543e7',
-    proposals: {},
-    styles
+    address: req.query.address || '0xeF8305E140ac520225DAf050e2f71d5fBcC543e7'
   };
+  let msg;
 
-  if (req.params.template === 'summary') {
-    params.proposals = await getProposals(params.address);
+  switch (req.params.template) {
+    case 'subscribe':
+      msg = await prepareSubscribe(params);
+      break;
+    case 'summary':
+      msg = await prepareSummary(params);
+      break;
+    default:
+      return res.sendStatus(404);
   }
-
-  const msg = {
-    to: params.to,
-    from: compile(template.from)(params),
-    subject: compile(template.subject)(params),
-    text: compile(template.text)(params),
-    html: compile(template.html)(params)
-  };
 
   const content = compile(fs.readFileSync('./src/preview/layout.hbs', 'utf-8'))(msg);
 
