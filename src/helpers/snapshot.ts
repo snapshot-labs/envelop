@@ -29,6 +29,7 @@ export const PROPOSALS_QUERY = gql`
   query Proposals($space_in: [String], $start_gt: Int) {
     proposals(where: { space_in: $space_in, start_gt: $start_gt }, first: 100) {
       id
+      body
       title
       start
       end
