@@ -1,19 +1,12 @@
-import { getProposals } from './helpers/snapshot';
 import { send } from './helpers/mail';
-import styles from './helpers/styles.json';
 import constants from './helpers/constants.json';
+import prepare from './templates/summary';
+
 
 async function start() {
   const { to, address } = constants.example;
 
-  const proposals = await getProposals(address);
-
-  const result = await send('summary', {
-    to,
-    address,
-    proposals,
-    styles
-  });
+  const result = await send(await prepare({ to, address }));
 
   console.log('OK', result);
 }

@@ -1,0 +1,135 @@
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    {{#if subject}}
+      <title>{{subject}}</title>
+    {{/if}}
+
+    <style type="text/css">
+      body {
+        margin: 0;
+      }
+
+      #container {
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+
+      #message_headers {
+        background: #fff;
+        font-size: 12px;
+        font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+        overflow: auto;
+        flex: 0 0 auto;
+      }
+
+      #message_headers dl {
+        float: left;
+        line-height: 1.3em;
+        padding: 0;
+      }
+
+      #message_headers dt {
+        width: 92px;
+        margin: 0;
+        float: left;
+        text-align: right;
+        font-weight: bold;
+        color: #7f7f7f;
+      }
+
+      #message_headers dd {
+        margin: 0 0 0 102px;
+      }
+
+      h2 {
+        font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+        font-size: 14px;
+        color: darkslategrey;
+        background-color: #fcfcfc;
+        border-bottom: 1px solid #dedede;
+        border-top: 1px solid #dedede;
+
+        margin: 0;
+        padding: 8px 16px;
+        flex: 0 0 auto;
+      }
+
+      pre#message_text_body {
+        padding: 8px 16px;
+        white-space: pre-wrap;
+        flex: 0 0 auto;
+      }
+
+      #message_html_body {
+        flex-grow: 1;
+      }
+
+      iframe {
+        border: 0;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <div id="message_headers">
+        <dl>
+          <dt>From:</dt>
+          <dd>{{from}}</dd>
+
+          {{#if sender}}
+            <dt>Sender:</dt>
+            <dd>{{sender}}</dd>
+          {{/if}}
+
+          {{#if replyTo}}
+            <dt>Reply-To:</dt>
+            <dd>{{replyTo}}</dd>
+          {{/if}}
+
+          {{#if subject}}
+            <dt>Subject:</dt>
+            <dd><strong>{{subject}}</strong></dd>
+          {{/if}}
+
+          {{#if date}}
+            <dt>Date:</dt>
+            <dd>{{date}}</dd>
+          {{/if}}
+
+          {{#if to}}
+            <dt>To:</dt>
+            <dd>{{to}}</dd>
+          {{/if}}
+
+          {{#if cc}}
+            <dt>CC:</dt>
+            <dd>{{cc}}</dd>
+          {{/if}}
+
+          {{#if bcc}}
+            <dt>BCC:</dt>
+            <dd>{{bcc}}</dd>
+          {{/if}}
+        </dl>
+      </div>
+
+      {{#if text}}
+        <h2>Text version</h2>
+        <pre id="message_text_body">{{text}}</pre>
+      {{/if}}
+
+      {{#if html}}
+        <h2>HTML version</h2>
+        <div id="message_html_body">
+          <iframe seamless="seamless" srcdoc="<base target='_top'>{{html}}"></iframe>
+        </div>
+      {{/if}}
+    </div>
+  </body>
+</html>
