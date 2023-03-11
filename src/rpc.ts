@@ -12,7 +12,13 @@ router.post('/', async (req, res) => {
     if (method === 'snapshot.subscribe') {
       await subscribe(params.email, params.address);
 
-      await send(await prepare({ to: params.email, address: params.address }));
+      await send(
+        await prepare({
+          to: params.email,
+          address: params.address,
+          verifyLink: 'https://snapshot.org'
+        })
+      );
 
       return rpcSuccess(res, 'OK', id);
     }

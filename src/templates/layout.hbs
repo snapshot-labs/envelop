@@ -27,16 +27,82 @@
     body {
       height: 100% !important;
       margin: 0 auto !important;
-      padding: 0 !important;
+      padding: 2em 1em !important;
       width: 100% !important;
       -webkit-text-size-adjust: 100%;
       -ms-text-size-adjust: 100%;
       word-spacing: normal;
+
+      background: #f8f9fa;
+      color: #444;
+      text-align: left;
     }
+
+    img {
+      border: 0;
+      outline: none;
+      text-decoration: none;
+      display: block;
+    }
+
+    h1 {
+      font-size: 2em;
+      font-weight: 600;
+    }
+
+    .logo {
+      border-radius: 100%;
+      width: 3em;
+      height: 3em;
+    }
+
+    .btn {
+      padding: 0.75em 2em;
+      margin: 0.75em 0;
+      display: inline-block;
+      color: #fff;
+      background: #3455fa;
+      border-radius: 2em;
+      text-decoration: none;
+    }
+
+    .content {
+      padding: 2.5em;
+      font-family: Roboto,'Open sans',Arial,sans-serif;
+      color: #444;
+      max-width: 600px;
+      margin: 0 auto;
+      background: #fff;
+      width: 100%;
+      border: 1px solid #e8eaed;
+    }
+
+    @media only screen and (max-width: 620px) {
+      .content {
+        max-width: 100%;
+        padding: 2em;
+      }
+    }
+
+    @media (prefers-color-scheme: dark) {
+      body {
+        background: #211f24;
+      }
+
+      h1 {
+        color: #fff;
+      }
+
+      .content {
+        color: #8b949e !important;
+        background: #211f24;
+        border-color: #2d2d2d;
+      }
+     }
   </style>
 </head>
 <body class="body" xml:lang="en">
-  <div role="article" aria-roledescription="email" aria-label="email name" lang="en" dir="ltr" style="font-size:medium; font-size:max(16px, 1rem)">
+  <div role="article" aria-roledescription="email" aria-label="email name" lang="en" dir="ltr" style="font-size:medium; font-size:max(16px, 1em)">
     {{> @partial-block }}
   </div>
 </body>
