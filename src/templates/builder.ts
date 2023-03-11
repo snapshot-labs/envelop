@@ -3,11 +3,18 @@ import Handlebars, { compile } from 'handlebars';
 import templates from './';
 import styles from '../helpers/styles.json';
 
+Handlebars.registerPartial(
+  'layout',
+  fs.readFileSync('./src/templates/partials/layout.hbs', 'utf-8')
+);
+Handlebars.registerPartial(
+  'proposals',
+  fs.readFileSync('./src/templates/partials/proposals.hbs', 'utf-8')
+);
+
 export default function buildMessage(id: string, params: any) {
   const template = templates[id];
   params.styles = styles;
-
-  Handlebars.registerPartial('layout', fs.readFileSync('./src/templates/layout.hbs', 'utf-8'));
 
   return {
     to: params.to,
