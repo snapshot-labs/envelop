@@ -1,5 +1,6 @@
 import { gql, ApolloClient, InMemoryCache, HttpLink } from '@apollo/client/core';
 import fetch from 'cross-fetch';
+import removeMd from 'remove-markdown';
 
 const SNAPSHOT_HUB_URL = 'https://hub.snapshot.org/graphql';
 
@@ -29,6 +30,7 @@ export const PROPOSALS_QUERY = gql`
   query Proposals($space_in: [String], $start_gt: Int) {
     proposals(where: { space_in: $space_in, start_gt: $start_gt }, first: 100) {
       id
+      body
       title
       start
       end
@@ -62,6 +64,12 @@ export async function getProposals(address: string) {
       space_in: follows.map(follow => follow.space.id),
       start_gt: now - 604800
     }
+  });
+
+  Object.keys(proposals).forEach(status => {
+    proposals[status].forEach(proposal => {
+      proposal.shortBody = `${removeMd(proposal.body).slice(0, 150)}…`;
+    });
   });
 
   const pending = proposals.filter(proposal => proposal.state === 'pending');
