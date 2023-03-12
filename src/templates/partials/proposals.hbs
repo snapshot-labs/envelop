@@ -1,13 +1,13 @@
 <div class="space-block">
   <div class="space-title">
-    <img alt="{{ space.name }}" src="https://cdn.stamp.fyi/space/{{ space.id }}?s=32" class="space-avatar" />
-    {{ space.name }}
+    <img alt="{{space.name}}" src="https://cdn.stamp.fyi/space/{{space.id}}?s=32" class="space-avatar" />
+    {{space.name}}
   </div>
   <div class="space-body">
     {{#each proposals}}
-      <a href="{{ link }}" target="_blank" class="proposal-title">{{ title }}</a>
+      <a href="{{link}}" target="_blank" class="proposal-title">{{title}}</a>
       <p class="proposal-body">
-        {{ shortBody }}
+        {{shortBody}}
       </p>
     {{/each}}
   </div>
