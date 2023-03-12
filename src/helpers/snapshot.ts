@@ -71,8 +71,14 @@ export async function getProposals(address: string) {
     closed: {}
   };
 
+  const shortBodyLength = 150;
   proposals.forEach(proposal => {
-    proposal.shortBody = `${removeMd(proposal.body).slice(0, 150)}…`;
+    const sanitizedBody = removeMd(proposal.body);
+
+    proposal.shortBody =
+      sanitizedBody.length > shortBodyLength
+        ? `${sanitizedBody.slice(0, shortBodyLength)}…`
+        : sanitizedBody;
   });
 
   Object.keys(groupedProposals).forEach(status => {
