@@ -1,38 +1,36 @@
 {{#> layout }}
-  <div class="content">
-    <img class="logo" src="https://www.gitbook.com/cdn-cgi/image/width=40,dpr=2,height=40,fit=contain,format=auto/https%3A%2F%2F352593183-files.gitbook.io%2F~%2Ffiles%2Fv0%2Fb%2Fgitbook-legacy-files%2Fo%2Fspaces%252F-MG4Ulnnabb2Xz3Lei9_%252Favatar-1602311890000.png%3Fgeneration%3D1602311890284612%26alt%3Dmedia" />
-    <h1>Weekly summary</h1>
-    {{#if proposals.pending.length}}
-      <div style="{{ styles.block }}">
-        <div style="{{ styles.h2 }}">
-          Pending proposals
-        </div>
-        {{#each proposals.pending}}
-          {{> proposals}}
-        {{/each}}
-      </div>
-    {{/if}}
+  <img class="logo" src="https://www.gitbook.com/cdn-cgi/image/width=40,dpr=2,height=40,fit=contain,format=auto/https%3A%2F%2F352593183-files.gitbook.io%2F~%2Ffiles%2Fv0%2Fb%2Fgitbook-legacy-files%2Fo%2Fspaces%252F-MG4Ulnnabb2Xz3Lei9_%252Favatar-1602311890000.png%3Fgeneration%3D1602311890284612%26alt%3Dmedia" />
+  <h1>Past week summary</h1>
+  {{#if proposals.pending.length}}
+    <div class="status-block">
+      <h2>
+        Pending proposals
+      </h2>
+      {{#each proposals.pending}}
+        {{> proposals}}
+      {{/each}}
+    </div>
+  {{/if}}
 
-    {{#if proposals.active.length}}
-      <div style="{{ styles.block }}">
-        <div style="{{ styles.h2 }}">
-          Active proposals
-        </div>
-        {{#each proposals.active}}
-          {{> proposals}}
-        {{/each}}
-      </div>
-    {{/if}}
+  {{#if proposals.active.length}}
+    <div class="status-block">
+      <h2>
+        Active proposals
+      </h2>
+      {{#each proposals.active}}
+        {{> proposals}}
+      {{/each}}
+    </div>
+  {{/if}}
 
-    {{#if proposals.closed.length}}
-      <div style="{{ styles.block }}">
-        <div style="{{ styles.h2 }}">
-          Closed proposals
-        </div>
-        {{#each proposals.closed}}
-          {{> proposals}}
-        {{/each}}
-      </div>
-    {{/if}}
-  </div>
+  {{#if proposals.closed.length}}
+    <div class="status-block">
+      <h2>
+        Closed proposals
+      </h2>
+      {{#each proposals.closed}}
+        {{> proposals}}
+      {{/each}}
+    </div>
+  {{/if}}
 {{/layout}}

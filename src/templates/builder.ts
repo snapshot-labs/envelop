@@ -1,7 +1,7 @@
 import fs from 'fs';
 import Handlebars, { compile } from 'handlebars';
+import juice from 'juice';
 import templates from './';
-import styles from '../helpers/styles.json';
 
 Handlebars.registerPartial(
   'layout',
@@ -14,13 +14,14 @@ Handlebars.registerPartial(
 
 export default function buildMessage(id: string, params: any) {
   const template = templates[id];
-  params.styles = styles;
 
   return {
     to: params.to,
     from: compile(template.from)(params),
     subject: compile(template.subject)(params),
     text: compile(template.text)(params),
-    html: compile(template.html)(params)
+    html: juice(compile(template.html)(params), {
+      extraCss: fs.readFileSync('./src/templates/styles.scss', 'utf-8')
+    })
   };
 }

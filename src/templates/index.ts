@@ -9,7 +9,7 @@ const templates = {
   },
   summary: {
     from: 'Snapshot <notify@snapshot.org>',
-    subject: 'Summary',
+    subject: 'Your weekly Snapshot summary',
     text: "Hi {{ name }} don't miss out on proposals!",
     html: fs.readFileSync('./src/templates/summary/index.hbs', 'utf-8')
   }
