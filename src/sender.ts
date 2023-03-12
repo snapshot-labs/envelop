@@ -1,11 +1,11 @@
 import { send } from './helpers/mail';
 import constants from './helpers/constants.json';
-import prepare from './templates/summary';
+import templates from './templates';
 
 async function start() {
   const { to, address } = constants.example;
 
-  const result = await send(await prepare({ to, address }));
+  const result = await send(await templates.summary.prepare({ to, address }));
 
   console.log('OK', result);
 }
