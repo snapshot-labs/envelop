@@ -1,11 +1,12 @@
 import fs from 'fs';
 import { compile } from 'handlebars';
 import templates from '../templates';
+import constants from '../helpers/constants.json';
 
 export default async function preview(req, res) {
   const params = {
-    to: req.query.to || 'fabien@bonustrack.co',
-    address: req.query.address || '0xeF8305E140ac520225DAf050e2f71d5fBcC543e7'
+    to: req.query.to || constants.example.to,
+    address: req.query.address || constants.example.address
   };
   const { template } = req.params;
   let msg;
