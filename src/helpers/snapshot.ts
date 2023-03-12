@@ -65,20 +65,36 @@ export async function getProposals(address: string) {
       start_gt: now - 604800
     }
   });
+  const groupedProposals = {
+    pending: {},
+    active: {},
+    closed: {}
+  };
 
-  Object.keys(proposals).forEach(status => {
-    proposals[status].forEach(proposal => {
-      proposal.shortBody = `${removeMd(proposal.body).slice(0, 150)}…`;
-    });
+  const shortBodyLength = 150;
+  proposals.forEach(proposal => {
+    const sanitizedBody = removeMd(proposal.body);
+
+    proposal.shortBody =
+      sanitizedBody.length > shortBodyLength
+        ? `${sanitizedBody.slice(0, shortBodyLength)}…`
+        : sanitizedBody;
   });
 
-  const pending = proposals.filter(proposal => proposal.state === 'pending');
-  const active = proposals.filter(proposal => proposal.state === 'active');
-  const closed = proposals.filter(proposal => proposal.state === 'closed');
+  Object.keys(groupedProposals).forEach(status => {
+    const groupedSpaces = {};
 
-  return {
-    pending,
-    active,
-    closed
-  };
+    proposals
+      .filter(proposal => proposal.state === status)
+      .forEach(proposal => {
+        const { space } = proposal;
+
+        groupedSpaces[space.id] ||= { space, proposals: [] };
+        groupedSpaces[space.id].proposals.push(proposal);
+      });
+
+    groupedProposals[status] = Object.values(groupedSpaces);
+  });
+
+  return groupedProposals;
 }
