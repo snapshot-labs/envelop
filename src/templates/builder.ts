@@ -20,8 +20,14 @@ export default function buildMessage(id: string, params: any) {
     from: compile(template.from)(params),
     subject: compile(template.subject)(params),
     text: compile(template.text)(params),
-    html: juice(compile(template.html)(params), {
-      extraCss: fs.readFileSync('./src/templates/styles.scss', 'utf-8')
-    })
+    html: juice(
+      compile(template.html)({
+        ...params,
+        subject: template.subject
+      }),
+      {
+        extraCss: fs.readFileSync('./src/templates/styles.scss', 'utf-8')
+      }
+    )
   };
 }
