@@ -1,5 +1,6 @@
 import { gql, ApolloClient, InMemoryCache, HttpLink } from '@apollo/client/core';
 import fetch from 'cross-fetch';
+import removeMd from 'remove-markdown';
 
 const SNAPSHOT_HUB_URL = 'https://hub.snapshot.org/graphql';
 
@@ -29,6 +30,7 @@ export const PROPOSALS_QUERY = gql`
   query Proposals($space_in: [String], $start_gt: Int) {
     proposals(where: { space_in: $space_in, start_gt: $start_gt }, first: 100) {
       id
+      body
       title
       start
       end
@@ -63,14 +65,30 @@ export async function getProposals(address: string) {
       start_gt: now - 604800
     }
   });
-
-  const pending = proposals.filter(proposal => proposal.state === 'pending');
-  const active = proposals.filter(proposal => proposal.state === 'active');
-  const closed = proposals.filter(proposal => proposal.state === 'closed');
-
-  return {
-    pending,
-    active,
-    closed
+  const groupedProposals = {
+    pending: {},
+    active: {},
+    closed: {}
   };
+
+  proposals.forEach(proposal => {
+    proposal.shortBody = `${removeMd(proposal.body).slice(0, 150)}…`;
+  });
+
+  Object.keys(groupedProposals).forEach(status => {
+    const groupedSpaces = {};
+
+    proposals
+      .filter(proposal => proposal.state === status)
+      .forEach(proposal => {
+        const { space } = proposal;
+
+        groupedSpaces[space.id] ||= { space, proposals: [] };
+        groupedSpaces[space.id].proposals.push(proposal);
+      });
+
+    groupedProposals[status] = Object.values(groupedSpaces);
+  });
+
+  return groupedProposals;
 }
