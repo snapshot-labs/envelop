@@ -1,0 +1,133 @@
+:root {
+  --border-color: #e8eaed;
+  --content-text-color: #444444;
+  --content-bg-color: #ffffff;
+  --bg-color: #f8f9fa;
+  --contrast-text-color: #000000;
+  --mild-contrast-text-color: #3c4043;
+  --primary-color: #3455fa;
+  --primary-color-inverse: #ffffff;
+}
+
+body {
+  height: 100% !important;
+  margin: 0 auto !important;
+  padding: 2em 1em !important;
+  width: 100% !important;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  word-spacing: normal;
+
+  background: var(--bg-color);
+  color: var(--content-text-color);
+  text-align: left;
+}
+
+img {
+  border: 0;
+  outline: none;
+  text-decoration: none;
+  display: block;
+}
+
+h1,
+h2 {
+  font-family: 'Google Sans', Helvetica, Arial, sans-serif;
+}
+
+h1 {
+  font-size: 2em;
+  font-weight: 600;
+  color: var(--contrast-text-color);
+}
+
+h2 {
+  font-size: 1.25em;
+  font-weight: 700;
+  color: var(--mild-contrast-text-color);
+  line-height: 1.25em;
+}
+
+.logo {
+  border-radius: 100%;
+  width: 3em;
+  height: 3em;
+}
+
+.content {
+  padding: 2.5em 2.5em 1em;
+  font-family: Roboto, 'Open sans', Arial, sans-serif;
+  color: var(--content-text-color);
+  max-width: 600px;
+  margin: 0 auto;
+  background: var(--content-bg-color);
+  width: 100%;
+  border: 1px solid var(--border-color);
+}
+
+.space-block {
+  border: 1px solid var(--border-color);
+  margin-bottom: 1em;
+  border-radius: 0.25em;
+}
+
+.space-title {
+  font-weight: 700;
+  padding: 0.5em 1em;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.space-body {
+  padding: 1em 1em 0;
+}
+
+.space-avatar {
+  width: 1em;
+  height: 1em;
+
+  border-radius: 100%;
+  float: left;
+  margin-right: 0.5em;
+}
+
+.proposal-title {
+  text-decoration: none;
+}
+
+.proposal-body {
+  font-size: 0.85em;
+  margin: 0.5em 0 1em;
+}
+
+.btn {
+  padding: 0.75em 2em;
+  margin: 0.75em 0;
+  display: inline-block;
+  color: var(--primary-color-inverse);
+  background: var(--primary-color);
+  border-radius: 2em;
+  text-decoration: none;
+}
+
+.status-block {
+  margin-bottom: 2em;
+}
+
+@media only screen and (max-width: 620px) {
+  .content {
+    max-width: 100%;
+    padding: 2em;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --border-color: #2d2d2d !important;
+    --content-bg-color: #211f24 !important;
+    --content-text-color: #8b949e !important;
+    --content-bg-color: #211f24 !important;
+    --bg-color: #211f24 !important;
+    --contrast-text-color: #ffffff !important;
+    --mild-contrast-text-color: #c5cacf !important;
+  }
+}

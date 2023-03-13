@@ -1,1 +1,13 @@
-Hi <b>{{ name }}</b> don't miss out on proposals!
+{{#> layout}}
+  <h1>Verify Email</h1>
+
+  <p>Please verify your email address by clicking the button below</p>
+
+  <a href="{{verifyLink}}" class="btn">Verify email</a>
+
+  <p>
+    Or visit the following link in your browser:
+    <br/>
+    <a href="{{verifyLink}}">{{verifyLink}}</a>
+  </p>
+{{/layout}}

@@ -1,77 +1,36 @@
-<div style="{{ styles.body }}">
-  <div style="{{ styles.content }}">
+{{#> layout}}
+  <h1>Past week summary</h1>
 
-    {{#if proposals.pending.length}}
-      <div style="{{ styles.block }}">
-        <div style="{{ styles.h2 }}">
-          Pending proposals
-        </div>
-        {{#each proposals.pending}}
-          <div style="{{ styles.item }}">
-            <img alt="{{ space.name }}" src="https://cdn.stamp.fyi/space/{{ space.id }}?s=32" style="{{ styles.avatar }}"/>
-            {{ space.name }}
-            {{#each proposals}}
-              <div>
-                <div>
-                  <a href="{{ link }}" target="_blank">{{ title }}</a>
-                </div>
-                <div>
-                  {{ body }}
-                </div>
-              </div>
-            {{/each}}
-          </div>
-        {{/each}}
-      </div>
-    {{/if}}
+  {{#if proposals.pending.length}}
+    <div class="status-block">
+      <h2>
+        Pending proposals
+      </h2>
+      {{#each proposals.pending}}
+        {{> proposals}}
+      {{/each}}
+    </div>
+  {{/if}}
 
-    {{#if proposals.active.length}}
-      <div style="{{ styles.block }}">
-        <div style="{{ styles.h2 }}">
-          Active proposals
-        </div>
-        {{#each proposals.active}}
-          <div style="{{ styles.item }}">
-            <img alt="{{ space.name }}" src="https://cdn.stamp.fyi/space/{{ space.id }}?s=32" style="{{ styles.avatar }}"/>
-            {{ space.name }}
-            {{#each proposals}}
-              <div>
-                <div>
-                  <a href="{{ link }}" target="_blank">{{ title }}</a>
-                </div>
-                <div>
-                  {{ shortBody }}
-                </div>
-              </div>
-            {{/each}}
-          </div>
-        {{/each}}
-      </div>
-    {{/if}}
+  {{#if proposals.active.length}}
+    <div class="status-block">
+      <h2>
+        Active proposals
+      </h2>
+      {{#each proposals.active}}
+        {{> proposals}}
+      {{/each}}
+    </div>
+  {{/if}}
 
-    {{#if proposals.closed.length}}
-      <div style="{{ styles.block }}">
-        <div style="{{ styles.h2 }}">
-          Closed proposals
-        </div>
-        {{#each proposals.closed}}
-          <div style="{{ styles.item }}">
-            <img alt="{{ space.name }}" src="https://cdn.stamp.fyi/space/{{ space.id }}?s=32" style="{{ styles.avatar }}"/>
-            {{ space.name }}
-            {{#each proposals}}
-              <div>
-                <div>
-                  <a href="{{ link }}" target="_blank">{{ title }}</a>
-                </div>
-                <div>
-                  {{ shortBody }}
-                </div>
-              </div>
-            {{/each}}
-          </div>
-        {{/each}}
-      </div>
-    {{/if}}
-
-  </div>
-</div>
+  {{#if proposals.closed.length}}
+    <div class="status-block">
+      <h2>
+        Closed proposals
+      </h2>
+      {{#each proposals.closed}}
+        {{> proposals}}
+      {{/each}}
+    </div>
+  {{/if}}
+{{/layout}}
