@@ -3,7 +3,6 @@ import express from 'express';
 import cors from 'cors';
 import rpc from './rpc';
 import preview from './preview';
-import './sender';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
