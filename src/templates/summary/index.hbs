@@ -16,8 +16,13 @@
                   <a href="{{ link }}" target="_blank">{{ title }}</a>
                 </div>
                 <div>
-                  {{ body }}
+                  {{ shortBody }}
                 </div>
+                {{#if voted}}
+                  <div>
+                    You participated
+                  </div>
+                {{/if}}
               </div>
             {{/each}}
           </div>
@@ -42,6 +47,11 @@
                 <div>
                   {{ shortBody }}
                 </div>
+                {{#if voted}}
+                  <div>
+                    You participated
+                  </div>
+                {{/if}}
               </div>
             {{/each}}
           </div>
@@ -66,6 +76,11 @@
                 <div>
                   {{ shortBody }}
                 </div>
+                {{#if voted}}
+                  <div>
+                    You participated
+                  </div>
+                {{/if}}
               </div>
             {{/each}}
           </div>
