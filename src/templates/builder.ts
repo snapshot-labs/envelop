@@ -1,6 +1,7 @@
 import fs from 'fs';
 import Handlebars, { compile } from 'handlebars';
 import juice from 'juice';
+import sass from 'sass';
 import templates from './';
 
 Handlebars.registerPartial(
@@ -26,7 +27,7 @@ export default function buildMessage(id: string, params: any) {
         subject: template.subject
       }),
       {
-        extraCss: fs.readFileSync('./src/templates/styles.scss', 'utf-8')
+        extraCss: sass.compile('./src/templates/styles.scss').css
       }
     )
   };
