@@ -122,13 +122,13 @@ h2 {
 }
 
 @media (prefers-color-scheme: dark) {
-  $border-color: #2d2d2d;
-  $content-bg-color: #211f24;
-  $content-text-color: #8b949e;
-  $content-bg-color: #211f24;
-  $bg-color: #211f24;
-  $contrast-text-color: #ffffff;
-  $mild-contrast-text-color: #c5cacf;
+  $border-color: #2d2d2d !important;
+  $content-bg-color: #211f24 !important;
+  $content-text-color: #8b949e !important;
+  $content-bg-color: #211f24 !important;
+  $bg-color: #211f24 !important;
+  $contrast-text-color: #ffffff !important;
+  $mild-contrast-text-color: #c5cacf !important;
 
   body {
     color: $content-text-color;
