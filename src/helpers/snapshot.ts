@@ -44,6 +44,17 @@ export const PROPOSALS_QUERY = gql`
   }
 `;
 
+export const VOTES_QUERY = gql`
+  query Votes($proposal_in: [String], $voter: String) {
+    votes(where: { proposal_in: $proposal_in, voter: $voter }, first: 100) {
+      id
+      proposal {
+        id
+      }
+    }
+  }
+`;
+
 export async function getProposals(address: string) {
   const now = Math.floor(Date.now() / 1e3);
 
@@ -65,12 +76,24 @@ export async function getProposals(address: string) {
       start_gt: now - 604800
     }
   });
+
+  const {
+    data: { votes }
+  } = await client.query({
+    query: VOTES_QUERY,
+    variables: {
+      proposal_in: proposals.map(proposal => proposal.id),
+      voter: address
+    }
+  });
+
   const groupedProposals = {
     pending: {},
     active: {},
     closed: {}
   };
 
+  const votedProposals = votes.map(vote => vote.proposal.id);
   const shortBodyLength = 150;
   proposals.forEach(proposal => {
     const sanitizedBody = removeMd(proposal.body);
@@ -79,6 +102,7 @@ export async function getProposals(address: string) {
       sanitizedBody.length > shortBodyLength
         ? `${sanitizedBody.slice(0, shortBodyLength)}…`
         : sanitizedBody;
+    proposal.voted = votedProposals.includes(proposal.id);
   });
 
   Object.keys(groupedProposals).forEach(status => {
