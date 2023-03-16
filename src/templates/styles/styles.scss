@@ -1,3 +1,5 @@
+@import './reset.scss';
+
 $border-color: #e8eaed;
 $content-text-color: #444444;
 $content-bg-color: #ffffff;
@@ -29,26 +31,10 @@ $primary-color-inverse: #ffffff;
 }
 
 body {
-  height: 100% !important;
-  margin: 0 auto !important;
-  padding: 2em 1em !important;
-  width: 100% !important;
-  -webkit-text-size-adjust: 100%;
-  -ms-text-size-adjust: 100%;
-  word-spacing: normal;
-
   background: $bg-color;
   color: $content-text-color;
-  text-align: left;
 
   font-family: Roboto, Arial, Helvetica, sans-serif;
-}
-
-img {
-  border: 0;
-  outline: none;
-  text-decoration: none;
-  display: block;
 }
 
 h1,

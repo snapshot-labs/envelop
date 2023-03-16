@@ -27,7 +27,7 @@ export default function buildMessage(id: string, params: any) {
         subject: template.subject
       }),
       {
-        extraCss: sass.compile('./src/templates/styles.scss').css
+        extraCss: sass.compile('./src/templates/styles/styles.scss').css
       }
     )
   };
