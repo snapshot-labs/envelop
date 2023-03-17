@@ -16,7 +16,7 @@ const client = new ApolloClient({
   }
 });
 
-export const FOLLOWS_QUERY = gql`
+const FOLLOWS_QUERY = gql`
   query Follows($follower: String) {
     follows(where: { follower: $follower }, first: 100) {
       space {
@@ -26,7 +26,7 @@ export const FOLLOWS_QUERY = gql`
   }
 `;
 
-export const PROPOSALS_QUERY = gql`
+const PROPOSALS_QUERY = gql`
   query Proposals($space_in: [String], $start_gt: Int) {
     proposals(where: { space_in: $space_in, start_gt: $start_gt }, first: 100) {
       id
@@ -44,7 +44,7 @@ export const PROPOSALS_QUERY = gql`
   }
 `;
 
-export const VOTES_QUERY = gql`
+const VOTES_QUERY = gql`
   query Votes($proposal_in: [String], $voter: String) {
     votes(where: { proposal_in: $proposal_in, voter: $voter }, first: 100) {
       id
@@ -55,7 +55,7 @@ export const VOTES_QUERY = gql`
   }
 `;
 
-export async function getProposals(address: string) {
+export const fetchProposals = async (address: string) => {
   const now = Math.floor(Date.now() / 1e3);
 
   const {
@@ -87,20 +87,25 @@ export async function getProposals(address: string) {
     }
   });
 
+  return { proposals, votes };
+};
+
+export async function getProposals(address: string, maxShortBodyLength = 150) {
+  const { proposals, votes } = await fetchProposals(address);
+
   const groupedProposals = {
-    pending: {},
-    active: {},
-    closed: {}
+    pending: [],
+    active: [],
+    closed: []
   };
 
   const votedProposals = votes.map(vote => vote.proposal.id);
-  const shortBodyLength = 150;
   proposals.forEach(proposal => {
     const sanitizedBody = removeMd(proposal.body);
 
     proposal.shortBody =
-      sanitizedBody.length > shortBodyLength
-        ? `${sanitizedBody.slice(0, shortBodyLength)}…`
+      sanitizedBody.length > maxShortBodyLength
+        ? `${sanitizedBody.slice(0, maxShortBodyLength)}…`
         : sanitizedBody;
     proposal.voted = votedProposals.includes(proposal.id);
   });
@@ -117,7 +122,7 @@ export async function getProposals(address: string) {
         groupedSpaces[space.id].proposals.push(proposal);
       });
 
-    groupedProposals[status] = Object.values(groupedSpaces);
+    groupedProposals[status] = Array.from(Object.values(groupedSpaces));
   });
 
   return groupedProposals;
