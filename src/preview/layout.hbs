@@ -22,7 +22,7 @@
         margin: 0 auto;
         display: flex;
         flex-direction: column;
-        height: 100%;
+        min-height: 100%;
       }
 
       #message_headers {
@@ -135,9 +135,16 @@
       {{#if html}}
         <h2>HTML version</h2>
         <div id="message_html_body">
-          <iframe seamless="seamless" srcdoc="<base target='_top'>{{html}}"></iframe>
+          <iframe id="htmlcontent" seamless="seamless" srcdoc="<base target='_top'>{{html}}"></iframe>
         </div>
       {{/if}}
     </div>
+    <script>
+      document.querySelector('#htmlcontent').addEventListener("load", ev => {
+        if (window.frames && window.frames.htmlcontent) {
+          document.getElementById('message_html_body').style.height = window.frames.htmlcontent.contentWindow.document.body.scrollHeight + 'px';
+        }
+      })
+    </script>
   </body>
 </html>
