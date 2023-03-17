@@ -1,14 +1,13 @@
 {{#> layout}}
   <h1>Past week summary</h1>
 
-
   {{#if proposals.pending.length}}
     <div class="status-block">
       <h2>
         Pending proposals
       </h2>
       {{#each proposals.pending}}
-        {{> proposals}}
+        {{> proposalsHtml}}
       {{/each}}
     </div>
   {{/if}}
@@ -19,7 +18,7 @@
         Active proposals
       </h2>
       {{#each proposals.active}}
-        {{> proposals}}
+        {{> proposalsHtml}}
       {{/each}}
     </div>
   {{/if}}
@@ -30,7 +29,7 @@
         Closed proposals
       </h2>
       {{#each proposals.closed}}
-        {{> proposals}}
+        {{> proposalsHtml}}
       {{/each}}
     </div>
   {{/if}}

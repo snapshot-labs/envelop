@@ -9,8 +9,12 @@ Handlebars.registerPartial(
   fs.readFileSync('./src/templates/partials/layout.hbs', 'utf-8')
 );
 Handlebars.registerPartial(
-  'proposals',
-  fs.readFileSync('./src/templates/partials/proposals.hbs', 'utf-8')
+  'proposalsHtml',
+  fs.readFileSync('./src/templates/partials/proposals-html.hbs', 'utf-8')
+);
+Handlebars.registerPartial(
+  'proposalsText',
+  fs.readFileSync('./src/templates/partials/proposals-text.hbs', 'utf-8')
 );
 
 export default function buildMessage(id: string, params: any) {
