@@ -1,8 +1,0 @@
-{
-  "body": "direction:ltr; text-align:left; background-color:#f8f9fa; margin:20px 0; padding: 20px;",
-  "content": "padding: 20px; font-family:Roboto,'Open sans',Arial,sans-serif; color:#444; max-width:600px; margin:0 auto 0 auto; background:#fff; width:100%; border:1px solid #e8eaed;",
-  "h2": "color:#3c4043; font-family:'Google Sans',Helvetica,Arial,sans-serif; font-size:16px; font-weight:700; line-height:20px;",
-  "avatar": "width: 16px; height: 16px; border-radius: 100%;",
-  "item": "padding: 16px 0;",
-  "block": "margin-bottom: 20px;"
-}

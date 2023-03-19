@@ -103,10 +103,12 @@ export async function getProposals(address: string, maxShortBodyLength = 150) {
   proposals.forEach(proposal => {
     const sanitizedBody = removeMd(proposal.body);
 
-    proposal.shortBody =
+    proposal.shortBody = (
       sanitizedBody.length > maxShortBodyLength
         ? `${sanitizedBody.slice(0, maxShortBodyLength)}…`
-        : sanitizedBody;
+        : sanitizedBody
+    ).replace(/\r?\n|\r/g, ' ');
+
     proposal.voted = votedProposals.includes(proposal.id);
   });
 

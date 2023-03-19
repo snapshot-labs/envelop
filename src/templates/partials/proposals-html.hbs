@@ -1,0 +1,24 @@
+<table role="presentation" class="space-block">
+  <tbody>
+    <tr>
+      <td>
+        <table role="presentation" width="100%">
+          <tr class="space-title">
+            <td class="space-logo"><img alt="{{space.name}}" src="https://cdn.stamp.fyi/space/{{space.id}}?s=32" class="space-avatar" /></td>
+            <td>{{space.name}}</td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td class="space-body">
+        {{#each proposals}}
+          <a href="{{link}}" target="_blank" class="proposal-title">{{title}}</a>
+          <p class="proposal-body">
+            {{shortBody}}
+          </p>
+        {{/each}}
+      </td>
+    </tr>
+  </tbody>
+</table>
