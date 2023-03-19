@@ -1,9 +1,4 @@
-import {
-  gql,
-  ApolloClient,
-  InMemoryCache,
-  HttpLink,
-} from '@apollo/client/core';
+import { gql, ApolloClient, InMemoryCache, HttpLink } from '@apollo/client/core';
 import fetch from 'cross-fetch';
 import removeMd from 'remove-markdown';
 
@@ -12,13 +7,13 @@ const SNAPSHOT_HUB_URL = 'https://hub.snapshot.org/graphql';
 const client = new ApolloClient({
   link: new HttpLink({ uri: SNAPSHOT_HUB_URL, fetch }),
   cache: new InMemoryCache({
-    addTypename: false,
+    addTypename: false
   }),
   defaultOptions: {
     query: {
-      fetchPolicy: 'no-cache',
-    },
-  },
+      fetchPolicy: 'no-cache'
+    }
+  }
 });
 
 const FOLLOWS_QUERY = gql`
@@ -64,32 +59,32 @@ export const fetchProposals = async (address: string) => {
   const now = Math.floor(Date.now() / 1e3);
 
   const {
-    data: { follows },
+    data: { follows }
   } = await client.query({
     query: FOLLOWS_QUERY,
     variables: {
-      follower: address,
-    },
+      follower: address
+    }
   });
 
   const {
-    data: { proposals },
+    data: { proposals }
   } = await client.query({
     query: PROPOSALS_QUERY,
     variables: {
       space_in: follows.map(follow => follow.space.id),
-      start_gt: now - 604800,
-    },
+      start_gt: now - 604800
+    }
   });
 
   const {
-    data: { votes },
+    data: { votes }
   } = await client.query({
     query: VOTES_QUERY,
     variables: {
       proposal_in: proposals.map(proposal => proposal.id),
-      voter: address,
-    },
+      voter: address
+    }
   });
 
   return { proposals, votes };
@@ -101,7 +96,7 @@ export async function getProposals(address: string, maxShortBodyLength = 150) {
   const groupedProposals = {
     pending: [],
     active: [],
-    closed: [],
+    closed: []
   };
 
   const votedProposals = votes.map(vote => vote.proposal.id);
