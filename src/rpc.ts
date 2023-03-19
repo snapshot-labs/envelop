@@ -30,7 +30,7 @@ router.post('/', async (req, res) => {
 
       return rpcError(res, 500, 'Unable to authenticate your verification link', id);
     } else if (method === 'snapshot.unsubscribe') {
-      if (verifySignature(params.email, params.address, params.signature)) {
+      if (verifySignature(params.email, params.address, params.signature, 'unsubscribe')) {
         await unsubscribe(params.email, params.address);
         return rpcSuccess(res, 'OK', id);
       }
