@@ -1,6 +1,6 @@
 import express from 'express';
 import { subscribe, verify, rpcError, rpcSuccess } from './helpers/utils';
-import { getSignature, verifySignature } from './sign';
+import { sign as getSignature, verify as verifySignature } from './sign';
 import { send } from './helpers/mail';
 import templates from './templates';
 
