@@ -1,0 +1,29 @@
+Past week summary
+=================
+{{#if proposals.pending.length}}
+-----------------
+PENDING PROPOSALS
+-----------------
+
+{{#each proposals.pending}}
+{{> proposalsText}}
+{{/each}}
+{{/if}}
+
+{{#if proposals.active.length}}
+-----------------
+ACTIVE PROPOSALS
+-----------------
+{{#each proposals.active}}
+{{> proposalsText}}
+{{/each}}
+{{/if}}
+
+{{#if proposals.closed.length}}
+-----------------
+CLOSED PROPOSALS
+-----------------
+{{#each proposals.closed}}
+{{> proposalsText}}
+{{/each}}
+{{/if}}
