@@ -28,6 +28,7 @@ export default function buildMessage(id: string, params: any) {
     html: juice(
       compile(template.html)({
         ...params,
+        host: process.env.HOST,
         subject: template.subject
       }),
       {
