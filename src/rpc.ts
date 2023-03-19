@@ -17,13 +17,13 @@ router.post('/', async (req, res) => {
         await templates.subscribe.prepare({
           to: params.email,
           address: params.address,
-          signature: getSignature(params.email, params.address)
+          signature: getSignature(params.email, params.address, 'subscribe')
         })
       );
 
       return rpcSuccess(res, 'OK', id);
     } else if (method === 'snapshot.verify') {
-      if (verifySignature(params.email, params.address, params.signature)) {
+      if (verifySignature(params.email, params.address, params.signature, 'subscribe')) {
         await verify(params.email, params.address);
         return rpcSuccess(res, 'OK', id);
       }
