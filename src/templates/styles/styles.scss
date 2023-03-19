@@ -2,6 +2,7 @@
 
 $border-color: #e8eaed;
 $content-text-color: #444444;
+$content-muted-text-color: lighten($content-text-color, 25%);
 $content-bg-color: #ffffff;
 $bg-color: #f8f9fa;
 $contrast-text-color: #000000;
@@ -79,12 +80,22 @@ p {
 }
 
 .content {
-  padding: 2.5em 2.5em 1em;
   max-width: 600px;
   margin: 0 auto;
-  background: $content-bg-color;
   width: 100%;
+}
+
+.content-body {
+  padding: 2.5em 2.5em 1em;
   border: 1px solid $border-color;
+  background: $content-bg-color;
+}
+
+.content-footer {
+  font-size: 0.75em;
+  line-height: 1.5em;
+  padding: 1.5em 0;
+  color: $content-muted-text-color;
 }
 
 .btn {
@@ -159,6 +170,7 @@ p {
   $border-color: #2d2d2d !important;
   $content-bg-color: #211f24 !important;
   $content-text-color: #8b949e !important;
+  $content-muted-text-color: darken(#8b949e, 25%);
   $content-bg-color: #211f24 !important;
   $bg-color: #211f24 !important;
   $contrast-text-color: #ffffff !important;
@@ -176,11 +188,15 @@ p {
     color: $mild-contrast-text-color;
   }
 
-  .content {
+  .content-body {
     background: $content-bg-color;
   }
 
-  .content,
+  .content-footer {
+    color: $content-muted-text-color !important;
+  }
+
+  .content-body,
   .space-block,
   .space-title td {
     border-color: $border-color;
