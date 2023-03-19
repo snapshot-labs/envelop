@@ -5,8 +5,8 @@ import constants from '../helpers/constants.json';
 
 export default async function preview(req, res) {
   const params = {
-    to: req.query.to || constants.example.to,
-    address: req.query.address || constants.example.address
+    to: constants.example.to,
+    address: constants.example.address
   };
   const { template } = req.params;
   let msg;
