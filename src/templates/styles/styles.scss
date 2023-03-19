@@ -65,10 +65,17 @@ p {
   margin: 0 0 1em;
 }
 
-.logo {
-  border-radius: 100%;
-  width: 3em;
-  height: 3em;
+.logo-light,
+.logo-dark {
+  height: 2em;
+}
+
+.logo-dark {
+  display: none;
+}
+
+.logo-light {
+  display: block;
 }
 
 .content {
@@ -171,5 +178,13 @@ p {
   .space-block,
   .space-title td {
     border-color: $border-color;
+  }
+
+  .logo-dark {
+    display: block !important;
+  }
+
+  .logo-light {
+    display: none !important;
   }
 }
