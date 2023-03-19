@@ -1,36 +1,61 @@
 {{#> layout}}
-  <h1>Past week summary</h1>
+  <table role="presentation">
+    <tbody>
+      <tr>
+        <td>
+          <h1>Past week summary</h1>
+        </td>
+      </tr>
+      {{#if proposals.pending.length}}
+        <tr>
+          <td>
+            <h2>
+              Pending proposals
+            </h2>
+          </td>
+        </tr>
+        <tr>
+          <td class="status-block">
+            {{#each proposals.pending}}
+              {{> proposalsHtml}}
+            {{/each}}
+          </td>
+        </tr>
+      {{/if}}
 
-  {{#if proposals.pending.length}}
-    <div class="status-block">
-      <h2>
-        Pending proposals
-      </h2>
-      {{#each proposals.pending}}
-        {{> proposalsHtml}}
-      {{/each}}
-    </div>
-  {{/if}}
+      {{#if proposals.active.length}}
+        <tr>
+          <td>
+            <h2>
+              Active proposals
+            </h2>
+          </td>
+        </tr>
+        <tr>
+          <td class="status-block">
+            {{#each proposals.active}}
+              {{> proposalsHtml}}
+            {{/each}}
+          </td>
+        </tr>
+      {{/if}}
 
-  {{#if proposals.active.length}}
-    <div class="status-block">
-      <h2>
-        Active proposals
-      </h2>
-      {{#each proposals.active}}
-        {{> proposalsHtml}}
-      {{/each}}
-    </div>
-  {{/if}}
-
-  {{#if proposals.closed.length}}
-    <div class="status-block">
-      <h2>
-        Closed proposals
-      </h2>
-      {{#each proposals.closed}}
-        {{> proposalsHtml}}
-      {{/each}}
-    </div>
-  {{/if}}
+      {{#if proposals.closed.length}}
+        <tr>
+          <td>
+            <h2>
+              Closed proposals
+            </h2>
+          </td>
+        </tr>
+        <tr>
+          <td class="status-block">
+            {{#each proposals.closed}}
+              {{> proposalsHtml}}
+            {{/each}}
+          </td>
+        </tr>
+      {{/if}}
+    </tbody>
+  </table>
 {{/layout}}

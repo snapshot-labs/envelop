@@ -36,6 +36,8 @@ mso-table-lspace / mso-table-rspace to ensure no left and right space is added n
 
 table {
   border-collapse: collapse;
+  border: 0;
+  padding: 0;
   mso-table-lspace: 0;
   mso-table-rspace: 0;
 }

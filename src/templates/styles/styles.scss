@@ -61,6 +61,10 @@ h2 {
   line-height: 1.25em;
 }
 
+p {
+  margin: 0 0 1em;
+}
+
 .logo {
   border-radius: 100%;
   width: 3em;
@@ -78,7 +82,6 @@ h2 {
 
 .btn {
   padding: 0.75em 2em;
-  margin: 0.75em 0;
   display: inline-block;
   color: $primary-color-inverse;
   background: $primary-color;
@@ -90,10 +93,11 @@ h2 {
   &-block {
     border: 1px solid $border-color;
     margin-bottom: 1em;
-    border-radius: 0.25em;
+
+    width: 100%;
   }
 
-  &-title {
+  &-title td {
     font-weight: 500;
     padding: 0.5em 1em;
     border-bottom: 1px solid $border-color;
@@ -103,13 +107,16 @@ h2 {
     padding: 1em 1em 0;
   }
 
+  &-logo {
+    width: 1em;
+    padding-right: 0 !important;
+  }
+
   &-avatar {
     width: 1em;
     height: 1em;
 
     border-radius: 100%;
-    float: left;
-    margin-right: 0.5em;
   }
 }
 
@@ -125,7 +132,7 @@ h2 {
 }
 
 .status-block {
-  margin-bottom: 2em;
+  padding-bottom: 2em;
 }
 
 @media only screen and (max-width: 620px) {
@@ -162,7 +169,7 @@ h2 {
 
   .content,
   .space-block,
-  .space-title {
+  .space-title td {
     border-color: $border-color;
   }
 }
