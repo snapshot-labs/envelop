@@ -8,7 +8,7 @@ export default async function preview(req, res) {
   const params = {
     to: constants.example.to,
     address: constants.example.address,
-    signature: await getSignature(constants.example.to, constants.example.address)
+    signature: await getSignature(constants.example.to, constants.example.address, req.params)
   };
   const { template } = req.params;
   let msg;
