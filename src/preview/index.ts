@@ -2,15 +2,18 @@ import fs from 'fs';
 import { compile } from 'handlebars';
 import templates from '../templates';
 import constants from '../helpers/constants.json';
-import { subscribe as getSignature } from '../sign';
+import { subscribe, unsubscribe } from '../sign';
 
 export default async function preview(req, res) {
+  const { template } = req.params;
   const params = {
     to: constants.example.to,
     address: [constants.example.address],
-    signature: await getSignature(constants.example.to, constants.example.address)
+    signature:
+      template === 'subscribe'
+        ? await subscribe(constants.example.to, constants.example.address)
+        : await unsubscribe(constants.example.to, constants.example.address)
   };
-  const { template } = req.params;
   let msg;
 
   if (templates[template]) {
