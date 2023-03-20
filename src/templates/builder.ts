@@ -19,6 +19,7 @@ Handlebars.registerPartial(
 
 export default function buildMessage(id: string, params: any) {
   const template = templates[id];
+  const headers = {};
 
   const extraParams: { host: string; subject: string; unsubscribeLink?: string } = {
     host: process.env.HOST as string,
@@ -31,6 +32,8 @@ export default function buildMessage(id: string, params: any) {
       email: params.to,
       address: params.address
     }).toString()}`;
+
+    headers['List-Unsubscribe'] = `<${extraParams.unsubscribeLink}>`;
   }
 
   return {
@@ -49,6 +52,7 @@ export default function buildMessage(id: string, params: any) {
       {
         extraCss: sass.compile('./src/templates/styles/styles.scss').css
       }
-    )
+    ),
+    headers
   };
 }
