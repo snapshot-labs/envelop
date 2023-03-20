@@ -9,3 +9,10 @@ export const SubscribeTypes = {
     { name: 'email', type: 'string' }
   ]
 };
+
+export const UnsubscribeTypes = {
+  Subscribe: [
+    { name: 'address', type: 'address' },
+    { name: 'email', type: 'string' }
+  ]
+};

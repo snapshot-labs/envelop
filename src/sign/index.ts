@@ -1,6 +1,6 @@
 import { getAddress } from '@ethersproject/address';
 import { Wallet, verifyTypedData } from '@ethersproject/wallet';
-import { Subscriber, SubscribeTypes } from './types';
+import { Subscriber, SubscribeTypes, UnsubscribeTypes } from './types';
 
 const NAME = 'envelop';
 const VERSION = '1';
@@ -37,6 +37,14 @@ export const subscribe = (email: string, address: string) => {
   return sign(buildValue(email, address), SubscribeTypes);
 };
 
+export const unsubscribe = (email: string, address: string) => {
+  return sign(buildValue(email, address), UnsubscribeTypes);
+};
+
 export const verifySubscribe = (email: string, address: string, signature: string) => {
   return verify(buildValue(email, address), signature, SubscribeTypes);
+};
+
+export const verifyUnsubscribe = (email: string, address: string, signature: string) => {
+  return verify(buildValue(email, address), signature, UnsubscribeTypes);
 };
