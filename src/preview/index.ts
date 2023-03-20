@@ -2,13 +2,13 @@ import fs from 'fs';
 import { compile } from 'handlebars';
 import templates from '../templates';
 import constants from '../helpers/constants.json';
-import { sign as getSignature } from '../sign';
+import { subscribe as getSignature } from '../sign';
 
 export default async function preview(req, res) {
   const params = {
     to: constants.example.to,
     address: constants.example.address,
-    signature: await getSignature(constants.example.to, constants.example.address, req.params)
+    signature: await getSignature(constants.example.to, constants.example.address)
   };
   const { template } = req.params;
   let msg;
