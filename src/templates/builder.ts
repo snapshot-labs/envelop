@@ -37,7 +37,10 @@ export default function buildMessage(id: string, params: any) {
     to: params.to,
     from: compile(template.from)(params),
     subject: compile(template.subject)(params),
-    text: compile(template.text)(params),
+    text: compile(template.text)({
+      ...params,
+      ...extraParams
+    }),
     html: juice(
       compile(template.html)({
         ...params,
