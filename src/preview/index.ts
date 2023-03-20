@@ -6,7 +6,7 @@ import constants from '../helpers/constants.json';
 export default async function preview(req, res) {
   const params = {
     to: constants.example.to,
-    address: constants.example.address
+    address: [constants.example.address]
   };
   const { template } = req.params;
   let msg;
