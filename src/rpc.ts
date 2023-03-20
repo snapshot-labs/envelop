@@ -1,6 +1,6 @@
 import express from 'express';
 import { subscribe, verify, unsubscribe, rpcError, rpcSuccess } from './helpers/utils';
-import { sign as getSignature, verify as verifySignature } from './sign';
+import { subscribe as signSubscribe, verifySubscribe, verifyUnsubscribe } from './sign';
 import { send } from './helpers/mail';
 import templates from './templates';
 
@@ -17,20 +17,20 @@ router.post('/', async (req, res) => {
         await templates.subscribe.prepare({
           to: params.email,
           address: params.address,
-          signature: getSignature(params.email, params.address, 'subscribe')
+          signature: signSubscribe(params.email, params.address)
         })
       );
 
       return rpcSuccess(res, 'OK', id);
     } else if (method === 'snapshot.verify') {
-      if (verifySignature(params.email, params.address, params.signature, 'subscribe')) {
+      if (verifySubscribe(params.email, params.address, params.signature)) {
         await verify(params.email, params.address);
         return rpcSuccess(res, 'OK', id);
       }
 
       return rpcError(res, 500, 'Unable to authenticate your verification link', id);
     } else if (method === 'snapshot.unsubscribe') {
-      if (verifySignature(params.email, params.address, params.signature, 'unsubscribe')) {
+      if (verifyUnsubscribe(params.email, params.address, params.signature)) {
         await unsubscribe(params.email, params.address);
         return rpcSuccess(res, 'OK', id);
       }

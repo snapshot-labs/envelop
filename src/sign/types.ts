@@ -1,13 +1,11 @@
-export interface Subscription {
+export interface Subscriber {
   address: string;
   email: string;
-  action: string;
 }
 
-export const SubscriptionTypes = {
-  Subscriber: [
+export const SubscribeTypes = {
+  Subscribe: [
     { name: 'address', type: 'address' },
-    { name: 'email', type: 'string' },
-    { name: 'action', type: 'string' }
+    { name: 'email', type: 'string' }
   ]
 };
