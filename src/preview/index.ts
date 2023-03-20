@@ -4,11 +4,16 @@ import templates from '../templates';
 import constants from '../helpers/constants.json';
 
 export default async function preview(req, res) {
-  const params = {
-    to: constants.example.to,
-    address: [constants.example.address]
-  };
   const { template } = req.params;
+  const params: { to: string; address?: string; addresses?: string[] } = {
+    to: constants.example.to
+  };
+
+  if (template === 'summary') {
+    params.addresses = constants.example.addresses;
+  } else {
+    params.address = constants.example.addresses[0];
+  }
   let msg;
 
   if (templates[template]) {
