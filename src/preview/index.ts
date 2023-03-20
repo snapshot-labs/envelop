@@ -7,7 +7,7 @@ import { sign as getSignature } from '../sign';
 export default async function preview(req, res) {
   const params = {
     to: constants.example.to,
-    address: constants.example.address,
+    address: [constants.example.address],
     signature: await getSignature(constants.example.to, constants.example.address, req.params)
   };
   const { template } = req.params;

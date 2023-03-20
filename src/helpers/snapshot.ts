@@ -17,8 +17,8 @@ const client = new ApolloClient({
 });
 
 const FOLLOWS_QUERY = gql`
-  query Follows($follower: String) {
-    follows(where: { follower: $follower }, first: 100) {
+  query Follows($follower_in: [String]) {
+    follows(where: { follower_in: $follower_in }, first: 100) {
       space {
         id
       }
@@ -45,8 +45,8 @@ const PROPOSALS_QUERY = gql`
 `;
 
 const VOTES_QUERY = gql`
-  query Votes($proposal_in: [String], $voter: String) {
-    votes(where: { proposal_in: $proposal_in, voter: $voter }, first: 100) {
+  query Votes($proposal_in: [String], $voter_in: [String]) {
+    votes(where: { proposal_in: $proposal_in, voter_in: $voter_in }, first: 100) {
       id
       proposal {
         id
@@ -55,7 +55,7 @@ const VOTES_QUERY = gql`
   }
 `;
 
-export const fetchProposals = async (address: string) => {
+export const fetchProposals = async (addresses: string[]) => {
   const now = Math.floor(Date.now() / 1e3);
 
   const {
@@ -63,7 +63,7 @@ export const fetchProposals = async (address: string) => {
   } = await client.query({
     query: FOLLOWS_QUERY,
     variables: {
-      follower: address
+      follower_in: addresses
     }
   });
 
@@ -83,15 +83,15 @@ export const fetchProposals = async (address: string) => {
     query: VOTES_QUERY,
     variables: {
       proposal_in: proposals.map(proposal => proposal.id),
-      voter: address
+      voter_in: addresses
     }
   });
 
   return { proposals, votes };
 };
 
-export async function getProposals(address: string, maxShortBodyLength = 150) {
-  const { proposals, votes } = await fetchProposals(address);
+export async function getProposals(addresses: string[], maxShortBodyLength = 150) {
+  const { proposals, votes } = await fetchProposals(addresses);
 
   const groupedProposals = {
     pending: [],
