@@ -28,7 +28,7 @@ describe('snapshot', () => {
     it.each([['active'], ['closed'], ['pending']])(
       'groups the proposals by %s status',
       async status => {
-        const results = await testSnapshot.getProposals(['']);
+        const results = await testSnapshot.getProposals([]);
 
         expect(results[status].map(s => s.proposals.map(p => p.id)).flat()).toEqual(
           expectedProposalsByStatus[status]
@@ -37,7 +37,7 @@ describe('snapshot', () => {
     );
 
     it('groups the proposals by space', async () => {
-      const results = await testSnapshot.getProposals(['']);
+      const results = await testSnapshot.getProposals([]);
 
       Object.keys(results).forEach(status => {
         expect(
@@ -50,13 +50,13 @@ describe('snapshot', () => {
     });
 
     it.each(expectedShortBody)('truncates the body when necessary', async data => {
-      const results = await testSnapshot.getProposals([''], data.length);
+      const results = await testSnapshot.getProposals([], data.length);
 
       expect(proposalsById(results, data.id).shortBody).toBe(data.shortBody);
     });
 
     it('includes whether the address has voted in the proposal', async () => {
-      const results = await testSnapshot.getProposals(['']);
+      const results = await testSnapshot.getProposals([]);
 
       Object.values(results)
         .flat()
@@ -70,7 +70,7 @@ describe('snapshot', () => {
     it.each(expectedSanitazedShortBody)(
       'strips all markdown tags from the shortBody',
       async data => {
-        const results = await testSnapshot.getProposals(['']);
+        const results = await testSnapshot.getProposals([]);
 
         expect(proposalsById(results, data.id).shortBody).toBe(data.shortBody);
       }
