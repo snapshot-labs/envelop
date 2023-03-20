@@ -1,5 +1,5 @@
 import { getAddress } from '@ethersproject/address';
-import { ethers } from 'ethers';
+import { Wallet, verifyTypedData } from '@ethersproject/wallet';
 import { Subscription, SubscriptionTypes } from './types';
 
 const NAME = 'envelop';
@@ -18,7 +18,7 @@ const buildValue = (email: string, address: string, action: string): Subscriptio
   };
 };
 
-const signer = new ethers.Wallet(process.env.WALLET_PRIVATE_KEY as string);
+const signer = new Wallet(process.env.WALLET_PRIVATE_KEY as string);
 
 export const sign = async (email: string, address: string, action: string): Promise<string> => {
   return await signer._signTypedData(domain, SubscriptionTypes, buildValue(email, address, action));
@@ -30,7 +30,7 @@ export const verify = (
   action: string,
   signature: string
 ): boolean => {
-  const messageSigner = ethers.utils.verifyTypedData(
+  const messageSigner = verifyTypedData(
     domain,
     SubscriptionTypes,
     buildValue(email, address, action),
