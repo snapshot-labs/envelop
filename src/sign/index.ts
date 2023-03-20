@@ -1,6 +1,6 @@
 import { getAddress } from '@ethersproject/address';
 import { Wallet, verifyTypedData } from '@ethersproject/wallet';
-import { Subscription, SubscriptionTypes } from './types';
+import { Subscriber, SubscribeTypes } from './types';
 
 const NAME = 'envelop';
 const VERSION = '1';
@@ -10,32 +10,33 @@ const domain = {
   version: VERSION
 };
 
-const buildValue = (email: string, address: string, action: string): Subscription => {
+const buildValue = (email: string, address: string): Subscriber => {
   return {
     email,
-    address: getAddress(address),
-    action
+    address: getAddress(address)
   };
 };
 
 const signer = new Wallet(process.env.WALLET_PRIVATE_KEY as string);
 
-export const sign = async (email: string, address: string, action: string): Promise<string> => {
-  return await signer._signTypedData(domain, SubscriptionTypes, buildValue(email, address, action));
+const sign = async (message, type): Promise<string> => {
+  return await signer._signTypedData(domain, type, message);
 };
 
-export const verify = (
-  email: string,
-  address: string,
-  action: string,
-  signature: string
-): boolean => {
-  const messageSigner = verifyTypedData(
-    domain,
-    SubscriptionTypes,
-    buildValue(email, address, action),
-    signature
-  );
+const verify = (message, signature: string, type): boolean => {
+  try {
+    const messageSigner = verifyTypedData(domain, type, message, signature);
 
-  return messageSigner === signer.address;
+    return messageSigner === signer.address;
+  } catch (e) {
+    return false;
+  }
+};
+
+export const subscribe = (email: string, address: string) => {
+  return sign(buildValue(email, address), SubscribeTypes);
+};
+
+export const verifySubscribe = (email: string, address: string, signature: string) => {
+  return verify(buildValue(email, address), signature, SubscribeTypes);
 };
