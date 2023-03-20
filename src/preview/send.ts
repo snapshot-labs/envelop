@@ -1,6 +1,7 @@
 import { send as sendMail } from '../helpers/mail';
 import templates from '../templates';
 import constants from '../helpers/constants.json';
+import { rpcSuccess, rpcError } from '../helpers/utils';
 
 export default async function send(req, res) {
   const params = {
@@ -16,5 +17,10 @@ export default async function send(req, res) {
     return res.sendStatus(404);
   }
 
-  res.send(await sendMail(msg));
+  try {
+    await sendMail(msg);
+    return rpcSuccess(res, 'OK', template);
+  } catch (e) {
+    return rpcError(res, 500, e, template);
+  }
 }
