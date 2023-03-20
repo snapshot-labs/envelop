@@ -60,6 +60,7 @@ h2 {
   font-weight: 500;
   color: $mild-contrast-text-color;
   line-height: 1.25em;
+  margin-bottom: 0;
 }
 
 p {
@@ -79,10 +80,13 @@ p {
   display: block;
 }
 
+.container {
+  padding: 2em 1em;
+}
+
 .content {
   max-width: 600px;
   margin: 0 auto;
-  width: 100%;
 }
 
 .content-body {
@@ -94,8 +98,8 @@ p {
 .content-footer {
   font-size: 0.75em;
   line-height: 1.5em;
-  padding: 1.5em 0;
   color: $content-muted-text-color;
+  padding: 1.5em 0;
 }
 
 .btn {
@@ -150,7 +154,7 @@ p {
 }
 
 .status-block {
-  padding-bottom: 2em;
+  padding-top: 1em;
 }
 
 .break-line {
@@ -160,9 +164,22 @@ p {
 }
 
 @media only screen and (max-width: 620px) {
+  .container {
+    padding: 0 !important;
+  }
+
   .content {
-    max-width: 100%;
-    padding: 2em;
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+
+  .content-body {
+    padding: 2em 1.5em 1em !important;
+    border: 0 !important;
+  }
+
+  .content-footer {
+    padding: 1.5em !important;
   }
 }
 
