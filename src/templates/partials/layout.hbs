@@ -36,23 +36,40 @@
         &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279;
       </div>
     {{/if}}
-    <div role="article" aria-roledescription="email" aria-label="{{subject}}" lang="en" dir="ltr" style="font-size:medium; font-size:max(16px, 1em);padding:2em 1em">
+    <div class="container" role="article" aria-roledescription="email" aria-label="{{subject}}" lang="en" dir="ltr" style="font-size:medium; font-size:max(16px, 1em);">
       <div class="content">
-        <table role="presentation">
-          <tbody>
+        <div class="content-body">
+          <table role="presentation">
+            <tbody>
+              <tr>
+                <td>
+                  <img alt="Snapshot logo" class="logo-light" src="{{host}}/images/logo.png" />
+                  <img alt="Snapshot logo" class="logo-dark" src="{{host}}/images/logo-white.png" />
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  {{> @partial-block}}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="content">
+        <div class="content-footer">
+          <table role="presentation">
             <tr>
               <td>
-                <img alt="Snapshot logo" class="logo-light" src="{{host}}/images/logo.png" />
-                <img alt="Snapshot logo" class="logo-dark" src="{{host}}/images/logo-white.png" />
+                {{#if unsubscribeLink}}
+                  You are receiving this email because you are subscribed to Snapshot summary report.
+                  <br/>
+                  <a href="{{unsubscribeLink}}">Unsubscribe</a> to stop receiving this kind of email.
+                {{/if}}
               </td>
             </tr>
-            <tr>
-              <td>
-                {{> @partial-block}}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+          </table>
+        </div>
       </div>
     </div>
   </body>

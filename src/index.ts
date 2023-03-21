@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import rpc from './rpc';
 import preview from './preview';
+import send from './preview/send';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -13,5 +14,6 @@ app.use(express.static('./public'));
 app.use(cors({ maxAge: 86400 }));
 app.use('/', rpc);
 app.use('/preview/:template', preview);
+app.use('/send/:template', send);
 
 app.listen(PORT, () => console.log(`Listening at http://localhost:${PORT}`));

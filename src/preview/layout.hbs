@@ -50,6 +50,7 @@
 
       #message_headers dd {
         margin: 0 0 0 102px;
+        word-break: break-all;
       }
 
       h2 {
@@ -69,6 +70,7 @@
         padding: 8px 16px;
         white-space: pre-wrap;
         flex: 0 0 auto;
+        word-break: break-all;
       }
 
       #message_html_body {
@@ -123,6 +125,13 @@
           {{#if bcc}}
             <dt>BCC:</dt>
             <dd>{{bcc}}</dd>
+          {{/if}}
+
+          {{#if headers}}
+            {{#each headers}}
+              <dt>{{@key}}</dt>
+              <dd>{{this}}</dd>
+            {{/each}}
           {{/if}}
         </dl>
       </div>

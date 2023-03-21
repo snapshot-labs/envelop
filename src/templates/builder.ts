@@ -19,22 +19,46 @@ Handlebars.registerPartial(
 
 export default function buildMessage(id: string, params: any) {
   const template = templates[id];
+  const headers = {};
+
+  const extraParams: {
+    host: string;
+    subject: string;
+    preheader: string;
+    unsubscribeLink?: string;
+  } = {
+    host: process.env.HOST as string,
+    subject: template.subject,
+    preheader: template.preheader
+  };
+
+  if (id !== 'subscribe') {
+    extraParams.unsubscribeLink = `${process.env.FRONT_HOST}/unsubscribe?${new URLSearchParams({
+      signature: params.signature,
+      email: params.to,
+      address: params.address
+    }).toString()}`;
+
+    headers['List-Unsubscribe'] = `<${extraParams.unsubscribeLink}>`;
+  }
 
   return {
     to: params.to,
     from: compile(template.from)(params),
     subject: compile(template.subject)(params),
-    text: compile(template.text)(params),
+    text: compile(template.text)({
+      ...params,
+      ...extraParams
+    }),
     html: juice(
       compile(template.html)({
         ...params,
-        host: process.env.HOST,
-        subject: template.subject,
-        preheader: template.preheader
+        ...extraParams
       }),
       {
         extraCss: sass.compile('./src/templates/styles/styles.scss').css
       }
-    )
+    ),
+    headers
   };
 }
