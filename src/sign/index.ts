@@ -37,14 +37,14 @@ export const subscribe = (email: string, address: string) => {
   return sign(buildValue(email, address), SubscribeTypes);
 };
 
-export const unsubscribe = (email: string, address: string) => {
-  return sign(buildValue(email, address), UnsubscribeTypes);
+export const unsubscribe = (email: string) => {
+  return sign({ email }, UnsubscribeTypes);
 };
 
 export const verifySubscribe = (email: string, address: string, signature: string) => {
   return verify(buildValue(email, address), signature, SubscribeTypes);
 };
 
-export const verifyUnsubscribe = (email: string, address: string, signature: string) => {
-  return verify(buildValue(email, address), signature, UnsubscribeTypes);
+export const verifyUnsubscribe = (email: string, signature: string) => {
+  return verify({ email }, signature, UnsubscribeTypes);
 };

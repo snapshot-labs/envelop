@@ -35,8 +35,7 @@ export default function buildMessage(id: string, params: any) {
   if (id !== 'subscribe') {
     extraParams.unsubscribeLink = `${process.env.FRONT_HOST}/unsubscribe?${new URLSearchParams({
       signature: params.signature,
-      email: params.to,
-      address: params.address
+      email: params.to
     }).toString()}`;
 
     headers['List-Unsubscribe'] = `<${extraParams.unsubscribeLink}>`;

@@ -12,7 +12,7 @@ export default async function preview(req, res) {
     signature:
       template === 'subscribe'
         ? await subscribe(constants.example.to, constants.example.address)
-        : await unsubscribe(constants.example.to, constants.example.address)
+        : await unsubscribe(constants.example.to)
   };
   let msg;
 

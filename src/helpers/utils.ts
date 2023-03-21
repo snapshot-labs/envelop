@@ -34,9 +34,6 @@ export async function verify(email: string, address: string) {
   );
 }
 
-export async function unsubscribe(email: string, address: string) {
-  return await db.queryAsync('DELETE FROM subscribers WHERE email = ? AND address = ? LIMIT 1', [
-    email,
-    address
-  ]);
+export async function unsubscribe(email: string) {
+  return await db.queryAsync('DELETE FROM subscribers WHERE email = ?', [email]);
 }
