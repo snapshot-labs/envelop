@@ -1,7 +1,5 @@
-import crypto from 'crypto';
+import { createHash } from 'crypto';
 
-export function authenticateToken(token = ''): boolean {
-  const data = crypto.createHmac('sha256', process.env.SEND_SECRET as string).update(token);
-
-  return data.digest('hex') === process.env.SEND_HASH;
+export function sha256(token = ''): string {
+  return createHash('sha256').update(token).digest('hex');
 }
