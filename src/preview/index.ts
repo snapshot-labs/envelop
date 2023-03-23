@@ -1,9 +1,12 @@
+import express from 'express';
 import fs from 'fs';
 import { compile } from 'handlebars';
 import templates from '../templates';
 import constants from '../helpers/constants.json';
 
-export default async function preview(req, res) {
+const router = express.Router();
+
+router.get('/preview/:template', async (req, res) => {
   const { template } = req.params;
   const params: { to: string; address?: string; addresses?: string[] } = {
     to: constants.example.to
@@ -25,4 +28,6 @@ export default async function preview(req, res) {
   const content = compile(fs.readFileSync('./src/preview/layout.hbs', 'utf-8'))(msg);
 
   res.send(content);
-}
+});
+
+export default router;

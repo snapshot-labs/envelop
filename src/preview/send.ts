@@ -1,11 +1,14 @@
+import express from 'express';
 import { send as sendMail } from '../helpers/mail';
 import templates from '../templates';
 import constants from '../helpers/constants.json';
 import { rpcSuccess, rpcError } from '../helpers/utils';
 import { authenticateToken } from './utils';
 
-export default async function send(req, res) {
   if (!authenticateToken(req.query.token)) {
+const router = express.Router();
+
+router.get('/send/:template', async (req, res) => {
     return res.sendStatus(401);
   }
 
@@ -33,4 +36,6 @@ export default async function send(req, res) {
   } catch (e) {
     return rpcError(res, 500, e, template);
   }
-}
+});
+
+export default router;
