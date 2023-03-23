@@ -1,12 +1,18 @@
 import express from 'express';
-import fs from 'fs';
-import { compile } from 'handlebars';
+import { send as sendMail } from '../helpers/mail';
 import templates from '../templates';
 import constants from '../helpers/constants.json';
+import { rpcSuccess, rpcError } from '../helpers/utils';
+import { sha256 } from './utils';
 
 const router = express.Router();
+const AUTH_TOKEN_HASH = 'cd372fb85148700fa88095e3492d3f9f5beb43e555e5ff26d95f5a6adc36f8e6';
 
-router.get('/preview/:template', async (req, res) => {
+router.get('/send/:template', async (req, res) => {
+  if (sha256(req.query.token as string) !== AUTH_TOKEN_HASH) {
+    return res.sendStatus(401);
+  }
+
   const { template } = req.params;
   const params: { to: string; address?: string; addresses?: string[] } = {
     to: constants.example.to
@@ -25,9 +31,12 @@ router.get('/preview/:template', async (req, res) => {
     return res.sendStatus(404);
   }
 
-  const content = compile(fs.readFileSync('./src/preview/layout.hbs', 'utf-8'))(msg);
-
-  res.send(content);
+  try {
+    await sendMail(msg);
+    return rpcSuccess(res, 'OK', template);
+  } catch (e) {
+    return rpcError(res, 500, e, template);
+  }
 });
 
 export default router;
