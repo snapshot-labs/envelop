@@ -4,7 +4,7 @@ import cors from 'cors';
 import rpc from './rpc';
 import preview from './preview';
 import send from './preview/send';
-import QueueProcessor from './queues/QueueProcessor';
+import QueueProcessor from './queues/queueProcessor';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
