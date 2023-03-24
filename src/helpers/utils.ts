@@ -32,3 +32,11 @@ export async function unsubscribe(email: string, address: string) {
     address
   ]);
 }
+
+export async function getEmailAddresses(email: string) {
+  return await db.queryAsync('SELECT address FROM subscribers WHERE email = ?', [email]);
+}
+
+export async function getUniqueEmails() {
+  return await db.queryAsync('SELECT DISTINCT email FROM subscribers');
+}
