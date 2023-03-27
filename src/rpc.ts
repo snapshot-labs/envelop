@@ -1,6 +1,6 @@
 import express from 'express';
 import { subscribe, verify, rpcError, rpcSuccess } from './helpers/utils';
-import { subscribe as signSubscribe, verifySubscribe } from './sign';
+import { verifySubscribe } from './sign';
 import { send } from './helpers/mail';
 import templates from './templates';
 
@@ -16,8 +16,7 @@ router.post('/', async (req, res) => {
       await send(
         await templates.subscribe.prepare({
           to: params.email,
-          address: params.address,
-          signature: signSubscribe(params.email, params.address)
+          address: params.address
         })
       );
 

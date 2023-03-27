@@ -1,7 +1,6 @@
 import { createHash } from 'crypto';
 import templates from '../templates';
 import constants from '../helpers/constants.json';
-import { subscribe as getSignature } from '../sign';
 
 export function sha256(token = ''): string {
   return createHash('sha256').update(token).digest('hex');
@@ -16,7 +15,6 @@ export async function buildMessage(template: string): Promise<any> {
     params.addresses = constants.example.addresses;
   } else {
     params.address = constants.example.addresses[0];
-    params.signature = await getSignature(constants.example.to, constants.example.addresses[0]);
   }
 
   if (templates[template]) {
