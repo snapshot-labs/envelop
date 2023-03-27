@@ -21,9 +21,15 @@ export default function buildMessage(id: string, params: any) {
   const template = templates[id];
   const headers = {};
 
-  const extraParams: { host: string; subject: string; unsubscribeLink?: string } = {
+  const extraParams: {
+    host: string;
+    subject: string;
+    unsubscribeLink?: string;
+    preheader: string;
+  } = {
     host: process.env.HOST as string,
-    subject: template.subject
+    subject: template.subject,
+    preheader: template.preheader
   };
 
   if (id !== 'subscribe') {

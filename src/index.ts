@@ -13,7 +13,7 @@ app.use(express.urlencoded({ limit: '4mb', extended: false }));
 app.use(express.static('./public'));
 app.use(cors({ maxAge: 86400 }));
 app.use('/', rpc);
-app.use('/preview/:template', preview);
-app.use('/send/:template', send);
+app.use('/', preview);
+app.use('/', send);
 
 app.listen(PORT, () => console.log(`Listening at http://localhost:${PORT}`));
