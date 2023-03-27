@@ -1,6 +1,6 @@
 import { getAddress } from '@ethersproject/address';
 import { Wallet, verifyTypedData } from '@ethersproject/wallet';
-import { Subscriber, SubscribeTypes, UnsubscribeTypes } from './types';
+import { SubscribeTypes, UnsubscribeTypes } from './types';
 
 const NAME = 'envelop';
 const VERSION = '1';
@@ -8,13 +8,6 @@ const VERSION = '1';
 const domain = {
   name: NAME,
   version: VERSION
-};
-
-const buildValue = (email: string, address: string): Subscriber => {
-  return {
-    email,
-    address: getAddress(address)
-  };
 };
 
 const signer = new Wallet(process.env.WALLET_PRIVATE_KEY as string);
@@ -34,17 +27,29 @@ function verify(message, signature: string, type): boolean {
 }
 
 export function subscribe(email: string, address: string) {
-  return sign(buildValue(email, address), SubscribeTypes);
-}
-
-export function unsubscribe(email: string, address: string) {
-  return sign(buildValue(email, address), UnsubscribeTypes);
+  return sign(
+    {
+      email,
+      address: getAddress(address)
+    },
+    SubscribeTypes
+  );
 }
 
 export function verifySubscribe(email: string, address: string, signature: string) {
-  return verify(buildValue(email, address), signature, SubscribeTypes);
+  return verify(
+    {
+      email,
+      address: getAddress(address)
+    },
+    signature,
+    SubscribeTypes
+  );
 }
 
-export function verifyUnsubscribe(email: string, address: string, signature: string) {
-  return verify(buildValue(email, address), signature, UnsubscribeTypes);
+export function unsubscribe(email: string) {
+  return sign({ email }, UnsubscribeTypes);
+}
+export function verifyUnsubscribe(email: string, signature: string) {
+  return verify({ email }, signature, UnsubscribeTypes);
 }

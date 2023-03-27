@@ -2,6 +2,7 @@ import fs from 'fs';
 import Handlebars, { compile } from 'handlebars';
 import juice from 'juice';
 import sass from 'sass';
+import { unsubscribe as signUnsubscribe } from '../sign';
 import templates from './';
 
 Handlebars.registerPartial(
@@ -17,7 +18,7 @@ Handlebars.registerPartial(
   fs.readFileSync('./src/templates/partials/proposals-text.hbs', 'utf-8')
 );
 
-export default function buildMessage(id: string, params: any) {
+export default async function buildMessage(id: string, params: any) {
   const template = templates[id];
   const headers = {};
 
@@ -34,9 +35,8 @@ export default function buildMessage(id: string, params: any) {
 
   if (id !== 'subscribe') {
     extraParams.unsubscribeLink = `${process.env.FRONT_HOST}/unsubscribe?${new URLSearchParams({
-      signature: params.signature,
-      email: params.to,
-      address: params.address
+      signature: await signUnsubscribe(params.to),
+      email: params.to
     }).toString()}`;
 
     headers['List-Unsubscribe'] = `<${extraParams.unsubscribeLink}>`;
