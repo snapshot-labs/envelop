@@ -23,7 +23,7 @@ const sign = async (message, type): Promise<string> => {
   return await signer._signTypedData(domain, type, message);
 };
 
-const verify = (message, signature: string, type): boolean => {
+function verify(message, signature: string, type): boolean {
   try {
     const messageSigner = verifyTypedData(domain, type, message, signature);
 
@@ -31,12 +31,12 @@ const verify = (message, signature: string, type): boolean => {
   } catch (e) {
     return false;
   }
-};
+}
 
-export const subscribe = (email: string, address: string) => {
+export function subscribe(email: string, address: string) {
   return sign(buildValue(email, address), SubscribeTypes);
-};
+}
 
-export const verifySubscribe = (email: string, address: string, signature: string) => {
+export function verifySubscribe(email: string, address: string, signature: string) {
   return verify(buildValue(email, address), signature, SubscribeTypes);
-};
+}
