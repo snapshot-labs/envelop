@@ -29,7 +29,7 @@ export async function subscribe(email: string, address: string) {
 export async function verify(email: string, address: string) {
   const verified = (Date.now() / 1e3).toFixed();
   return await db.queryAsync(
-    'UPDATE subscribers SET verified = ? WHERE email = ? AND address = ? LIMIT 1',
+    'UPDATE subscribers SET verified = ? WHERE email = ? AND address = ? AND verified IS NULL LIMIT 1',
     [verified, email, address]
   );
 }
