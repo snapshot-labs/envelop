@@ -11,7 +11,7 @@ router.get('/send/:template', async (req, res) => {
   const { template } = req.params;
 
   if (sha256(req.query.token as string) !== AUTH_TOKEN_HASH) {
-    return res.sendStatus(401);
+    return rpcError(res, 401, 'Invalid security token', template);
   }
 
   if (template === 'all-summary') {
@@ -23,11 +23,11 @@ router.get('/send/:template', async (req, res) => {
   try {
     msg = await buildMessage(template, req.query.to ? { to: req.query.to } : {});
   } catch (e) {
-    return res.sendStatus(404);
+    return rpcError(res, 404, e, template);
   }
 
   if (Object.keys(msg).length === 0) {
-    return res.sendStatus(204);
+    return rpcSuccess(res, 204, template);
   }
 
   try {
