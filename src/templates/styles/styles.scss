@@ -100,6 +100,11 @@ p {
   line-height: 1.5em;
   color: $content-muted-text-color;
   padding: 1.5em 0;
+
+  a,
+  a:visited {
+    color: $content-muted-text-color;
+  }
 }
 
 .btn {
@@ -217,6 +222,11 @@ p {
 
   .content-footer {
     color: $content-muted-text-color !important;
+
+    a,
+    a:visited {
+      color: $content-muted-text-color !important;
+    }
   }
 
   .content-body,
