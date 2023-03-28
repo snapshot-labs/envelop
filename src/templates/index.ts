@@ -13,7 +13,7 @@ const templates = {
   },
   summary: {
     from: 'Snapshot <notify@snapshot.org>',
-    subject: 'Your weekly Snapshot summary',
+    subject: 'Your weekly Snapshot summary - {{formattedStartDate}} to {{formattedEndDate}}',
     text: fs.readFileSync('./src/templates/summary/text.hbs', 'utf-8'),
     preheader: '',
     html: fs.readFileSync('./src/templates/summary/html.hbs', 'utf-8'),
