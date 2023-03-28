@@ -221,6 +221,20 @@ p {
   .content-footer {
     padding: 1.5em !important;
   }
+
+  .content {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+
+  .content-body {
+    padding: 2em 1.5em 1em !important;
+    border: 0 !important;
+  }
+
+  .content-footer {
+    padding: 1.5em !important;
+  }
 }
 
 table {
