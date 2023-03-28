@@ -13,7 +13,7 @@ describe('templates', () => {
   });
 
   it('creates a valid unsubscribe link', async () => {
-    const link = new URL(await unsubscribeLink(email));
+    const link = new URL((await unsubscribeLink(email)).replace('#/', ''));
 
     expect(link.origin).toBe(process.env.FRONT_HOST);
     expect(link.searchParams.get('signature')).toMatch(/^0x[a-f0-9]{130}$/gi);
