@@ -20,6 +20,10 @@ router.get('/send/:template', async (req, res) => {
     return res.sendStatus(404);
   }
 
+  if (Object.keys(msg).length === 0) {
+    return res.sendStatus(204);
+  }
+
   try {
     await sendMail(msg);
     return rpcSuccess(res, 'OK', template);

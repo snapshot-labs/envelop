@@ -9,5 +9,9 @@ export default async (job): Promise<any> => {
     addresses: (await getEmailAddresses(email)).map(data => data.address)
   });
 
+  if (Object.keys(msg).length === 0) {
+    return Promise.resolve('Skipped');
+  }
+
   return Promise.resolve(await send(msg));
 };
