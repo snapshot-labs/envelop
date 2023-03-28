@@ -6,6 +6,25 @@
           <h1>Past week summary</h1>
         </td>
       </tr>
+      <tr>
+        <td>
+          <table class="stats-block">
+            <tbody>
+              <tr>
+                <td class="bordered">
+                  <strong>{{proposals.pending.length}}</strong>
+                Pending proposals</td>
+                <td class="bordered">
+                <strong>{{proposals.active.length}}</strong>
+              Active proposals</td>
+                <td>
+                <strong>{{proposals.closed.length}}</strong>
+              Closed proposals</td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
       {{#if proposals.pending.length}}
         <tr>
           <td>

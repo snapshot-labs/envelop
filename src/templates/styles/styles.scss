@@ -93,6 +93,7 @@ p {
   padding: 2.5em 2.5em 1em;
   border: 1px solid $border-color;
   background: $content-bg-color;
+  border-radius: 0.25em;
 }
 
 .content-footer {
@@ -142,6 +143,29 @@ p {
   }
 }
 
+.stats {
+  &-block {
+    border: 1px solid $border-color;
+    margin-bottom: 1em;
+
+    width: 100%;
+
+    td {
+      padding: 1em;
+
+      strong {
+        color: $mild-contrast-text-color;
+        font-size: 2em;
+        line-height: 1.25em;
+        display: block;
+      }
+
+      &.bordered {
+        border-right: 1px solid $border-color;
+      }
+    }
+  }
+}
 .proposal {
   &-title {
     text-decoration: none;
@@ -183,6 +207,12 @@ p {
   }
 }
 
+table {
+  border-radius: 0.25em;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
 @media (prefers-color-scheme: dark) {
   $border-color: #2d2d2d !important;
   $content-bg-color: #211f24 !important;
@@ -215,8 +245,14 @@ p {
 
   .content-body,
   .space-block,
-  .space-title td {
+  .space-title td,
+  .stats-block,
+  .stats-block td.bordered {
     border-color: $border-color;
+  }
+
+  .stats-block td strong {
+    color: $mild-contrast-text-color;
   }
 
   .logo-dark {
