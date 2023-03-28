@@ -15,7 +15,7 @@ router.get('/send/:template', async (req, res) => {
 
   let msg;
   try {
-    msg = await buildMessage(template);
+    msg = await buildMessage(template, req.query.to ? { to: req.query.to } : {});
   } catch (e) {
     return res.sendStatus(404);
   }
