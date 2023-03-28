@@ -1,5 +1,5 @@
 import { getUniqueEmails } from '../../helpers/utils';
-import { mailerQueue } from '../queueProcessor';
+import { mailerQueue } from '../index';
 
 export default async (): Promise<number> => {
   const emails = await getUniqueEmails();

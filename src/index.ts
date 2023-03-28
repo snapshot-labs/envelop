@@ -4,12 +4,13 @@ import cors from 'cors';
 import rpc from './rpc';
 import preview from './preview';
 import send from './preview/send';
-import QueueProcessor from './queues/queueProcessor';
+import { start as startQueue, shutdown as shutdownQueue, queueScheduler } from './queues';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const queueProcessor = new QueueProcessor();
+startQueue();
+queueScheduler();
 
 app.use(express.json({ limit: '4mb' }));
 app.use(express.urlencoded({ limit: '4mb', extended: false }));
@@ -24,7 +25,7 @@ const server = app.listen(PORT, () => console.log(`Listening at http://localhost
 function shutdown() {
   if (server.listening) {
     server.close(async () => {
-      await Promise.all(queueProcessor.shutdown());
+      await Promise.all(shutdownQueue());
       process.exit(0);
     });
   }
