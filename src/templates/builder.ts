@@ -19,7 +19,7 @@ Handlebars.registerPartial(
 );
 
 export async function unsubscribeLink(email: string) {
-  return `${process.env.FRONT_HOST}/unsubscribe?${new URLSearchParams({
+  return `${process.env.FRONT_HOST}/#/unsubscribe?${new URLSearchParams({
     signature: await signUnsubscribe(email),
     email: email
   }).toString()}`;
