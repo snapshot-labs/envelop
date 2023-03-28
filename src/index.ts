@@ -4,13 +4,12 @@ import cors from 'cors';
 import rpc from './rpc';
 import preview from './preview';
 import send from './preview/send';
-import { start as startQueue, shutdown as shutdownQueue, queueScheduler } from './queues';
+import { start as startQueue, shutdown as shutdownQueue } from './queues';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 startQueue();
-queueScheduler();
 
 app.use(express.json({ limit: '4mb' }));
 app.use(express.urlencoded({ limit: '4mb', extended: false }));
