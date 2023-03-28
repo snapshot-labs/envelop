@@ -68,6 +68,12 @@ p {
   margin: 0 0 1em;
 }
 
+table {
+  border-radius: 0.25em;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
 .logo-light,
 .logo-dark {
   height: 2em;
@@ -92,24 +98,24 @@ p {
 .content {
   max-width: 600px;
   margin: 0 auto;
-}
 
-.content-body {
-  padding: 2.5em 2.5em 1em;
-  border: 1px solid $border-color;
-  background: $content-bg-color;
-  border-radius: 0.25em;
-}
+  &-body {
+    padding: 2.5em 2.5em 1em;
+    border: 1px solid $border-color;
+    background: $content-bg-color;
+    border-radius: 0.25em;
+  }
 
-.content-footer {
-  font-size: 0.75em;
-  line-height: 1.5em;
-  color: $content-muted-text-color;
-  padding: 1.5em 0;
-
-  a,
-  a:visited {
+  &-footer {
+    font-size: 0.75em;
+    line-height: 1.5em;
     color: $content-muted-text-color;
+    padding: 1.5em 0;
+
+    a,
+    a:visited {
+      color: $content-muted-text-color;
+    }
   }
 }
 
@@ -176,6 +182,7 @@ p {
     }
   }
 }
+
 .proposal {
   &-title {
     text-decoration: none;
@@ -211,36 +218,16 @@ p {
   .content {
     max-width: 100% !important;
     padding: 0 !important;
-  }
 
-  .content-body {
-    padding: 2em 1.5em 1em !important;
-    border: 0 !important;
-  }
+    &-body {
+      padding: 2em 1.5em 1em !important;
+      border: 0 !important;
+    }
 
-  .content-footer {
-    padding: 1.5em !important;
+    &-footer {
+      padding: 1.5em !important;
+    }
   }
-
-  .content {
-    max-width: 100% !important;
-    padding: 0 !important;
-  }
-
-  .content-body {
-    padding: 2em 1.5em 1em !important;
-    border: 0 !important;
-  }
-
-  .content-footer {
-    padding: 1.5em !important;
-  }
-}
-
-table {
-  border-radius: 0.25em;
-  border-collapse: separate;
-  border-spacing: 0;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -261,20 +248,23 @@ table {
   h1 {
     color: $contrast-text-color;
   }
+
   h2 {
     color: $mild-contrast-text-color;
   }
 
-  .content-body {
-    background: $content-bg-color;
-  }
+  .content {
+    &-body {
+      background: $content-bg-color;
+    }
 
-  .content-footer {
-    color: $content-muted-text-color !important;
-
-    a,
-    a:visited {
+    &-footer {
       color: $content-muted-text-color !important;
+
+      a,
+      a:visited {
+        color: $content-muted-text-color !important;
+      }
     }
   }
 
