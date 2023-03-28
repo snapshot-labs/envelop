@@ -50,6 +50,7 @@ export function verifySubscribe(email: string, address: string, signature: strin
 export function unsubscribe(email: string) {
   return sign({ email }, UnsubscribeTypes);
 }
+
 export function verifyUnsubscribe(email: string, signature: string) {
   return verify({ email }, signature, UnsubscribeTypes);
 }

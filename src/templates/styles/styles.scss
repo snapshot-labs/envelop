@@ -163,6 +163,12 @@ p {
   word-break: break-word;
 }
 
+.break-line {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
 @media only screen and (max-width: 620px) {
   .container {
     padding: 0 !important;
