@@ -13,7 +13,7 @@ export default {
   coveragePathIgnorePatterns: ['/node_modules/', '<rootDir>/dist/', '<rootDir>/test/fixtures/'],
 
   preset: 'ts-jest',
-  testEnvironment: 'node',
+  testEnvironment: 'jest-environment-node-single-context',
   setupFiles: ['dotenv/config'],
   //setupFilesAfterEnv: ['<rootDir>src/setupTests.ts'],
   moduleFileExtensions: ['js', 'ts']

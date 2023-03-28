@@ -1,6 +1,7 @@
 Past week summary
 =================
 {{#if proposals.pending.length}}
+
 -----------------
 PENDING PROPOSALS
 -----------------
@@ -9,8 +10,8 @@ PENDING PROPOSALS
 {{> proposalsText}}
 {{/each}}
 {{/if}}
-
 {{#if proposals.active.length}}
+
 -----------------
 ACTIVE PROPOSALS
 -----------------
@@ -18,8 +19,8 @@ ACTIVE PROPOSALS
 {{> proposalsText}}
 {{/each}}
 {{/if}}
-
 {{#if proposals.closed.length}}
+
 -----------------
 CLOSED PROPOSALS
 -----------------
@@ -27,3 +28,7 @@ CLOSED PROPOSALS
 {{> proposalsText}}
 {{/each}}
 {{/if}}
+
+
+-----------------
+To unsubscribe, follow the link: {{{unsubscribeLink}}}
