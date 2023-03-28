@@ -43,5 +43,5 @@ export async function getEmailAddresses(email: string) {
 }
 
 export async function getUniqueEmails() {
-  return await db.queryAsync('SELECT DISTINCT email FROM subscribers');
+  return await db.queryAsync('SELECT DISTINCT email FROM subscribers WHERE verified > 0');
 }
