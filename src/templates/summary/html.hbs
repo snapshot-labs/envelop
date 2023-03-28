@@ -2,8 +2,28 @@
   <table role="presentation">
     <tbody>
       <tr>
+        <td class="title-container">
+          <h1>Your weekly summary</h1>
+          <div>{{formattedStartDate}} - {{formattedEndDate}}</div>
+        </td>
+      </tr>
+      <tr>
         <td>
-          <h1>Past week summary</h1>
+          <table class="stats-block">
+            <tbody>
+              <tr>
+                <td class="bordered">
+                  <strong>{{proposals.pending.length}}</strong>
+                Pending proposals</td>
+                <td class="bordered">
+                <strong>{{proposals.active.length}}</strong>
+              Active proposals</td>
+                <td>
+                <strong>{{proposals.closed.length}}</strong>
+              Closed proposals</td>
+              </tr>
+            </tbody>
+          </table>
         </td>
       </tr>
       {{#if proposals.pending.length}}

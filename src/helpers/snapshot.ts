@@ -55,8 +55,8 @@ const VOTES_QUERY = gql`
   }
 `;
 
-export const fetchProposals = async (addresses: string[]) => {
-  const now = Math.floor(Date.now() / 1e3);
+export const fetchProposals = async (addresses: string[], endDate: Date) => {
+  const now = Math.floor(+endDate / 1e3);
 
   const {
     data: { follows }
@@ -90,8 +90,12 @@ export const fetchProposals = async (addresses: string[]) => {
   return { proposals, votes };
 };
 
-export async function getProposals(addresses: string[], maxShortBodyLength = 150) {
-  const { proposals, votes } = await fetchProposals(addresses);
+export async function getProposals(
+  addresses: string[],
+  endDate = new Date(),
+  maxShortBodyLength = 150
+) {
+  const { proposals, votes } = await fetchProposals(addresses, endDate);
 
   const groupedProposals = {
     pending: [],

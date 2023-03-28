@@ -7,12 +7,19 @@ export function sha256(token = ''): string {
 }
 
 export async function buildMessage(template: string, customParams = {}): Promise<any> {
-  const params: { to: string; address?: string; addresses?: string[]; signature?: string } = {
+  const params: {
+    to: string;
+    address?: string;
+    addresses?: string[];
+    signature?: string;
+    endDate?: Date;
+  } = {
     to: constants.example.to
   };
 
   if (template === 'summary') {
     params.addresses = constants.example.addresses;
+    params.endDate = new Date();
   } else {
     params.address = constants.example.addresses[0];
   }

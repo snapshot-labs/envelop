@@ -50,7 +50,7 @@ describe('snapshot', () => {
     });
 
     it.each(expectedShortBody)('truncates the body when necessary', async data => {
-      const results = await testSnapshot.getProposals([], data.length);
+      const results = await testSnapshot.getProposals([], new Date(), data.length);
 
       expect(proposalsById(results, data.id).shortBody).toBe(data.shortBody);
     });
