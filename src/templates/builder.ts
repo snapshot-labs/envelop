@@ -2,6 +2,7 @@ import fs from 'fs';
 import Handlebars, { compile } from 'handlebars';
 import juice from 'juice';
 import sass from 'sass';
+import { unsubscribe as signUnsubscribe } from '../sign';
 import templates from './';
 
 Handlebars.registerPartial(
@@ -17,24 +18,50 @@ Handlebars.registerPartial(
   fs.readFileSync('./src/templates/partials/proposals-text.hbs', 'utf-8')
 );
 
-export default function buildMessage(id: string, params: any) {
+export async function unsubscribeLink(email: string) {
+  return `${process.env.FRONT_HOST}/#/unsubscribe?${new URLSearchParams({
+    signature: await signUnsubscribe(email),
+    email: email
+  }).toString()}`;
+}
+
+export default async function buildMessage(id: string, params: any) {
   const template = templates[id];
+  const headers = {};
+
+  const extraParams: {
+    host: string;
+    subject: string;
+    unsubscribeLink?: string;
+    preheader: string;
+  } = {
+    host: process.env.HOST as string,
+    subject: template.subject,
+    preheader: template.preheader
+  };
+
+  if (id !== 'subscribe') {
+    extraParams.unsubscribeLink = await unsubscribeLink(params.to);
+    headers['List-Unsubscribe'] = `<${extraParams.unsubscribeLink}>`;
+  }
 
   return {
     to: params.to,
     from: compile(template.from)(params),
     subject: compile(template.subject)(params),
-    text: compile(template.text)(params),
+    text: compile(template.text)({
+      ...params,
+      ...extraParams
+    }),
     html: juice(
       compile(template.html)({
         ...params,
-        host: process.env.HOST,
-        subject: template.subject,
-        preheader: template.preheader
+        ...extraParams
       }),
       {
         extraCss: sass.compile('./src/templates/styles/styles.scss').css
       }
-    )
+    ),
+    headers
   };
 }
