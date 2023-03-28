@@ -53,6 +53,7 @@ h1 {
   font-size: 2em;
   font-weight: 700;
   color: $contrast-text-color;
+  margin: 0 0 0.15em;
 }
 
 h2 {
@@ -82,6 +83,10 @@ p {
 
 .container {
   padding: 2em 1em;
+}
+
+.title-container {
+  padding: 1em 0;
 }
 
 .content {
@@ -146,7 +151,7 @@ p {
 .stats {
   &-block {
     border: 1px solid $border-color;
-    margin-bottom: 1em;
+    margin: 1em 0;
 
     width: 100%;
 
