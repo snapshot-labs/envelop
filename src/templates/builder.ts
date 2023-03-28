@@ -18,6 +18,13 @@ Handlebars.registerPartial(
   fs.readFileSync('./src/templates/partials/proposals-text.hbs', 'utf-8')
 );
 
+export async function unsubscribeLink(email: string) {
+  return `${process.env.FRONT_HOST}/unsubscribe?${new URLSearchParams({
+    signature: await signUnsubscribe(email),
+    email: email
+  }).toString()}`;
+}
+
 export default async function buildMessage(id: string, params: any) {
   const template = templates[id];
   const headers = {};
@@ -34,11 +41,7 @@ export default async function buildMessage(id: string, params: any) {
   };
 
   if (id !== 'subscribe') {
-    extraParams.unsubscribeLink = `${process.env.FRONT_HOST}/unsubscribe?${new URLSearchParams({
-      signature: await signUnsubscribe(params.to),
-      email: params.to
-    }).toString()}`;
-
+    extraParams.unsubscribeLink = await unsubscribeLink(params.to);
     headers['List-Unsubscribe'] = `<${extraParams.unsubscribeLink}>`;
   }
 
