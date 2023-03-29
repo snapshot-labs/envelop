@@ -18,6 +18,6 @@ jobs:
       - run: yarn global add dotenv-cli
       - run: yarn lint
       - run: yarn build
-      - run: dotenv -e test/.env.test yarn start
+      - run: dotenv -e test/.env.test yarn start &
       - run: yarn test
       - run: yarn test:e2e
