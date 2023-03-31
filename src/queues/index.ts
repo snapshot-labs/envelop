@@ -2,8 +2,8 @@ import Queue from 'bull';
 import summaryProcessor from './processors/summary';
 import schedulerProcessor from './processors/scheduler';
 
-export const mailerQueue = new Queue('mailer');
-export const scheduleQueue = new Queue('scheduler');
+export const mailerQueue = new Queue('mailer', process.env.REDIS_URL);
+export const scheduleQueue = new Queue('scheduler', process.env.REDIS_URL);
 
 export function start(): void {
   console.log('[QUEUE-MAILER] Starting queue mailer');
