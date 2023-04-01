@@ -27,8 +27,11 @@ const FOLLOWS_QUERY = gql`
 `;
 
 const PROPOSALS_QUERY = gql`
-  query Proposals($space_in: [String], $start_gt: Int) {
-    proposals(where: { space_in: $space_in, start_gt: $start_gt }, first: 100) {
+  query Proposals($space_in: [String], $start_gt: Int, $start_lt: Int) {
+    proposals(
+      where: { space_in: $space_in, start_gt: $start_gt, start_lt: $start_lt }
+      first: 100
+    ) {
       id
       body
       title
@@ -55,9 +58,7 @@ const VOTES_QUERY = gql`
   }
 `;
 
-export const fetchProposals = async (addresses: string[], endDate: Date) => {
-  const now = Math.floor(+endDate / 1e3);
-
+export const fetchProposals = async (addresses: string[], startDate: Date, endDate: Date) => {
   const {
     data: { follows }
   } = await client.query({
@@ -73,7 +74,8 @@ export const fetchProposals = async (addresses: string[], endDate: Date) => {
     query: PROPOSALS_QUERY,
     variables: {
       space_in: follows.map(follow => follow.space.id),
-      start_gt: now - 604800
+      start_gt: Math.floor(+startDate / 1e3),
+      start_lt: Math.floor(+endDate / 1e3)
     }
   });
 
@@ -92,10 +94,11 @@ export const fetchProposals = async (addresses: string[], endDate: Date) => {
 
 export async function getProposals(
   addresses: string[],
-  endDate = new Date(),
+  startDate: Date,
+  endDate: Date,
   maxShortBodyLength = 150
 ) {
-  const { proposals, votes } = await fetchProposals(addresses, endDate);
+  const { proposals, votes } = await fetchProposals(addresses, startDate, endDate);
 
   const groupedProposals = {
     pending: [],

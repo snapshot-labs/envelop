@@ -24,19 +24,15 @@ function formatDate(date) {
 }
 
 export default async function prepare(params: any) {
-  const proposals = await getProposals(params.addresses, params.endDate);
+  const proposals = await getProposals(params.addresses, params.startDate, params.endDate);
 
   if (Object.values(proposals).every(p => p.length === 0)) {
     return {};
   }
 
-  const startDate = new Date(params.endDate);
-  startDate.setDate(startDate.getDate() - 7);
-
   return buildMessage('summary', {
     ...params,
-    startDate,
-    formattedStartDate: formatDate(startDate),
+    formattedStartDate: formatDate(params.startDate),
     formattedEndDate: formatDate(params.endDate),
     proposals
   });

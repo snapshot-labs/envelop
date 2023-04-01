@@ -3,10 +3,11 @@ import { send } from '../../helpers/mail';
 import templates from '../../templates';
 
 export default async (job): Promise<any> => {
-  const { email, endTimestamp } = job.data;
+  const { email, startTimestamp, endTimestamp } = job.data;
   const msg = await templates.summary.prepare({
     to: email,
     addresses: (await getEmailAddresses(email)).map(data => data.address),
+    startDate: new Date(startTimestamp),
     endDate: new Date(endTimestamp)
   });
 

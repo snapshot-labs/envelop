@@ -13,6 +13,7 @@ export async function buildMessage(template: string, customParams = {}): Promise
     addresses?: string[];
     signature?: string;
     endDate?: Date;
+    startDate?: Date;
   } = {
     to: constants.example.to
   };
@@ -20,6 +21,7 @@ export async function buildMessage(template: string, customParams = {}): Promise
   if (template === 'summary') {
     params.addresses = constants.example.addresses;
     params.endDate = new Date();
+    params.startDate = new Date(new Date(params.endDate).setDate(params.endDate.getDate() - 7));
   } else {
     params.address = constants.example.addresses[0];
   }
