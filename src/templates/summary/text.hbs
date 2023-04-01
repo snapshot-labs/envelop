@@ -8,7 +8,7 @@ PENDING PROPOSALS
 -----------------
 
 {{#each proposals.pending}}
-{{> proposalsText}}
+{{> proposals.text}}
 {{/each}}
 {{/if}}
 {{#if proposals.active.length}}
@@ -17,7 +17,7 @@ PENDING PROPOSALS
 ACTIVE PROPOSALS
 -----------------
 {{#each proposals.active}}
-{{> proposalsText}}
+{{> proposals.text}}
 {{/each}}
 {{/if}}
 {{#if proposals.closed.length}}
@@ -26,7 +26,7 @@ ACTIVE PROPOSALS
 CLOSED PROPOSALS
 -----------------
 {{#each proposals.closed}}
-{{> proposalsText}}
+{{> proposals.text}}
 {{/each}}
 {{/if}}
 
