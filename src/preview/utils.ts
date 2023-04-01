@@ -7,7 +7,10 @@ export function sha256(token = ''): string {
   return createHash('sha256').update(token).digest('hex');
 }
 
-export async function buildMessage(template: string, customParams = {}): Promise<any> {
+export async function buildMessage(
+  template: string,
+  customParams: { sendDate?: Date; to?: string } = {}
+): Promise<any> {
   const params: {
     to: string;
     address?: string;
@@ -22,7 +25,7 @@ export async function buildMessage(template: string, customParams = {}): Promise
   if (template === 'summary') {
     params.addresses = constants.example.addresses;
 
-    const summaryTimeRange = previousWeek(new Date(), constants.summary.timezone);
+    const summaryTimeRange = previousWeek(customParams.sendDate, constants.summary.timezone);
     params.endDate = summaryTimeRange.end.toDate();
     params.startDate = summaryTimeRange.start.toDate();
   } else {

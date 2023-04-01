@@ -9,7 +9,9 @@ router.get('/preview/:template', async (req, res) => {
   let msg;
 
   try {
-    msg = await buildMessage(req.params.template);
+    msg = await buildMessage(req.params.template, {
+      sendDate: req.query.sendDate ? new Date(req.query.sendDate as string) : new Date()
+    });
   } catch (e) {
     return res.sendStatus(404);
   }
