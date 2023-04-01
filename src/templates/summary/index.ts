@@ -1,30 +1,11 @@
 import { getProposals } from '../../helpers/snapshot';
+import { formatShortDate } from '../../helpers/date';
 import buildMessage from '../builder';
-
-function formatDate(date) {
-  const day = date.getDate();
-  const month = date.toLocaleString('default', { month: 'long' });
-  const year = date.getFullYear();
-
-  const nthNumber = number => {
-    if (number > 3 && number < 21) return 'th';
-    switch (number % 10) {
-      case 1:
-        return 'st';
-      case 2:
-        return 'nd';
-      case 3:
-        return 'rd';
-      default:
-        return 'th';
-    }
-  };
-
-  return `${month} ${day}${nthNumber(day)}, ${year}`;
-}
+import constants from '../../helpers/constants.json';
 
 export default async function prepare(params: any) {
   const proposals = await getProposals(params.addresses, params.startDate, params.endDate);
+  const { timezone } = constants.summary;
 
   if (Object.values(proposals).every(p => p.length === 0)) {
     return {};
@@ -32,8 +13,8 @@ export default async function prepare(params: any) {
 
   return buildMessage('summary', {
     ...params,
-    formattedStartDate: formatDate(params.startDate),
-    formattedEndDate: formatDate(params.endDate),
+    formattedStartDate: formatShortDate(params.startDate, timezone),
+    formattedEndDate: formatShortDate(params.endDate, timezone),
     proposals
   });
 }
