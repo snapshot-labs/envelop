@@ -1,4 +1,5 @@
-import buildMessage, { unsubscribeLink } from '../../../src/templates/builder';
+import buildMessage from '../../../src/templates/builder';
+import { unsubscribeLink } from '../../../src/templates/utils';
 
 describe('templates', () => {
   const email = 'test@test.com';
