@@ -21,7 +21,11 @@ export async function buildMessage(template: string, customParams = {}): Promise
   if (template === 'summary') {
     params.addresses = constants.example.addresses;
     params.endDate = new Date();
-    params.startDate = new Date(new Date(params.endDate).setDate(params.endDate.getDate() - 7));
+    params.startDate = new Date(
+      new Date(params.endDate).setDate(
+        params.endDate.getDate() - constants.summary.days_time_window
+      )
+    );
   } else {
     params.address = constants.example.addresses[0];
   }
