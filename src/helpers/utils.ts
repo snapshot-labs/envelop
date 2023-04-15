@@ -1,6 +1,7 @@
+import { Response } from 'express';
 import db from './mysql';
 
-export function rpcSuccess(res, result, id) {
+export function rpcSuccess(res: Response, result: string, id: string | number) {
   res.json({
     jsonrpc: '2.0',
     result,
@@ -8,7 +9,7 @@ export function rpcSuccess(res, result, id) {
   });
 }
 
-export function rpcError(res, code, e, id) {
+export function rpcError(res: Response, code: number, e: unknown, id: string | number) {
   res.status(code).json({
     jsonrpc: '2.0',
     error: {

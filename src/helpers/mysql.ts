@@ -1,5 +1,7 @@
 import mysql from 'mysql';
+// @ts-ignore
 import Pool from 'mysql/lib/Pool';
+// @ts-ignore
 import Connection from 'mysql/lib/Connection';
 import bluebird from 'bluebird';
 import parse from 'connection-string';

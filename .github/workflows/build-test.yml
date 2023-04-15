@@ -18,5 +18,6 @@ jobs:
       - run: echo -en "FRONT_HOST=http://localhost:3000\nWALLET_PRIVATE_KEY=c0cdaf30be0c6bb222add05617aa4cf9804d9f1841fec0928914e98833d274b7" > .env
       - run: yarn build
       - run: yarn test
+      - run: yarn typecheck
         env:
           DATABASE_URL: 'mysql://root:root@l27.0.0.1:3306/envelop'

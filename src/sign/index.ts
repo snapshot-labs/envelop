@@ -1,6 +1,7 @@
 import { getAddress } from '@ethersproject/address';
 import { Wallet, verifyTypedData } from '@ethersproject/wallet';
 import { SubscribeTypes, UnsubscribeTypes } from './types';
+import type { TypedDataField } from '@ethersproject/abstract-signer';
 
 const NAME = 'envelop';
 const VERSION = '1';
@@ -12,11 +13,15 @@ const domain = {
 
 const signer = new Wallet(process.env.WALLET_PRIVATE_KEY as string);
 
-const sign = async (message, type): Promise<string> => {
+const sign = async (message: Record<string, any>, type: Record<string, Array<TypedDataField>>) => {
   return await signer._signTypedData(domain, type, message);
 };
 
-function verify(message, signature: string, type): boolean {
+function verify(
+  message: Record<string, any>,
+  signature: string,
+  type: Record<string, Array<TypedDataField>>
+) {
   try {
     const messageSigner = verifyTypedData(domain, type, message, signature);
 
