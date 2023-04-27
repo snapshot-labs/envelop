@@ -28,11 +28,20 @@ export default async function prepare(params: any) {
   const startDate = new Date(params.endDate);
   startDate.setDate(startDate.getDate() - 7);
 
+  const stats: Record<string, number> = {};
+
+  for (const [key, value] of Object.entries(proposals)) {
+    stats[key] = value
+      .map(groupedSpace => groupedSpace.proposals.length)
+      .reduce((total, count) => total + count, 0);
+  }
+
   return buildMessage('summary', {
     ...params,
     startDate,
     formattedStartDate: formatDate(startDate),
     formattedEndDate: formatDate(params.endDate),
-    proposals
+    proposals,
+    stats
   });
 }
