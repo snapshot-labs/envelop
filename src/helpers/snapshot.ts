@@ -97,7 +97,7 @@ export async function getProposals(
 ) {
   const { proposals, votes } = await fetchProposals(addresses, endDate);
 
-  const groupedProposals = {
+  const groupedProposals: Record<string, { space: any; proposals: any[] }[]> = {
     pending: [],
     active: [],
     closed: []
