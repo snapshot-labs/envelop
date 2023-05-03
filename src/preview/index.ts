@@ -14,6 +14,10 @@ router.get('/preview/:template', async (req, res) => {
     return res.sendStatus(404);
   }
 
+  if (Object.keys(msg).length === 0) {
+    return res.send('No preview available');
+  }
+
   res.send(compile(fs.readFileSync('./src/preview/layout.hbs', 'utf-8'))(msg));
 });
 

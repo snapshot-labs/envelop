@@ -37,3 +37,13 @@ export async function verify(email: string, address: string) {
 export async function unsubscribe(email: string) {
   return await db.queryAsync('DELETE FROM subscribers WHERE email = ?', [email]);
 }
+
+export async function getEmailAddresses(email: string) {
+  return await db.queryAsync('SELECT address FROM subscribers WHERE email = ? AND verified > 0', [
+    email
+  ]);
+}
+
+export async function getUniqueEmails() {
+  return await db.queryAsync('SELECT DISTINCT email FROM subscribers WHERE verified > 0');
+}
