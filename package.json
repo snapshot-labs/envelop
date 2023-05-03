@@ -9,7 +9,7 @@
     "dev": "nodemon src/index.ts -e js,ts,hbs,json",
     "start": "node dist/src/index.js",
     "test": "jest",
-    "typecheck": "tsc"
+    "typecheck": "tsc --noEmit"
   },
   "eslintConfig": {
     "extends": "@snapshot-labs"

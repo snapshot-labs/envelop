@@ -15,7 +15,7 @@ export type Template = {
   text: string;
   preheader: string;
   html: string;
-  prepare: (params: TemplatePrepareParams) => Promise<Message>;
+  prepare: (params: TemplatePrepareParams) => Promise<Message | Record<string, never>>;
 };
 
 export type TemplatePrepareParams = Record<string, any>;
