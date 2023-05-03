@@ -26,14 +26,28 @@ function formatDate(date: Date) {
 
 export default async function prepare(params: TemplatePrepareParams) {
   const proposals = await getProposals(params.addresses, params.endDate);
+
+  if (Object.values(proposals).every(p => p.length === 0)) {
+    return {};
+  }
+
   const startDate = new Date(params.endDate);
   startDate.setDate(startDate.getDate() - 7);
+
+  const stats: Record<string, number> = {};
+
+  for (const [key, value] of Object.entries(proposals)) {
+    stats[key] = value
+      .map(groupedSpace => groupedSpace.proposals.length)
+      .reduce((total, count) => total + count, 0);
+  }
 
   return buildMessage('summary', {
     ...params,
     startDate,
     formattedStartDate: formatDate(startDate),
     formattedEndDate: formatDate(params.endDate),
-    proposals
+    proposals,
+    stats
   });
 }
