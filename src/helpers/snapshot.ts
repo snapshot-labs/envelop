@@ -55,12 +55,34 @@ const VOTES_QUERY = gql`
   }
 `;
 
+type Space = { id: string; name?: string };
+type Follow = { space: Space };
+export type Proposal = {
+  id: string;
+  body: string;
+  title: string;
+  start: number;
+  end: number;
+  state: string;
+  link: string;
+  space: Space;
+  shortBody?: string;
+  voted?: boolean;
+};
+export type Vote = {
+  id: string;
+  proposal: Pick<Proposal, 'id'>;
+};
+export type ProposalStatus = 'pending' | 'active' | 'closed';
+export type GroupedSpaces = { space: Space; proposals: Proposal[] };
+export type GroupedProposals = Record<ProposalStatus, GroupedSpaces[]>;
+
 export const fetchProposals = async (addresses: string[], endDate: Date) => {
   const now = Math.floor(+endDate / 1e3);
 
   const {
     data: { follows }
-  } = await client.query({
+  }: { data: { follows: Follow[] } } = await client.query({
     query: FOLLOWS_QUERY,
     variables: {
       follower_in: addresses
@@ -69,7 +91,7 @@ export const fetchProposals = async (addresses: string[], endDate: Date) => {
 
   const {
     data: { proposals }
-  } = await client.query({
+  }: { data: { proposals: Proposal[] } } = await client.query({
     query: PROPOSALS_QUERY,
     variables: {
       space_in: follows.map(follow => follow.space.id),
@@ -79,7 +101,7 @@ export const fetchProposals = async (addresses: string[], endDate: Date) => {
 
   const {
     data: { votes }
-  } = await client.query({
+  }: { data: { votes: Vote[] } } = await client.query({
     query: VOTES_QUERY,
     variables: {
       proposal_in: proposals.map(proposal => proposal.id),
@@ -97,7 +119,7 @@ export async function getProposals(
 ) {
   const { proposals, votes } = await fetchProposals(addresses, endDate);
 
-  const groupedProposals: Record<string, { space: any; proposals: any[] }[]> = {
+  const groupedProposals: GroupedProposals = {
     pending: [],
     active: [],
     closed: []
@@ -117,8 +139,7 @@ export async function getProposals(
   });
 
   Object.keys(groupedProposals).forEach(status => {
-    const groupedSpaces = {};
-
+    const groupedSpaces: Record<string, GroupedSpaces> = {};
     proposals
       .filter(proposal => proposal.state === status)
       .forEach(proposal => {
@@ -128,7 +149,7 @@ export async function getProposals(
         groupedSpaces[space.id].proposals.push(proposal);
       });
 
-    groupedProposals[status] = Array.from(Object.values(groupedSpaces));
+    groupedProposals[status as keyof GroupedProposals] = Array.from(Object.values(groupedSpaces));
   });
 
   return groupedProposals;

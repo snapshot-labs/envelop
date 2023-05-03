@@ -9,7 +9,7 @@ import {
   expectedVotedProposals
 } from '../../fixtures/proposals';
 
-const proposalsById = (proposals, id) => {
+const proposalsById = (proposals: testSnapshot.GroupedProposals, id: string) => {
   return Object.values(proposals)
     .flat()
     .map((s: any) => s.proposals)
@@ -30,9 +30,9 @@ describe('snapshot', () => {
       async status => {
         const results = await testSnapshot.getProposals([]);
 
-        expect(results[status].map(s => s.proposals.map(p => p.id)).flat()).toEqual(
-          expectedProposalsByStatus[status]
-        );
+        expect(
+          results[status as testSnapshot.ProposalStatus].map(s => s.proposals.map(p => p.id)).flat()
+        ).toEqual(expectedProposalsByStatus[status as testSnapshot.ProposalStatus]);
       }
     );
 
@@ -41,11 +41,11 @@ describe('snapshot', () => {
 
       Object.keys(results).forEach(status => {
         expect(
-          results[status].map(space => ({
+          results[status as testSnapshot.ProposalStatus].map(space => ({
             space: space.space.id,
             proposals: space.proposals.map(p => p.id)
           }))
-        ).toEqual(expectedProposalsBySpace[status]);
+        ).toEqual(expectedProposalsBySpace[status as testSnapshot.ProposalStatus]);
       });
     });
 
