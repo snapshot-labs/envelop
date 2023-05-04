@@ -9,6 +9,3 @@ coverage
 .idea
 .vscode
 *.log
-
-mysql
-redis
