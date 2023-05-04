@@ -9,7 +9,7 @@ dayjs.extend(timezone);
 dayjs.extend(isoWeek);
 dayjs.extend(advancedFormat);
 
-export function previousWeek(date, tz) {
+export function previousWeek(date: Date, tz: string) {
   const startOfCurrentWeek = dayjs(date).tz(tz).startOf('isoWeek');
 
   return {
@@ -18,6 +18,6 @@ export function previousWeek(date, tz) {
   };
 }
 
-export function formatShortDate(date, tz) {
+export function formatShortDate(date: Date, tz: string) {
   return dayjs(date).tz(tz).format('MMMM Do, YYYY');
 }
