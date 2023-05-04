@@ -3,6 +3,7 @@ import { subscribe, verify, unsubscribe, rpcError, rpcSuccess } from './helpers/
 import { verifySubscribe, verifyUnsubscribe } from './sign';
 import { send } from './helpers/mail';
 import templates from './templates';
+import type { Message } from '../types';
 
 const router = express.Router();
 
@@ -14,10 +15,10 @@ router.post('/', async (req, res) => {
       await subscribe(params.email, params.address);
 
       await send(
-        await templates.subscribe.prepare({
+        (await templates.subscribe.prepare({
           to: params.email,
           address: params.address
-        })
+        })) as Message
       );
 
       return rpcSuccess(res, 'OK', id);
