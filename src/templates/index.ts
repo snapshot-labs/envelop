@@ -1,8 +1,9 @@
 import fs from 'fs';
 import prepareSubscribe from './subscribe';
 import prepareSummary from './summary';
+import type { Templates } from '../../types';
 
-const templates = {
+const templates: Templates = {
   subscribe: {
     from: 'Snapshot <notify@snapshot.org>',
     subject: 'Verify your email address',

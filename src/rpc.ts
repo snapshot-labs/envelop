@@ -1,8 +1,7 @@
 import express from 'express';
 import { subscribe, verify, unsubscribe, rpcError, rpcSuccess } from './helpers/utils';
 import { verifySubscribe, verifyUnsubscribe } from './sign';
-import { send } from './helpers/mail';
-import templates from './templates';
+import { queueSubscribe } from './queues';
 
 const router = express.Router();
 
@@ -12,13 +11,7 @@ router.post('/', async (req, res) => {
   try {
     if (method === 'snapshot.subscribe') {
       await subscribe(params.email, params.address);
-
-      await send(
-        await templates.subscribe.prepare({
-          to: params.email,
-          address: params.address
-        })
-      );
+      queueSubscribe(params.email, params.address);
 
       return rpcSuccess(res, 'OK', id);
     } else if (method === 'snapshot.verify') {
