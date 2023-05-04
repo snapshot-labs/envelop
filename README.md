@@ -68,6 +68,8 @@ yarn test:e2e
 
 E2E tests rely on a another .env file: `test/.env.test`, edit its variables to suit your setup.
 
+This will run all tests
+
 ## Licence
 
 Envelop is open-sourced software licensed under the © [MIT license](LICENSE).
