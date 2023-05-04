@@ -11,5 +11,5 @@ export default async (): Promise<number> => {
     }))
   );
 
-  return Promise.resolve(results.length);
+  return results.length;
 };
