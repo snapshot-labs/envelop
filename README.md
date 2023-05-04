@@ -70,6 +70,33 @@ E2E tests rely on a another .env file: `test/.env.test`, edit its variables to s
 
 This will run all tests
 
+## Sending test emails
+
+As triggering emails involve a few fastidious steps on the UI, a few CLI scripts are provided to
+trigger the email sending directly to a given email address.
+
+### To send a `subscribe` (verification) test email
+
+```bash
+yarn ts-node scripts/send-subscribe.ts [EMAIL] [ADDRESS]
+// E.g.
+// yarn ts-node scripts/send-subscribe.ts test@snapshot.org 0xeF8305E140ac520225DAf050e2f71d5fBcC543e7
+```
+
+- `EMAIL`: your email address (not required to already exist in the database)
+- `ADDRESS`: a wallet address (not required to already exist in the database)
+
+### To send a `summary` test email
+
+```bash
+yarn ts-node scripts/send-summary.ts [EMAIL] [SEND_DATE]
+// E.g.
+// yarn ts-node scripts/send-summary.ts test@snapshot.org 2023-04-25
+```
+
+- `EMAIL`: your email address (needs to already exists and verified in the database, in order to fetch the related wallet address)
+- `SEND_DATE`: a `yyyy-mm-dd` formatted date, to emulate the date the email is sent (affect the summary report time window)
+
 ## Licence
 
 Envelop is open-sourced software licensed under the © [MIT license](LICENSE).
