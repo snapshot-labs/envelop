@@ -48,3 +48,11 @@ export async function getEmailAddresses(email: string): Promise<{ address: strin
 export async function getUniqueEmails(): Promise<{ email: string }[]> {
   return await db.queryAsync('SELECT DISTINCT email FROM subscribers WHERE verified > 0');
 }
+
+export function isValidEmail(input: string) {
+  return new RegExp(/^[A-Za-z0-9_!#$%&'*+\/=?`{|}~^.-]+@[A-Za-z0-9.-]+$/, 'gm').test(input);
+}
+
+export function isValidAddress(input: string) {
+  return new RegExp(/^0x[a-fA-F0-9]{40}$/, 'g').test(input);
+}

@@ -1,5 +1,13 @@
 import express from 'express';
-import { subscribe, verify, unsubscribe, rpcError, rpcSuccess } from './helpers/utils';
+import {
+  subscribe,
+  verify,
+  unsubscribe,
+  rpcError,
+  rpcSuccess,
+  isValidEmail,
+  isValidAddress
+} from './helpers/utils';
 import { verifySubscribe, verifyUnsubscribe } from './sign';
 import { queueSubscribe } from './queues';
 
@@ -10,6 +18,10 @@ router.post('/', async (req, res) => {
 
   try {
     if (method === 'snapshot.subscribe') {
+      if (!isValidEmail(params.email) || !isValidAddress(params.address)) {
+        return rpcError(res, 400, 'Invalid params', id);
+      }
+
       await subscribe(params.email, params.address);
       queueSubscribe(params.email, params.address);
 
