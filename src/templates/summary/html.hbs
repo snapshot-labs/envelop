@@ -37,7 +37,7 @@
         <tr>
           <td class="status-block">
             {{#each proposals.pending}}
-              {{> proposalsHtml}}
+              {{> proposals.html}}
             {{/each}}
           </td>
         </tr>
@@ -54,7 +54,7 @@
         <tr>
           <td class="status-block">
             {{#each proposals.active}}
-              {{> proposalsHtml}}
+              {{> proposals.html}}
             {{/each}}
           </td>
         </tr>
@@ -71,7 +71,7 @@
         <tr>
           <td class="status-block">
             {{#each proposals.closed}}
-              {{> proposalsHtml}}
+              {{> proposals.html}}
             {{/each}}
           </td>
         </tr>
