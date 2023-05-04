@@ -1,0 +1,3 @@
+[submodule "external-repos/envelop-ui"]
+	path = external-repos/envelop-ui
+	url = git@github.com:snapshot-labs/envelop-ui.git
