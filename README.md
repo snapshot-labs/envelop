@@ -12,35 +12,33 @@ This service is API only, and should be used together with [Envelop-UI](https://
 
 ### Dependencies
 
-This API depends on a couple of services:
+This service depends on a couple of services:
 
 - Node.js (>= 18)
-- MySQL
+- MySQL5+
 - A sendgrid account (email provider)
 - An [Envelop-UI](https://github.com/snapshot-labs/envelop-ui) instance
 
 ### Install
 
-```
+```bash
 yarn
 ```
 
 ### Configure
 
-Next, make a copy of `.env.example` and rename it as `.env`. Then update the credentials in the file to the correct values for your local setup.
+Make a copy of `.env.example` and rename it as `.env`. Then update the credentials in the file to the correct values for your local setup.
 
 - `HOST`: hostname of the current envelop instance (eg: `http://localhost:3000`)
 - `FRONT_HOST`: hostname of the envelop-ui instance (eg: `http://localhost:8080`)
 
-### Start
+### Development
 
-Finally, start the service with
+Start the service with
 
-```
+```bash
 yarn dev
 ```
-
-This should start the service to be listening on port 3000.
 
 ## Running tests
 
@@ -48,7 +46,7 @@ This should start the service to be listening on port 3000.
 
 Unit test does not depends on the database, and can safely run locally with:
 
-```
+```bash
 yarn test
 ```
 
@@ -62,7 +60,7 @@ The tests does not rely on any mocking, and tests the whole stack.
 - start the app with `dotenv -e test/.env.test yarn dev`
 - run tests with:
 
-```
+```bash
 yarn test:e2e
 ```
 
@@ -94,8 +92,17 @@ yarn ts-node scripts/send-summary.ts [EMAIL] [SEND_DATE]
 // yarn ts-node scripts/send-summary.ts test@snapshot.org 2023-04-25
 ```
 
-- `EMAIL`: your email address (needs to already exists and verified in the database, in order to fetch the related wallet address)
-- `SEND_DATE`: a `yyyy-mm-dd` formatted date, to emulate the date the email is sent (affect the summary report time window)
+- `EMAIL`: your email address (needs to already exist and verified in the database, in order to fetch the related wallet addresses)
+- `SEND_DATE`: a `yyyy-mm-dd` formatted date, to emulate the date the email is sent (affects the summary report time window)
+
+## Production
+
+```bash
+// Build the project
+yarn build
+// Start the service
+yarn start
+```
 
 ## Licence
 
