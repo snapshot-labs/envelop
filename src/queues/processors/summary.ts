@@ -16,5 +16,5 @@ export default async (job: Job): Promise<any> => {
     return Promise.resolve('Skipped');
   }
 
-  return Promise.resolve(await send(msg as Message));
+  return await send(msg as Message);
 };
