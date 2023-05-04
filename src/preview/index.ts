@@ -1,6 +1,7 @@
 import express from 'express';
 import fs from 'fs';
 import { compile } from 'handlebars';
+import { TemplateId } from '../../types';
 import { buildMessage } from './utils';
 
 const router = express.Router();
@@ -9,7 +10,7 @@ router.get('/preview/:template', async (req, res) => {
   let msg;
 
   try {
-    msg = await buildMessage(req.params.template, {
+    msg = await buildMessage(req.params.template as TemplateId, {
       sendDate: req.query.sendDate ? new Date(req.query.sendDate as string) : new Date()
     });
   } catch (e) {
