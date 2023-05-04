@@ -5,7 +5,7 @@ import { cleanupDb } from './utils';
 describe('POST subscribe', () => {
   const email = 'test-subscribe@test.com';
   const address = '0xDBDd4c5473692Fa0490bfF6AAbf1181f29Ca851e';
-  let subscriberData;
+  let subscriberData: Record<string, any>;
 
   beforeEach(async () => {
     await cleanupDb();
