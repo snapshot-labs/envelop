@@ -1,7 +1,7 @@
 name: Run Lint
 on: [push]
 jobs:
-  build-test:
+  lint:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
@@ -10,5 +10,5 @@ jobs:
           node-version: '18'
           cache: 'yarn'
       - run: yarn install
-      - run: yarn lint
+      - run: yarn lint:nofix
       - run: yarn typecheck
