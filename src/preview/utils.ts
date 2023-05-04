@@ -2,7 +2,7 @@ import { createHash } from 'crypto';
 import templates from '../templates';
 import constants from '../helpers/constants.json';
 import { previousWeek } from '../helpers/date';
-import { TemplatePrepareParams, TemplateId } from '../../types';
+import type { TemplatePrepareParams, TemplateId } from '../../types';
 
 export function sha256(token = ''): string {
   return createHash('sha256').update(token).digest('hex');

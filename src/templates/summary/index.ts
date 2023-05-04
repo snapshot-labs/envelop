@@ -11,7 +11,6 @@ export default async function prepare(params: TemplatePrepareParams) {
   if (Object.values(proposals).every(p => p.length === 0)) {
     return {};
   }
-
   const startDate = new Date(params.endDate);
   startDate.setDate(startDate.getDate() - 7);
 

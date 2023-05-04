@@ -9,6 +9,7 @@ $contrast-text-color: #000000;
 $mild-contrast-text-color: #3c4043;
 $primary-color: #3455fa;
 $primary-color-inverse: #ffffff;
+$secondary-color: #f3b04e;
 
 @font-face {
   font-family: 'Roboto';
@@ -191,6 +192,12 @@ table {
   &-body {
     font-size: 0.85em;
     margin: 0.5em 0 1em;
+
+    .has-voted {
+      color: $secondary-color;
+      display: block;
+      margin-top: 0.5em;
+    }
   }
 }
 

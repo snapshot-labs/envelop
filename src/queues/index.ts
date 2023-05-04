@@ -13,6 +13,7 @@ export function start(): void {
   mailerQueue.process('summary', summaryProcessor);
   mailerQueue.process('subscribe', subscribeProcessor);
   scheduleQueue.process(schedulerProcessor);
+
   queueScheduler({ repeat: { cron: '0 1 * * MON', tz: constants.summary.timezone } });
 }
 
