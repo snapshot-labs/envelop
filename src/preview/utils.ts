@@ -1,7 +1,8 @@
 import { createHash } from 'crypto';
 import templates from '../templates';
 import constants from '../helpers/constants.json';
-import { TemplatePrepareParams, TemplateId } from '../../types';
+import { previousWeek } from '../helpers/date';
+import type { TemplatePrepareParams, TemplateId } from '../../types';
 
 export function sha256(token = ''): string {
   return createHash('sha256').update(token).digest('hex');
@@ -17,13 +18,17 @@ export async function buildMessage(
     addresses?: string[];
     signature?: string;
     endDate?: Date;
+    startDate?: Date;
   } = {
     to: constants.example.to
   };
 
   if (templateId === 'summary') {
     params.addresses = constants.example.addresses;
-    params.endDate = new Date();
+
+    const summaryTimeRange = previousWeek(new Date(), constants.summary.timezone);
+    params.endDate = summaryTimeRange.end.toDate();
+    params.startDate = summaryTimeRange.start.toDate();
   } else {
     params.address = constants.example.addresses[0];
   }

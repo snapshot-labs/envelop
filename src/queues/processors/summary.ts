@@ -5,10 +5,11 @@ import type { Job } from 'bull';
 import type { Message } from '../../../types';
 
 export default async (job: Job): Promise<any> => {
-  const { email, endTimestamp } = job.data;
+  const { email, startTimestamp, endTimestamp } = job.data;
   const msg = await templates.summary.prepare({
     to: email,
     addresses: (await getEmailAddresses(email)).map(data => data.address),
+    startDate: new Date(startTimestamp),
     endDate: new Date(endTimestamp)
   });
 
