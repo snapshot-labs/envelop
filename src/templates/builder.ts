@@ -4,6 +4,7 @@ import juice from 'juice';
 import sass from 'sass';
 import { unsubscribe as signUnsubscribe } from '../sign';
 import templates from './';
+import type { Message, TemplatePrepareParams, TemplateId } from '../../types';
 
 Handlebars.registerPartial(
   'layout',
@@ -25,9 +26,9 @@ export async function unsubscribeLink(email: string) {
   }).toString()}`;
 }
 
-export default async function buildMessage(id: string, params: any) {
+export default async function buildMessage(id: TemplateId, params: TemplatePrepareParams) {
   const template = templates[id];
-  const headers = {};
+  const headers: Message['headers'] = {};
 
   const extraParams: {
     host: string;
@@ -63,5 +64,5 @@ export default async function buildMessage(id: string, params: any) {
       }
     ),
     headers
-  };
+  } as Message;
 }

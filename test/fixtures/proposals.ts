@@ -1,4 +1,6 @@
-export const proposals = [
+import type { Proposal, Vote } from '../../src/helpers/snapshot';
+
+export const proposals: Proposal[] = [
   {
     id: '0x1',
     body: '[click here](https://link.com/) for some pretty awesome *content*',
@@ -51,9 +53,9 @@ export const proposals = [
   }
 ];
 
-export const votes = [
-  { id: 1, proposal: { id: '0x2' } },
-  { id: 2, proposal: { id: '0x4' } }
+export const votes: Vote[] = [
+  { id: '1', proposal: { id: '0x2' } },
+  { id: '2', proposal: { id: '0x4' } }
 ];
 
 export const expectedProposalsByStatus = {

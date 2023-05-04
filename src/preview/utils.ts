@@ -2,12 +2,16 @@ import { createHash } from 'crypto';
 import templates from '../templates';
 import constants from '../helpers/constants.json';
 import { previousWeek } from '../helpers/date';
+import type { TemplatePrepareParams, TemplateId } from '../../types';
 
 export function sha256(token = ''): string {
   return createHash('sha256').update(token).digest('hex');
 }
 
-export async function buildMessage(template: string, customParams = {}): Promise<any> {
+export async function buildMessage(
+  templateId: TemplateId,
+  customParams: TemplatePrepareParams = {}
+): Promise<any> {
   const params: {
     to: string;
     address?: string;
@@ -19,7 +23,7 @@ export async function buildMessage(template: string, customParams = {}): Promise
     to: constants.example.to
   };
 
-  if (template === 'summary') {
+  if (templateId === 'summary') {
     params.addresses = constants.example.addresses;
 
     const summaryTimeRange = previousWeek(new Date(), constants.summary.timezone);
@@ -29,8 +33,8 @@ export async function buildMessage(template: string, customParams = {}): Promise
     params.address = constants.example.addresses[0];
   }
 
-  if (templates[template]) {
-    return await templates[template].prepare({ ...params, ...customParams });
+  if (templates[templateId]) {
+    return await templates[templateId].prepare({ ...params, ...customParams });
   } else {
     return Promise.reject();
   }

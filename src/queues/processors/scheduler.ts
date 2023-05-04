@@ -10,6 +10,7 @@ export default async (): Promise<number> => {
   mailerQueue.addBulk(
     results.map(result => ({
       name: 'summary',
+
       data: {
         email: result.email,
         startTimestamp: +summaryTimeRange.start,

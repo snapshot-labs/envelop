@@ -9,7 +9,8 @@ describe('templates', () => {
 
     expect(result.text).toContain(link);
     expect(result.html).toContain(link.replace(/&/g, '&amp;').replace(/=/g, '&#x3D;'));
-    expect(result.headers['List-Unsubscribe']).toEqual(`<${link}>`);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    expect(result.headers!['List-Unsubscribe']).toEqual(`<${link}>`);
   });
 
   it('creates a valid unsubscribe link', async () => {
