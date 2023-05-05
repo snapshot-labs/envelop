@@ -10,8 +10,18 @@ import {
 } from './helpers/utils';
 import { verifySubscribe, verifyUnsubscribe } from './sign';
 import { queueSubscribe } from './queues';
+import { version, name } from '../package.json';
 
 const router = express.Router();
+
+router.get('/', (req, res) => {
+  const commit = process.env.COMMIT_HASH || '';
+  const v = commit ? `${version}#${commit.substr(0, 7)}` : version;
+  return res.json({
+    name,
+    version: v
+  });
+});
 
 router.post('/', async (req, res) => {
   const { id, method, params } = req.body;
