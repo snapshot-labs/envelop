@@ -89,6 +89,10 @@ yarn build
 yarn start
 ```
 
+## Contributing
+
+See [the contribution guideline](.github/CONTRIBUTING.md)
+
 ## Licence
 
 Envelop is open-sourced software licensed under the © [MIT license](LICENSE).
