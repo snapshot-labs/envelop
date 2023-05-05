@@ -60,7 +60,7 @@ describe('POST subscribe', () => {
         }
       });
 
-    expect(response.statusCode).toBe(500);
+    expect(response.statusCode).toBe(400);
   });
 
   it('returns an error code if the email is missing', async () => {
@@ -73,7 +73,7 @@ describe('POST subscribe', () => {
         }
       });
 
-    expect(response.statusCode).toBe(500);
+    expect(response.statusCode).toBe(400);
   });
 
   it('returns an error code if the address is missing', async () => {
@@ -86,6 +86,6 @@ describe('POST subscribe', () => {
         }
       });
 
-    expect(response.statusCode).toBe(500);
+    expect(response.statusCode).toBe(400);
   });
 });
