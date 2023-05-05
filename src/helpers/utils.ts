@@ -1,5 +1,6 @@
-import { Response } from 'express';
+import { isAddress } from '@ethersproject/address';
 import db from './mysql';
+import type { Response } from 'express';
 
 export function rpcSuccess(res: Response, result: string, id: string | number) {
   res.json({
@@ -54,5 +55,5 @@ export function isValidEmail(input: string) {
 }
 
 export function isValidAddress(input: string) {
-  return new RegExp(/^0x[a-fA-F0-9]{40}$/, 'g').test(input);
+  return isAddress(input);
 }
