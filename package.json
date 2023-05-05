@@ -19,12 +19,6 @@
   "engines": {
     "node": ">= 18"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "yarn lint:nofix && yarn typecheck",
-      "pre-push": "yarn test"
-    }
-  },
   "prettier": "@snapshot-labs/prettier-config",
   "dependencies": {
     "@apollo/client": "^3.7.9",
