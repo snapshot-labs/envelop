@@ -8,7 +8,7 @@
     "build": "tsc -p tsconfig.json",
     "dev": "nodemon src/index.ts -e js,ts,hbs,json",
     "start": "node dist/src/index.js",
-    "start:test": "dotenv -e test/.env.test yarn dev",
+    "start:test": "dotenv -e test/.env.test yarn start",
     "test": "jest test/unit/",
     "test:e2e": "start-server-and-test 'yarn start:test' 3030 'jest --runInBand test/e2e/'",
     "typecheck": "tsc --noEmit"
