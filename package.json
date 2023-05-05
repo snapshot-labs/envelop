@@ -19,6 +19,12 @@
   "engines": {
     "node": ">= 18"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn lint:nofix && yarn typecheck",
+      "pre-push": "yarn test"
+    }
+  },
   "prettier": "@snapshot-labs/prettier-config",
   "dependencies": {
     "@apollo/client": "^3.7.9",
@@ -54,6 +60,7 @@
     "@types/supertest": "^2.0.12",
     "dotenv-cli": "^7.2.1",
     "eslint": "^8.28.0",
+    "husky": "^8.0.3",
     "jest": "^29.5.0",
     "jest-environment-node-single-context": "^29.0.0",
     "nodemon": "^2.0.19",

@@ -74,6 +74,11 @@ yarn typecheck
 ```
 
 Make sure to run the lints to ensure your code follow the coding standard before submitting any commits.
+You can optionally run these tasks automatically on commit and on push by installing the git hooks with husky:
+
+```bash
+yarn husky install
+```
 
 ## Production
 
