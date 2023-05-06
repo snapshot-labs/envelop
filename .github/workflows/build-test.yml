@@ -19,7 +19,6 @@ jobs:
           mysql -uroot -proot -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root';"
           mysql -uroot -proot -e "FLUSH PRIVILEGES;"
       - run: yarn install
-      - run: echo -en "FRONT_HOST=http://localhost:3000\nWALLET_PRIVATE_KEY=c0cdaf30be0c6bb222add05617aa4cf9804d9f1841fec0928914e98833d274b7\nREDIS_URL=redis://127.0.0.1:6379" > .env
       - run: yarn build
       - run: yarn test
       - run: yarn test:e2e
