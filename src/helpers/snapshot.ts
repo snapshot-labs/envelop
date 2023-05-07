@@ -47,6 +47,24 @@ const PROPOSALS_QUERY = gql`
   }
 `;
 
+const PROPOSAL_QUERY = gql`
+  query Proposal($id: String) {
+    proposal(id: $id) {
+      id
+      body
+      title
+      start
+      end
+      state
+      link
+      space {
+        id
+        name
+      }
+    }
+  }
+`;
+
 const VOTES_QUERY = gql`
   query Votes($proposal_in: [String], $voter_in: [String]) {
     votes(where: { proposal_in: $proposal_in, voter_in: $voter_in }, first: 100) {
@@ -156,4 +174,17 @@ export async function getProposals(
   });
 
   return groupedProposals;
+}
+
+export async function getProposal(id: string) {
+  const {
+    data: { proposal }
+  }: { data: { proposal: Proposal | null } } = await client.query({
+    query: PROPOSAL_QUERY,
+    variables: {
+      id
+    }
+  });
+
+  return proposal;
 }

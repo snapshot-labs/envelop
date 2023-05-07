@@ -1,6 +1,8 @@
 import fs from 'fs';
 import prepareSubscribe from './subscribe';
 import prepareSummary from './summary';
+import prepareProposalCreation from './proposalCreation';
+import prepareProposalClosing from './proposalClosing';
 import type { Templates } from '../../types';
 
 const templates: Templates = {
@@ -19,6 +21,22 @@ const templates: Templates = {
     preheader: '',
     html: fs.readFileSync('./src/templates/summary/html.hbs', 'utf-8'),
     prepare: params => prepareSummary(params)
+  },
+  proposalCreation: {
+    from: 'Snapshot <notify@snapshot.org>',
+    subject: 'A new proposal has been posted on {{spaceName}}',
+    text: fs.readFileSync('./src/templates/proposalCreation/text.hbs', 'utf-8'),
+    preheader: '{{proposalTitle}}, will end on {{formattedEndDate}}',
+    html: fs.readFileSync('./src/templates/proposalCreation/html.hbs', 'utf-8'),
+    prepare: params => prepareProposalCreation(params)
+  },
+  proposalClosing: {
+    from: 'Snapshot <notify@snapshot.org>',
+    subject: 'The proposal {{proposalTitle}} is now closed, with {{formattedVotesCount}} votes',
+    text: fs.readFileSync('./src/templates/proposalClosing/text.hbs', 'utf-8'),
+    preheader: '{{winChoicePercentage}}% have voted {{winChoiceName}}',
+    html: fs.readFileSync('./src/templates/proposalClosing/html.hbs', 'utf-8'),
+    prepare: params => prepareProposalClosing(params)
   }
 };
 
