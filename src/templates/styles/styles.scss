@@ -69,6 +69,10 @@ p {
   margin: 0 0 1em;
 }
 
+a {
+  text-decoration: none;
+}
+
 table {
   border-radius: 0.25em;
   border-collapse: separate;
@@ -86,6 +90,14 @@ table {
 
 .logo-light {
   display: block;
+}
+
+.block {
+  background-color: $border-color;
+  border-radius: 5px;
+  padding: 1em;
+  font-size: 0.85em;
+  line-height: 1.5em;
 }
 
 .container {
@@ -187,6 +199,7 @@ table {
 .proposal {
   &-title {
     text-decoration: none;
+    color: $contrast-text-color;
   }
 
   &-body {
@@ -197,6 +210,45 @@ table {
       color: $secondary-color;
       display: block;
       margin-top: 0.5em;
+    }
+  }
+
+  &-fullbody {
+    font-size: 1.1em;
+    line-height: 1.4em;
+  }
+
+  &-space {
+    &-title {
+      font-size: 1.1em;
+      margin-top: 2em;
+    }
+
+    &-logo {
+      width: 1.5em;
+      padding-right: 0 !important;
+    }
+
+    &-avatar {
+      width: 1em;
+      height: 1em;
+
+      border-radius: 100%;
+    }
+  }
+
+  &-choices {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 0.5em;
+
+    &-item {
+      border-width: 1px;
+      border-style: solid;
+      border-color: $border-color;
+      border-left-width: 5px;
+      border-radius: 3px;
+      padding: 0.75em 1em;
     }
   }
 }
@@ -283,6 +335,10 @@ table {
     border-color: $border-color;
   }
 
+  .block {
+    background-color: $border-color;
+  }
+
   .stats-block td strong {
     color: $mild-contrast-text-color;
   }
@@ -293,5 +349,13 @@ table {
 
   .logo-light {
     display: none !important;
+  }
+
+  .proposal-title {
+    color: $contrast-text-color;
+  }
+
+  .proposal-choices-item {
+    border-color: $border-color;
   }
 }

@@ -57,6 +57,8 @@ const PROPOSAL_QUERY = gql`
       end
       state
       link
+      choices
+      author
       space {
         id
         name

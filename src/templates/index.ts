@@ -24,9 +24,10 @@ const templates: Templates = {
   },
   proposalCreation: {
     from: 'Snapshot <notify@snapshot.org>',
-    subject: 'A new proposal has been posted on {{spaceName}}',
+    subject: '[{{proposal.space.name}}] New proposal: {{proposal.title}}',
     text: fs.readFileSync('./src/templates/proposalCreation/text.hbs', 'utf-8'),
-    preheader: '{{proposalTitle}}, will end on {{formattedEndDate}}',
+    preheader:
+      'Submitted by {{proposal.author}}, voting period from {{formattedStartDate}} to {{formattedEndDate}}',
     html: fs.readFileSync('./src/templates/proposalCreation/html.hbs', 'utf-8'),
     prepare: params => prepareProposalCreation(params)
   },
