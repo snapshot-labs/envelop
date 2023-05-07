@@ -18,14 +18,17 @@ router.post('/', async (req, res) => {
 
   try {
     if (method === 'snapshot.subscribe') {
-      if (!isValidEmail(params.email) || !isValidAddress(params.address)) {
+      if (!isValidEmail(params.email) || !isValidAddress(params.address) || !params.signature) {
         return rpcError(res, 400, 'Invalid params', id);
       }
 
-      await subscribe(params.email, params.address);
-      queueSubscribe(params.email, params.address);
+      if (verifySubscribe(params.email, params.address, params.signature, params.address)) {
+        await subscribe(params.email, params.address);
+        queueSubscribe(params.email, params.address);
+        return rpcSuccess(res, 'OK', id);
+      }
 
-      return rpcSuccess(res, 'OK', id);
+      return rpcError(res, 500, 'Unable to authenticate the request', id);
     } else if (method === 'snapshot.verify') {
       if (verifySubscribe(params.email, params.address, params.signature)) {
         await verify(params.email, params.address);
