@@ -3,10 +3,8 @@ import db from '../../src/helpers/mysql';
 import { cleanupDb } from './utils';
 
 describe('POST subscribe', () => {
-  const email = 'test@snapshot.org';
-  const address = '0x91FD2c8d24767db4Ece7069AA27832ffaf8590f3';
-  const signature =
-    '0xd90711eb649882896dd394b1fa646b83b67f120090f0689ff4df9e6ae23c72f839dec83085019225324821de193b45135288af904d970c388e7a848121b2cf1f1b';
+  const email = 'test-subscribe@test.com';
+  const address = '0xDBDd4c5473692Fa0490bfF6AAbf1181f29Ca851e';
   let subscriberData: Record<string, any>;
 
   beforeEach(async () => {
@@ -15,8 +13,7 @@ describe('POST subscribe', () => {
       method: 'snapshot.subscribe',
       params: {
         email,
-        address,
-        signature
+        address
       }
     };
   });
