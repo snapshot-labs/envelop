@@ -17,8 +17,9 @@ const client = new ApolloClient({
 });
 
 const FOLLOWS_QUERY = gql`
-  query Follows($follower_in: [String]) {
-    follows(where: { follower_in: $follower_in }, first: 100) {
+  query Follows($follower_in: [String], $space: String) {
+    follows(where: { follower_in: $follower_in, space: $space }, first: 100) {
+      follower
       space {
         id
       }
@@ -79,7 +80,7 @@ const VOTES_QUERY = gql`
 `;
 
 type Space = { id: string; name?: string };
-type Follow = { space: Space };
+type Follow = { space: Space; follower: string };
 export type Proposal = {
   id: string;
   body: string;
@@ -189,4 +190,18 @@ export async function getProposal(id: string) {
   });
 
   return proposal;
+}
+
+export async function getFollows(followers: string[], space?: string) {
+  const {
+    data: { follows }
+  }: { data: { follows: Follow[] } } = await client.query({
+    query: FOLLOWS_QUERY,
+    variables: {
+      follower_in: followers,
+      space
+    }
+  });
+
+  return follows;
 }

@@ -46,6 +46,10 @@ export async function getEmailAddresses(email: string): Promise<{ address: strin
   ]);
 }
 
+export async function getVerifiedSubscriptions(): Promise<{ address: string; email: string }[]> {
+  return await db.queryAsync('SELECT email, address FROM subscribers WHERE verified > 0');
+}
+
 export async function getUniqueEmails(): Promise<{ email: string }[]> {
   return await db.queryAsync('SELECT DISTINCT email FROM subscribers WHERE verified > 0');
 }

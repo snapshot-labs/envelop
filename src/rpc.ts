@@ -9,7 +9,7 @@ import {
   isValidAddress
 } from './helpers/utils';
 import { verifySubscribe, verifyUnsubscribe } from './sign';
-import { queueSubscribe } from './queues';
+import { queueSubscribe, queueProposalActivity } from './queues';
 
 const router = express.Router();
 
@@ -44,6 +44,31 @@ router.post('/', async (req, res) => {
   } catch (e) {
     console.log(e);
     return rpcError(res, 500, e, id);
+  }
+});
+
+router.post('/webhook', async (req, res) => {
+  const body = req.body || {};
+  const event = body.event.toString();
+  const id = body.id.toString().replace('proposal/', '');
+
+  if (req.headers['authenticate'] !== process.env.WEBHOOK_AUTH_TOKEN?.toString()) {
+    return rpcError(res, 401, 'Unauthorized', id);
+  }
+
+  if (!event || !id) {
+    return rpcError(res, 400, 'Invalid Request', id);
+  }
+
+  if (!['proposal/end', 'proposal/created'].includes(event)) {
+    return rpcSuccess(res, 'Event skipped', id);
+  }
+
+  try {
+    queueProposalActivity(event.replace('proposal/', ''), id);
+    return rpcSuccess(res, 'OK', id);
+  } catch (e) {
+    return rpcError(res, 500, 'Internal error', id);
   }
 });
 
