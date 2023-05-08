@@ -9,5 +9,5 @@ export default async function prepare(params: TemplatePrepareParams) {
     return {};
   }
 
-  return buildMessage('proposalClosing', { ...params, proposal });
+  return buildMessage('closedProposal', { ...params, proposal });
 }

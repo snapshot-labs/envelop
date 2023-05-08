@@ -1,8 +1,8 @@
 import fs from 'fs';
 import prepareSubscribe from './subscribe';
 import prepareSummary from './summary';
-import prepareProposalCreation from './proposalCreation';
-import prepareProposalClosing from './proposalClosing';
+import prepareNewProposal from './newProposal';
+import prepareClosedProposal from './closedProposal';
 import type { Templates } from '../../types';
 
 const templates: Templates = {
@@ -22,22 +22,22 @@ const templates: Templates = {
     html: fs.readFileSync('./src/templates/summary/html.hbs', 'utf-8'),
     prepare: params => prepareSummary(params)
   },
-  proposalCreation: {
+  newProposal: {
     from: 'Snapshot <notify@snapshot.org>',
     subject: '[{{proposal.space.name}}] New proposal: {{proposal.title}}',
-    text: fs.readFileSync('./src/templates/proposalCreation/text.hbs', 'utf-8'),
+    text: fs.readFileSync('./src/templates/newProposal/text.hbs', 'utf-8'),
     preheader:
       'Submitted by {{proposal.author}}, voting period from {{formattedStartDate}} to {{formattedEndDate}}',
-    html: fs.readFileSync('./src/templates/proposalCreation/html.hbs', 'utf-8'),
-    prepare: params => prepareProposalCreation(params)
+    html: fs.readFileSync('./src/templates/newProposal/html.hbs', 'utf-8'),
+    prepare: params => prepareNewProposal(params)
   },
-  proposalClosing: {
+  closedProposal: {
     from: 'Snapshot <notify@snapshot.org>',
     subject: 'The proposal {{proposalTitle}} is now closed, with {{formattedVotesCount}} votes',
-    text: fs.readFileSync('./src/templates/proposalClosing/text.hbs', 'utf-8'),
+    text: fs.readFileSync('./src/templates/closedProposal/text.hbs', 'utf-8'),
     preheader: '{{winChoicePercentage}}% have voted {{winChoiceName}}',
-    html: fs.readFileSync('./src/templates/proposalClosing/html.hbs', 'utf-8'),
-    prepare: params => prepareProposalClosing(params)
+    html: fs.readFileSync('./src/templates/closedProposal/html.hbs', 'utf-8'),
+    prepare: params => prepareClosedProposal(params)
   }
 };
 

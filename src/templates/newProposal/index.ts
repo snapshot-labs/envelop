@@ -13,7 +13,7 @@ export default async function prepare(params: TemplatePrepareParams) {
   const BODY_LENGTH = 1000;
   const truncatedBody = proposal.body.slice(0, BODY_LENGTH);
 
-  return buildMessage('proposalCreation', {
+  return buildMessage('newProposal', {
     ...params,
     proposal,
     formattedStartDate: new Date(proposal.start * 1000).toUTCString(),
