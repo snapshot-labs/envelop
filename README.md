@@ -70,7 +70,7 @@ This will run all tests
 
 ## Sending test emails
 
-As triggering emails involve a few fastidious steps on the UI, a few CLI scripts are provided to
+As triggering emails involve a few tedious steps on the UI, a few CLI scripts are provided to
 trigger the email sending directly to a given email address.
 
 ### To send a `subscribe` (verification) test email
