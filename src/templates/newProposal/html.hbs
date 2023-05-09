@@ -40,7 +40,7 @@
           <table class="proposal-choices">
             {{#each proposal.choices}}
               <tr>
-                <td class="proposal-choices-item">
+                <td class="proposal-choices-item pending-result">
                   <a href="{{proposal.link}}" style="display: block">{{this}}</a>
                 </td>
               </tr>
@@ -50,7 +50,7 @@
       </tr>
       <tr>
         <td style="padding-top: .5em; padding-bottom: 1em">
-          Votes closes on {{formattedEndDate}}
+          Voting close on {{formattedEndDate}}
         </td>
       </tr>
     </tbody>

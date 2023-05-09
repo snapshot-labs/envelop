@@ -100,6 +100,16 @@ table {
   line-height: 1.5em;
 }
 
+.state-badge {
+  font-size: 16px;
+  vertical-align: middle;
+  padding: 4px 12px;
+  border-radius: 14px;
+  line-height: 24px;
+  color: #fff;
+  background-color: rgb(124, 58, 237);
+}
+
 .container {
   padding: 2em 1em;
 }
@@ -216,6 +226,7 @@ table {
   &-fullbody {
     font-size: 1.1em;
     line-height: 1.4em;
+    word-break: break-word;
   }
 
   &-space {
@@ -246,9 +257,31 @@ table {
       border-width: 1px;
       border-style: solid;
       border-color: $border-color;
-      border-left-width: 5px;
       border-radius: 3px;
       padding: 0.75em 1em;
+      position: relative;
+
+      &.pending-result {
+        border-left-width: 5px;
+      }
+
+      &.winning {
+        font-weight: bold;
+      }
+
+      .progress {
+        background-color: $border-color;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1;
+      }
+
+      table {
+        z-index: 2;
+        position: relative;
+      }
     }
   }
 }
@@ -357,5 +390,9 @@ table {
 
   .proposal-choices-item {
     border-color: $border-color;
+
+    .progress {
+      background-color: $border-color;
+    }
   }
 }

@@ -1,1 +1,16 @@
-The proposal has closed
+{{proposal.title}} (CLOSED)
+==================================
+{{proposal.link}}
+
+Voting ended on {{formattedEndDate}}
+
+{{proposalTextBody}}
+
+--------------
+Votes results
+--------------
+{{#each results}}
+[{{#if winning}}x{{else}} {{/if}}] ({{progress}}%) {{name}}
+{{/each}}
+
+To vote, visit: {{proposal.link}}

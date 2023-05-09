@@ -1,7 +1,7 @@
 import { marked } from 'marked';
 import buildMessage from '../builder';
-import type { TemplatePrepareParams } from '../../../types';
 import { getProposal } from '../../helpers/snapshot';
+import type { TemplatePrepareParams } from '../../../types';
 
 export default async function prepare(params: TemplatePrepareParams) {
   const proposal = await getProposal(params.id);
