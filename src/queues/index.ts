@@ -3,7 +3,7 @@ import summaryProcessor from './processors/summary';
 import schedulerProcessor from './processors/scheduler';
 import constants from '../helpers/constants.json';
 import subscribeProcessor from './processors/subscribe';
-import proposalActivitiesProcessor from './processors/proposalActivities';
+import proposalFactoryProcessor from './processors/proposalfactory';
 import newProposalProcessor from './processors/newProposal';
 import closedProposalProcessor from './processors/closedProposal';
 
@@ -18,7 +18,7 @@ export function start(): void {
   mailerQueue.process('summary', summaryProcessor);
   mailerQueue.process('subscribe', subscribeProcessor);
   scheduleQueue.process(schedulerProcessor);
-  proposalActivityQueue.process('batch', proposalActivitiesProcessor);
+  proposalActivityQueue.process('proposalFactory', proposalFactoryProcessor);
   proposalActivityQueue.process('newProposal', newProposalProcessor);
   proposalActivityQueue.process('closedProposal', closedProposalProcessor);
 
@@ -38,5 +38,5 @@ export function queueSubscribe(email: string, address: string) {
 }
 
 export function queueProposalActivity(event: string, id: string) {
-  return proposalActivityQueue.add('batch', { event, id });
+  return proposalActivityQueue.add('proposalFactory', { event, id });
 }

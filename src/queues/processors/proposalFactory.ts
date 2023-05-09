@@ -35,7 +35,7 @@ export default async (job: Job): Promise<any> => {
     follows.map(follow => {
       proposalActivityQueue.add(templateId, {
         email: subscriptions.get(follow.follower),
-        proposalId: id
+        id
       });
     });
   }
