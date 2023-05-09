@@ -3,7 +3,7 @@ import summaryProcessor from './processors/summary';
 import schedulerProcessor from './processors/scheduler';
 import constants from '../helpers/constants.json';
 import subscribeProcessor from './processors/subscribe';
-import proposalFactoryProcessor from './processors/proposalfactory';
+import proposalFactoryProcessor from './processors/proposalFactory';
 import newProposalProcessor from './processors/newProposal';
 import closedProposalProcessor from './processors/closedProposal';
 
