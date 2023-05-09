@@ -13,7 +13,7 @@ export default async function prepare(params: TemplatePrepareParams) {
   const BODY_LENGTH = 500;
   const truncatedBody = proposal.body.slice(0, BODY_LENGTH);
 
-  const winningChoice = proposal.scores?.indexOf(Math.max(...proposal.scores)) as number;
+  const winningChoice = proposal.scores?.indexOf(Math.max(...proposal.scores));
   const results = (
     proposal.choices?.map((choice, i) => {
       return {
@@ -25,6 +25,7 @@ export default async function prepare(params: TemplatePrepareParams) {
   ).sort((a, b) => {
     return b.progress - a.progress;
   });
+  const winningChoiceIndex = results.findIndex(p => p.winning);
 
   return buildMessage('closedProposal', {
     ...params,
@@ -33,8 +34,8 @@ export default async function prepare(params: TemplatePrepareParams) {
     formattedStartDate: new Date(proposal.start * 1000).toUTCString(),
     formattedEndDate: new Date(proposal.end * 1000).toUTCString(),
     formattedVotesCount: proposal.votes?.toLocaleString('en-US'),
-    winningChoiceName: results[winningChoice].name,
-    winningChoicePercentage: results[winningChoice].progress,
+    winningChoiceName: results[winningChoiceIndex].name,
+    winningChoicePercentage: results[winningChoiceIndex].progress,
     proposalTextBody: `${truncatedBody}${proposal.body.length > BODY_LENGTH ? ` [...]` : ''}`,
     proposalHtmlBody: marked.parse(
       `${truncatedBody}${
