@@ -61,6 +61,7 @@ const PROPOSAL_QUERY = gql`
       choices
       scores
       scores_total
+      votes
       author
       space {
         id
@@ -92,11 +93,12 @@ export type Proposal = {
   state: string;
   link: string;
   space: Space;
-  choices: string[];
-  scores: number[];
-  scores_total: number;
+  choices?: string[];
+  scores?: number[];
+  scores_total?: number;
   shortBody?: string;
   voted?: boolean;
+  votes?: number;
 };
 export type Vote = {
   id: string;
