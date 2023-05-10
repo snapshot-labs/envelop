@@ -12,10 +12,10 @@ This service is API only, and should be used together with [Envelop-UI](https://
 
 ### Dependencies
 
-This API depends on a couple of services:
+This service depends on a couple of services:
 
 - Node.js (>= 18)
-- MySQL@5+
+- MySQL5+
 - A sendgrid account (email provider)
 - An [Envelop-UI](https://github.com/snapshot-labs/envelop-ui) instance
 
@@ -27,20 +27,18 @@ yarn
 
 ### Configure
 
-Next, make a copy of `.env.example` and rename it as `.env`. Then update the credentials in the file to the correct values for your local setup.
+Make a copy of `.env.example` and rename it as `.env`. Then update the credentials in the file to the correct values for your local setup.
 
 - `HOST`: hostname of the current envelop instance (eg: `http://localhost:3000`)
 - `FRONT_HOST`: hostname of the envelop-ui instance (eg: `http://localhost:8080`)
 
-## Development
+### Development
 
-Start the app with
+Start the service with
 
 ```bash
 yarn dev
 ```
-
-This will start the app on port 3000.
 
 ### Running tests and linters
 
@@ -92,6 +90,42 @@ yarn start
 ## Contributing
 
 See [the contribution guideline](.github/CONTRIBUTING.md)
+
+## Sending test emails
+
+As triggering emails involve a few tedious steps on the UI, a few CLI scripts are provided to
+trigger the email sending directly to a given email address.
+
+### To send a `subscribe` (verification) test email
+
+```bash
+yarn ts-node scripts/send-subscribe.ts [EMAIL] [ADDRESS]
+// E.g.
+// yarn ts-node scripts/send-subscribe.ts test@snapshot.org 0xeF8305E140ac520225DAf050e2f71d5fBcC543e7
+```
+
+- `EMAIL`: your email address (not required to already exist in the database)
+- `ADDRESS`: a wallet address (not required to already exist in the database)
+
+### To send a `summary` test email
+
+```bash
+yarn ts-node scripts/send-summary.ts [EMAIL] [SEND_DATE]
+// E.g.
+// yarn ts-node scripts/send-summary.ts test@snapshot.org 2023-04-25
+```
+
+- `EMAIL`: your email address (needs to already exist and verified in the database, in order to fetch the related wallet addresses)
+- `SEND_DATE`: a `yyyy-mm-dd` formatted date, to emulate the date the email is sent (affects the summary report time window)
+
+## Production
+
+```bash
+// Build the project
+yarn build
+// Start the service
+yarn start
+```
 
 ## Licence
 

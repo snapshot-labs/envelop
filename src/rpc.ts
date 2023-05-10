@@ -1,12 +1,12 @@
 import express from 'express';
+import { isAddress } from '@ethersproject/address';
 import {
   subscribe,
   verify,
   unsubscribe,
   rpcError,
   rpcSuccess,
-  isValidEmail,
-  isValidAddress
+  isValidEmail
 } from './helpers/utils';
 import { verifySubscribe, verifyUnsubscribe } from './sign';
 import { queueSubscribe } from './queues';
@@ -28,7 +28,7 @@ router.post('/', async (req, res) => {
 
   try {
     if (method === 'snapshot.subscribe') {
-      if (!isValidEmail(params.email) || !isValidAddress(params.address)) {
+      if (!isValidEmail(params.email) || !isAddress(params.address)) {
         return rpcError(res, 400, 'Invalid params', id);
       }
 
