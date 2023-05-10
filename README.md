@@ -40,33 +40,56 @@ Start the service with
 yarn dev
 ```
 
-## Running tests
+### Running tests and linters
 
-### Unit tests
+#### Unit tests
 
-Unit test does not depends on the database, and can safely run locally with:
+Unit tests does not depend on the database, and can safely be run locally with:
 
 ```bash
 yarn test
 ```
 
-### End-to-end tests
+#### End-to-end tests
 
-End-to-end tests depends on a database, and should not be run on production, but only on a properly configured test environment, to prevent unintentional database wiping.
-The tests does not rely on any mocking, and tests the whole stack.
+End-to-end tests depends on the database, and should not be run on production, and only on a properly configured test environment, to prevent unintentional database wiping.
+The tests does not rely on any mocking, and test the whole stack.
 
-- Create a database named `envelop_test`, with the same schema as the live database
-- Install dotenv-cli with `yarn global add dotenv-cli`
-- start the app with `dotenv -e test/.env.test yarn dev`
+- Create a database named `envelop_test`, following the same schema as the live database
 - run tests with:
 
 ```bash
 yarn test:e2e
 ```
 
-E2E tests rely on a another .env file: `test/.env.test`, edit its variables to suit your setup.
+E2E tests rely on a different .env file: `test/.env.test`, edit its variables to suit your setup.
 
-This will run all tests
+#### Lint
+
+```bash
+yarn lint
+yarn typecheck
+```
+
+Make sure to run the lints to ensure your code follow the coding standard before submitting any commits.
+You can optionally run these tasks automatically on commit and on push by installing the git hooks with husky:
+
+```bash
+yarn husky install
+```
+
+## Production
+
+```bash
+// Build the project
+yarn build
+// Start the app
+yarn start
+```
+
+## Contributing
+
+See [the contribution guideline](.github/CONTRIBUTING.md)
 
 ## Sending test emails
 

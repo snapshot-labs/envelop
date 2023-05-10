@@ -3,6 +3,8 @@ on: [push]
 jobs:
   build-test:
     runs-on: ubuntu-20.04
+    env:
+      DATABASE_URL: 'mysql://root:root@127.0.0.1:3306/envelop_test'
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -17,13 +19,6 @@ jobs:
           mysql -uroot -proot -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root';"
           mysql -uroot -proot -e "FLUSH PRIVILEGES;"
       - run: yarn install
-      - run: yarn global add dotenv-cli
-      - run: yarn lint
-      - run: echo -en "FRONT_HOST=http://localhost:3000\nWALLET_PRIVATE_KEY=c0cdaf30be0c6bb222add05617aa4cf9804d9f1841fec0928914e98833d274b7\nREDIS_URL=redis://127.0.0.1:6379" > .env
       - run: yarn build
-      - run: dotenv -e test/.env.test yarn start &
       - run: yarn test
       - run: yarn test:e2e
-      - run: yarn typecheck
-        env:
-          DATABASE_URL: 'mysql://root:root@l27.0.0.1:3306/envelop'

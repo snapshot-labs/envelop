@@ -27,7 +27,7 @@ describe('POST verify', () => {
 
   afterAll(async () => {
     await cleanupDb();
-    await db.end();
+    await db.endAsync();
   });
 
   it('verify the email', async () => {

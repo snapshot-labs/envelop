@@ -29,7 +29,7 @@ describe('POST unsubscribe', () => {
 
   afterAll(async () => {
     await cleanupDb();
-    await db.end();
+    await db.endAsync();
   });
 
   it('removes the email from the database', async () => {
