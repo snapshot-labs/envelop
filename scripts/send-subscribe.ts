@@ -4,7 +4,7 @@ import subscribe from '../src/queues/processors/subscribe';
 
 async function main() {
   if (process.argv.length < 3) {
-    console.error(`Usage: yarn ts-node send-subscribe.ts [EMAIL] [ADDRESS]`);
+    console.error(`Usage: yarn ts-node scripts/send-subscribe.ts [EMAIL] [ADDRESS]`);
     return process.exit(1);
   }
   const [, , email, address] = process.argv;
