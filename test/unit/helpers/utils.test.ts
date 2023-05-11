@@ -140,8 +140,12 @@ describe('utils', () => {
       ]);
     });
 
-    afterEach(() => {
-      cleanupDb();
+    afterEach(async () => {
+      await cleanupDb();
+    });
+
+    afterAll(async () => {
+      await db.endAsync();
     });
 
     it('updates the subscriptions field', async () => {
@@ -176,8 +180,9 @@ describe('utils', () => {
 
       return Promise.all(p);
     });
-    afterAll(() => {
-      cleanupDb();
+
+    afterAll(async () => {
+      await cleanupDb();
     });
 
     it('returns a list of unique emails, filtered by subscription type', async () => {
