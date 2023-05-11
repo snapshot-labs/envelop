@@ -45,7 +45,7 @@ export async function verify(email: string, address: string) {
 export async function update(email: string, address: string, subscriptions: string[]) {
   const subs = sanitizeSubscriptions(subscriptions);
   if (subs.length === 0) {
-    return await db.queryAsync('DELETE FROM subscribers WHERE email = ? and address = ?', [
+    return await db.queryAsync('DELETE FROM subscribers WHERE email = ? and address = ? LIMIT 1', [
       email,
       address
     ]);
