@@ -8,6 +8,10 @@ import {
 import { cleanupDb } from '../../utils';
 
 describe('utils', () => {
+  afterAll(async () => {
+    await db.endAsync();
+  });
+
   describe('isvalidEmail', () => {
     it.each([
       'valid@example.com',
