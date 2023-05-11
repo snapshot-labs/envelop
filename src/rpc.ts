@@ -13,7 +13,7 @@ import {
 import { verifySubscribe, verifyUnsubscribe, verifyUpdate } from './sign';
 import { queueSubscribe } from './queues';
 import { version, name } from '../package.json';
-import { SUBSCRIPTIONS_TYPE } from './templates';
+import { SUBSCRIPTIONS_TYPE, default as templates } from './templates';
 
 const router = express.Router();
 
@@ -88,7 +88,14 @@ router.post('/subscriber', async (req, res) => {
 });
 
 router.get('/subscriptionsList', (req, res) => {
-  return res.json(SUBSCRIPTIONS_TYPE);
+  return res.json(
+    Object.fromEntries(
+      SUBSCRIPTIONS_TYPE.map(k => [
+        k,
+        { name: templates[k].name, description: templates[k].description }
+      ])
+    )
+  );
 });
 
 export default router;
