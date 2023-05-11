@@ -144,10 +144,6 @@ describe('utils', () => {
       await cleanupDb();
     });
 
-    afterAll(async () => {
-      await db.endAsync();
-    });
-
     it('updates the subscriptions field', async () => {
       await update('a', 'a', ['closedProposal', 'newProposal']);
       const result = await db.queryAsync('SELECT subscriptions from subscribers');
