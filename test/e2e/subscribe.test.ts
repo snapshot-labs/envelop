@@ -1,6 +1,6 @@
 import request from 'supertest';
 import db from '../../src/helpers/mysql';
-import { cleanupDb } from './utils';
+import { cleanupDb } from '../utils';
 
 describe('POST subscribe', () => {
   const email = 'test-subscribe@test.com';

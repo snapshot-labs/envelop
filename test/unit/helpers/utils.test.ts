@@ -1,4 +1,11 @@
-import { isValidEmail } from '../../../src/helpers/utils';
+import db from '../../../src/helpers/mysql';
+import {
+  getUniqueEmails,
+  isValidEmail,
+  sanitizeSubscriptions,
+  update
+} from '../../../src/helpers/utils';
+import { cleanupDb } from '../../utils';
 
 describe('utils', () => {
   describe('isvalidEmail', () => {
@@ -109,6 +116,75 @@ describe('utils', () => {
       // '(unbalancedcomment@example.com'
     ])('returns false on invalid email %s', email => {
       expect(isValidEmail(email)).toBe(false);
+    });
+  });
+
+  describe('sanitizeSubscriptions()', () => {
+    it.each(['', [null], [undefined], 0])('always returns an array (passing %s)', type => {
+      expect(sanitizeSubscriptions(type)).toBeInstanceOf(Array);
+    });
+
+    it('filters out invalid types', () => {
+      expect(sanitizeSubscriptions(['summary', 'test'])).toEqual(['summary']);
+    });
+
+    it('also takes a string as argument', () => {
+      expect(sanitizeSubscriptions('summary')).toEqual(['summary']);
+    });
+  });
+
+  describe('update', () => {
+    beforeEach(async () => {
+      await db.queryAsync('INSERT IGNORE INTO subscribers SET ?', [
+        { email: 'a', address: 'a', created: 0, subscriptions: JSON.stringify(['summary']) }
+      ]);
+    });
+
+    afterEach(() => {
+      cleanupDb();
+    });
+
+    it('updates the subscriptions field', async () => {
+      await update('a', 'a', ['closedProposal', 'newProposal']);
+      const result = await db.queryAsync('SELECT subscriptions from subscribers');
+      expect(JSON.parse(result[0].subscriptions as string)).toEqual([
+        'closedProposal',
+        'newProposal'
+      ]);
+    });
+  });
+
+  describe('getUniqueEmails()', () => {
+    beforeAll(async () => {
+      const p = [
+        ['1@test.com', '0x1', 1, ['newProposal', 'summary']],
+        ['1@test.com', '0xa', 1, ['newProposal', 'summary']],
+        ['2@test.com', '0x2', 1, ['summary']],
+        ['3@test.com', '0x3', 1, ['closedProposal']],
+        ['4@test.com', '0x4', 0, ['summary']]
+      ].map(async ([email, address, verified, subscriptions]) => {
+        const created = (Date.now() / 1e3).toFixed();
+        const subscriber = {
+          email: email as string,
+          address: address as string,
+          verified: verified as number,
+          subscriptions: JSON.stringify(subscriptions),
+          created
+        };
+        return await db.queryAsync('INSERT INTO subscribers SET ?', [subscriber]);
+      });
+
+      return Promise.all(p);
+    });
+    afterAll(() => {
+      cleanupDb();
+    });
+
+    it('returns a list of unique emails, filtered by subscription type', async () => {
+      const resultWithDuplicates = await getUniqueEmails('summary');
+      expect(resultWithDuplicates.map(r => r.email)).toEqual(['1@test.com', '2@test.com']);
+      const result = await getUniqueEmails('newProposal');
+      expect(result.map(r => r.email)).toEqual(['1@test.com']);
     });
   });
 });

@@ -1,7 +1,7 @@
 import request from 'supertest';
 import db from '../../src/helpers/mysql';
 import { subscribe } from '../../src/sign';
-import { cleanupDb } from './utils';
+import { cleanupDb } from '../utils';
 
 describe('POST verify', () => {
   const email = 'test-verify@test.com';

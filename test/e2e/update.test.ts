@@ -1,12 +1,23 @@
 import request from 'supertest';
 import db from '../../src/helpers/mysql';
-import { unsubscribe } from '../../src/sign';
+import { update } from '../../src/sign';
 import { cleanupDb } from '../utils';
 
-describe('POST unsubscribe', () => {
+describe('POST update', () => {
   const email = 'test-unsubscribe@test.com';
-  const address = '0xDBDd4c5473692Fa0490bfF6AAbf1181f29Ca851e';
-  let subscriberData: Record<string, any>;
+  const address = '0x123D816BF0b002bEA83a804e5cf1d2797Fcfc77d';
+
+  async function subscriberData(subscriptions: any) {
+    return {
+      method: 'snapshot.update',
+      params: {
+        email,
+        address,
+        subscriptions,
+        signature: await update(email, address, subscriptions)
+      }
+    };
+  }
 
   beforeEach(async () => {
     await cleanupDb();
@@ -18,13 +29,6 @@ describe('POST unsubscribe', () => {
       'INSERT INTO subscribers (created, email, address, subscriptions, verified) VALUES (?, ?, ?, ?, ?)',
       [+new Date() / 1e3, email, '0x0', JSON.stringify(['summary']), +new Date() / 1e3]
     );
-    subscriberData = {
-      method: 'snapshot.unsubscribe',
-      params: {
-        email,
-        signature: await unsubscribe(email)
-      }
-    };
   });
 
   afterAll(async () => {
@@ -33,42 +37,43 @@ describe('POST unsubscribe', () => {
   });
 
   describe('without subscriptions option', () => {
-    it('removes the email from the database', async () => {
-      const response = await request(process.env.HOST).post('/').send(subscriberData);
-      const result = await db.queryAsync('SELECT * FROM subscribers WHERE email = ?', [email]);
+    it('returns a 400 error', async () => {
+      const response = await request(process.env.HOST)
+        .post('/')
+        .send({
+          method: 'snapshot.update',
+          params: {
+            email,
+            address,
+            signature: ''
+          }
+        });
 
-      expect(response.statusCode).toBe(200);
-      expect(result.length).toBe(0);
+      expect(response.statusCode).toBe(400);
     });
   });
 
   describe('with an empty subscriptions option', () => {
-    it.each([[''], [null], [undefined], null, undefined, ''])(
-      'removes the email from the database when passing %s',
-      async list => {
-        const response = await request(process.env.HOST)
-          .post('/')
-          .send({ ...subscriberData, params: { ...subscriberData.params, subscriptions: list } });
-        const result = await db.queryAsync('SELECT * FROM subscribers WHERE email = ?', [email]);
+    it('removes the email from the database when passing en empty array', async () => {
+      const response = await request(process.env.HOST)
+        .post('/')
+        .send(await subscriberData([]));
+      const result = await db.queryAsync('SELECT * FROM subscribers WHERE email = ?', [email]);
 
-        expect(response.statusCode).toBe(200);
-        expect(result.length).toBe(0);
-      }
-    );
+      expect(response.statusCode).toBe(200);
+      expect(result.length).toBe(1);
+    });
   });
 
   describe('with a subscriptions option', () => {
     it('updates the email subscriptions list, and ignores invalid types', async () => {
       const response = await request(process.env.HOST)
         .post('/')
-        .send({
-          ...subscriberData,
-          params: {
-            ...subscriberData.params,
-            subscriptions: ['newProposal', 'invalid-type', 0, null]
-          }
-        });
-      const result = await db.queryAsync('SELECT * FROM subscribers WHERE email = ?', [email]);
+        .send(await subscriberData(['newProposal', 'invalid-type']));
+      const result = await db.queryAsync(
+        'SELECT * FROM subscribers WHERE email = ? and address = ? LIMIT 1',
+        [email, address]
+      );
 
       expect(response.statusCode).toBe(200);
       expect(result[0].subscriptions).toEqual(JSON.stringify(['newProposal']));
@@ -79,9 +84,11 @@ describe('POST unsubscribe', () => {
     const response = await request(process.env.HOST)
       .post('/')
       .send({
-        method: 'snapshot.unsubscribe',
+        method: 'snapshot.update',
         params: {
           email,
+          address,
+          subscriptions: ['summary'],
           signature: 'not-valid'
         }
       });

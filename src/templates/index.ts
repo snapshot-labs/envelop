@@ -3,6 +3,9 @@ import prepareSubscribe from './subscribe';
 import prepareSummary from './summary';
 import type { Templates } from '../../types';
 
+// List of subscriptions type, excluding system emails
+export const SUBSCRIPTIONS_TYPE = ['summary', 'newProposal', 'closedProposal'];
+
 const templates: Templates = {
   subscribe: {
     from: 'Snapshot <notify@snapshot.org>',

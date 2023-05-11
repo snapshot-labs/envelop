@@ -1,12 +1,10 @@
-process.env.WALLET_PRIVATE_KEY = '1c35d78975cadb12e4047a70a38bade91d2fd9d502884785797db3e9148ec5e2';
-
-import { subscribe, verifySubscribe } from '../../../src/sign';
+import { subscribe, update, verifySubscribe, verifyUpdate } from '../../../src/sign';
 
 describe('sign', () => {
-  describe('verifySubscribe', () => {
-    const email = 'test@test.com';
-    const address = '0x606535Dd25917855384811C9850D00d011EC1Eb8';
+  const email = 'test@test.com';
+  const address = '0x123D816BF0b002bEA83a804e5cf1d2797Fcfc77d';
 
+  describe('verifySubscribe()', () => {
     it('returns true when the signature is valid', async () => {
       const signature = await subscribe(email, address);
 
@@ -17,6 +15,36 @@ describe('sign', () => {
       const signature = 'invalid-signature';
 
       expect(verifySubscribe(email, address, signature)).toBe(false);
+    });
+  });
+
+  describe('update()', () => {
+    it('returns a signature when all params are set', async () => {
+      expect(await update(email, address, ['s'])).toHaveLength(132);
+    });
+
+    it('returns a signature when subscriptions is empty', async () => {
+      expect(await update(email, address, [])).toHaveLength(132);
+    });
+
+    it('returns an error when address is not an address', () => {
+      expect(async () => {
+        await update(email, 'test', ['s']);
+      }).rejects.toThrow();
+    });
+  });
+
+  describe('verifyUpdate()', () => {
+    it('returns true when the signature is valid', async () => {
+      const signature = await update(email, address, ['s']);
+
+      expect(verifyUpdate(email, address, ['s'], signature)).toBe(true);
+    });
+
+    it('returns false when the signature is invalid', async () => {
+      const signature = await update(email, address, ['s']);
+
+      expect(verifyUpdate(email, address, ['sss'], signature)).toBe(false);
     });
   });
 });
