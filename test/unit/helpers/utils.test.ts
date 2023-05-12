@@ -124,10 +124,6 @@ describe('utils', () => {
   });
 
   describe('sanitizeSubscriptions()', () => {
-    it.each(['', [null], [undefined], 0])('always returns an array (passing %s)', type => {
-      expect(sanitizeSubscriptions(type)).toBeInstanceOf(Array);
-    });
-
     it('filters out invalid types', () => {
       expect(sanitizeSubscriptions(['summary', 'test'])).toEqual(['summary']);
     });

@@ -22,7 +22,7 @@ export function rpcError(res: Response, code: number, e: unknown, id: string | n
   });
 }
 
-export function sanitizeSubscriptions(list?: any) {
+export function sanitizeSubscriptions(list?: string | string[]) {
   return (Array.isArray(list) ? list : [list]).filter((item: any) =>
     SUBSCRIPTIONS_TYPE.includes(item)
   ) as typeof SUBSCRIPTIONS_TYPE;
