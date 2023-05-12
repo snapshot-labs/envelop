@@ -21,7 +21,7 @@ describe('POST subscribe', () => {
 
   afterAll(async () => {
     await cleanupDb();
-    await db.end();
+    await db.endAsync();
   });
 
   it('adds the email and address in the database as not verified', async () => {
