@@ -2,6 +2,10 @@ import db from './mysql';
 import { SUBSCRIPTION_TYPE } from '../templates';
 import type { Response } from 'express';
 
+function currentTimestamp() {
+  return (Date.now() / 1e3).toFixed();
+}
+
 export function rpcSuccess(res: Response, result: string, id: string | number) {
   res.json({
     jsonrpc: '2.0',
@@ -15,7 +19,7 @@ export function rpcError(res: Response, code: number, e: unknown, id: string | n
     jsonrpc: '2.0',
     error: {
       code,
-      message: 'unauthorized',
+      message: e instanceof Error ? e.message : 'unauthorized',
       data: e
     },
     id
@@ -29,16 +33,27 @@ export function sanitizeSubscriptions(list?: string | string[]) {
 }
 
 export async function subscribe(email: string, address: string) {
-  const created = (Date.now() / 1e3).toFixed();
-  const subscriber = { email, address, created };
+  const subscriber = { email, address, created: currentTimestamp() };
   return await db.queryAsync('INSERT IGNORE INTO subscribers SET ?', [subscriber]);
 }
 
 export async function verify(email: string, address: string) {
-  const verified = (Date.now() / 1e3).toFixed();
+  const existingVerifiedEmail = (
+    await db.queryAsync(
+      `SELECT email FROM subscribers WHERE address = ? AND verified > 0 LIMIT 1`,
+      [address]
+    )
+  )[0]?.email;
+
+  if (existingVerifiedEmail === email) {
+    return true;
+  } else if (!!existingVerifiedEmail) {
+    throw new Error('ADDRESS_ALREADY_VERIFIED_WITH_ANOTHER_EMAIL');
+  }
+
   return await db.queryAsync(
     'UPDATE subscribers SET verified = ? WHERE email = ? AND address = ? AND verified = ? LIMIT 1',
-    [verified, email, address, 0]
+    [currentTimestamp(), email, address, 0]
   );
 }
 
