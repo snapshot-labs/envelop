@@ -77,10 +77,9 @@ export async function getEmailAddresses(email: string) {
 }
 
 export async function getUniqueEmails(subscriptionType: string) {
+  const subscription = sanitizeSubscriptions(subscriptionType)[0];
   return await db.queryAsync(
-    `SELECT DISTINCT email FROM subscribers WHERE verified > 0 AND JSON_CONTAINS(subscriptions, '${JSON.stringify(
-      sanitizeSubscriptions(subscriptionType)[0]
-    )}')`
+    `SELECT DISTINCT email FROM subscribers WHERE verified > 0 AND JSON_CONTAINS(subscriptions, '"${subscription}"')`
   );
 }
 
