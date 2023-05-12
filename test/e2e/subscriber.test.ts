@@ -9,6 +9,10 @@ describe('POST subscriber', () => {
   beforeAll(async () => {
     await db.queryAsync(
       'INSERT INTO subscribers (created, email, address, subscriptions, verified) VALUES (?, ?, ?, ?, ?)',
+      [+new Date() / 1e3, `a${email}`, address, JSON.stringify(['summary']), 0]
+    );
+    await db.queryAsync(
+      'INSERT INTO subscribers (created, email, address, subscriptions, verified) VALUES (?, ?, ?, ?, ?)',
       [+new Date() / 1e3, email, address, JSON.stringify(['summary']), +new Date() / 1e3]
     );
   });
@@ -19,7 +23,7 @@ describe('POST subscriber', () => {
   });
 
   describe('when the address exists', () => {
-    it('returns a list of subscriptions', async () => {
+    it('returns a list of subscriptions for the verified email', async () => {
       const response = await request(process.env.HOST).post('/subscriber').send({ address });
 
       expect(response.statusCode).toBe(200);

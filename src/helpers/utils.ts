@@ -84,9 +84,10 @@ export async function getUniqueEmails(subscriptionType: string) {
 }
 
 export async function getAddressSubscriptions(address: string) {
-  return await db.queryAsync('SELECT subscriptions from subscribers WHERE address = ? LIMIT 1', [
-    address
-  ]);
+  return await db.queryAsync(
+    'SELECT subscriptions from subscribers WHERE address = ? AND verified > 0 LIMIT 1',
+    [address]
+  );
 }
 
 // RFC5322 standard, does support most format, but not all
