@@ -28,7 +28,7 @@ router.post('/', async (req, res) => {
 
   try {
     if (method === 'snapshot.subscribe') {
-      if (!isValidEmail(params.email) || !isAddress(params.address)  || !params.signature) {
+      if (!isValidEmail(params.email) || !isAddress(params.address) || !params.signature) {
         return rpcError(res, 400, 'Invalid params', id);
       }
 
