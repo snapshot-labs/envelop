@@ -1,5 +1,5 @@
 import db from './mysql';
-import { SUBSCRIPTIONS_TYPE } from '../templates';
+import { SUBSCRIPTION_TYPE } from '../templates';
 import type { Response } from 'express';
 
 export function rpcSuccess(res: Response, result: string, id: string | number) {
@@ -24,8 +24,8 @@ export function rpcError(res: Response, code: number, e: unknown, id: string | n
 
 export function sanitizeSubscriptions(list?: string | string[]) {
   return (Array.isArray(list) ? list : [list]).filter((item: any) =>
-    SUBSCRIPTIONS_TYPE.includes(item)
-  ) as typeof SUBSCRIPTIONS_TYPE;
+    SUBSCRIPTION_TYPE.includes(item)
+  ) as typeof SUBSCRIPTION_TYPE;
 }
 
 export async function subscribe(email: string, address: string) {

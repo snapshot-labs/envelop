@@ -4,7 +4,7 @@ import prepareSummary from './summary';
 import type { Templates, TemplateId } from '../../types';
 
 // List of subscriptions type, excluding system emails
-export const SUBSCRIPTIONS_TYPE: TemplateId[] = ['summary', 'newProposal', 'closedProposal'];
+export const SUBSCRIPTION_TYPE: TemplateId[] = ['summary', 'newProposal', 'closedProposal'];
 
 const templates: Templates = {
   subscribe: {
