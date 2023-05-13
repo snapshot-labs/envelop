@@ -1,12 +1,12 @@
 import { getAddress } from '@ethersproject/address';
 import { Wallet, verifyTypedData } from '@ethersproject/wallet';
-import { SubscribeTypes, UnsubscribeTypes } from './types';
+import { SubscribeTypes, UnsubscribeTypes, VerifyTypes } from './types';
 import type { TypedDataField } from '@ethersproject/abstract-signer';
 
 const NAME = 'snapshot';
 const VERSION = '0.1.4';
 
-const domain = {
+export const domain = {
   name: NAME,
   version: VERSION
 };
@@ -30,37 +30,44 @@ function verify(
   }
 }
 
-export function subscribe(email: string, address: string) {
-  return sign(
-    {
-      email,
-      address: getAddress(address)
-    },
-    SubscribeTypes
-  );
-}
-
-export function verifySubscribe(
-  email: string,
-  address: string,
-  signature: string,
-  signer?: string
-) {
+export function verifySubscribe(email: string, address: string, signature: string) {
   return verify(
     {
       email,
       address: getAddress(address)
     },
-    signer || wallet.address,
+    getAddress(address),
     signature,
     SubscribeTypes
   );
 }
 
-export function unsubscribe(email: string) {
+export function signVerify(email: string, address: string) {
+  return sign(
+    {
+      email,
+      address: getAddress(address)
+    },
+    VerifyTypes
+  );
+}
+
+export function verifyVerify(email: string, address: string, signature: string) {
+  return verify(
+    {
+      email,
+      address: getAddress(address)
+    },
+    wallet.address,
+    signature,
+    VerifyTypes
+  );
+}
+
+export function signUnsubscribe(email: string) {
   return sign({ email }, UnsubscribeTypes);
 }
 
-export function verifyUnsubscribe(email: string, signature: string, signer?: string) {
-  return verify({ email }, signer || wallet.address, signature, UnsubscribeTypes);
+export function verifyUnsubscribe(email: string, signature: string) {
+  return verify({ email }, wallet.address, signature, UnsubscribeTypes);
 }
