@@ -109,7 +109,7 @@ describe('POST verify', () => {
       [email, address]
     );
 
-    expect(response.statusCode).toBe(500);
+    expect(response.statusCode).toBe(401);
     expect(result[0].verified).toBe(0);
   });
 });

@@ -87,7 +87,7 @@ describe('POST unsubscribe', () => {
       });
     const result = await db.queryAsync('SELECT * FROM subscribers WHERE email = ?', [email]);
 
-    expect(response.statusCode).toBe(500);
+    expect(response.statusCode).toBe(401);
     expect(result.length).toBe(2);
   });
 });

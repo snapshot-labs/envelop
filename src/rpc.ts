@@ -32,7 +32,7 @@ router.post('/', async (req, res) => {
   try {
     if (method === 'snapshot.subscribe') {
       if (!isValidEmail(params.email) || !isAddress(params.address)) {
-        return rpcError(res, 400, 'Invalid params', id);
+        return rpcError(res, 'INVALID_PARAMS', id);
       }
 
       await subscribe(params.email, params.address);
@@ -45,17 +45,17 @@ router.post('/', async (req, res) => {
         return rpcSuccess(res, 'OK', id);
       }
 
-      return rpcError(res, 500, 'Unable to authenticate your verification link', id);
+      return rpcError(res, 'UNAUTHORIZED', id);
     } else if (method === 'snapshot.unsubscribe') {
       if (verifyUnsubscribe(params.email, params.signature)) {
         await unsubscribe(params.email, params.subscriptions);
         return rpcSuccess(res, 'OK', id);
       }
 
-      return rpcError(res, 500, 'Unable to authenticate your verification link', id);
+      return rpcError(res, 'UNAUTHORIZED', id);
     } else if (method === 'snapshot.update') {
       if (!Array.isArray(params.subscriptions)) {
-        return rpcError(res, 400, 'Invalid params', id);
+        return rpcError(res, 'INVALID_PARAMS', id);
       }
 
       if (verifyUpdate(params.email, params.address, params.subscriptions, params.signature)) {
@@ -63,11 +63,11 @@ router.post('/', async (req, res) => {
         return rpcSuccess(res, 'OK', id);
       }
 
-      return rpcError(res, 500, 'Unable to authenticate your request', id);
+      return rpcError(res, 'UNAUTHORIZED', id);
     }
-  } catch (e) {
+  } catch (e: any) {
     console.log(e);
-    return rpcError(res, 500, e, id);
+    return rpcError(res, e, id);
   }
 });
 
@@ -77,13 +77,13 @@ router.post('/subscriber', async (req, res) => {
   try {
     const subscribers = await getAddressSubscriptions(address);
     if (!subscribers || !subscribers[0]) {
-      return rpcError(res, 404, 'Address not found', address);
+      return rpcError(res, 'RECORD_NOT_FOUND', address);
     }
 
     return res.json(JSON.parse(subscribers[0].subscriptions as string));
-  } catch (e) {
+  } catch (e: any) {
     console.log(e);
-    return rpcError(res, 500, e, address);
+    return rpcError(res, e, address);
   }
 });
 

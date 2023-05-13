@@ -15,13 +15,16 @@ export function rpcSuccess(res: Response, result: string, id: string | number) {
   });
 }
 
-export function rpcError(res: Response, code: number, e: unknown, id: string | number) {
-  const message = e instanceof Error ? e.message : 'unauthorized';
+export function rpcError(res: Response, e: Error | string, id: string | number) {
+  const message = e instanceof Error ? e.message : e;
   const ERROR_CODES: Record<string, number> = {
+    INVALID_PARAMS: 400,
+    ADDRESS_ALREADY_VERIFIED_WITH_ANOTHER_EMAIL: 400,
+    UNAUTHORIZED: 401,
     RECORD_NOT_FOUND: 404,
-    ADDRESS_ALREADY_VERIFIED_WITH_ANOTHER_EMAIL: 400
+    SERVER_ERROR: 500
   };
-  const statusCode = ERROR_CODES[message] || code;
+  const statusCode = ERROR_CODES[message] || 500;
 
   res.status(statusCode).json({
     jsonrpc: '2.0',
