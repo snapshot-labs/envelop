@@ -75,12 +75,7 @@ router.post('/subscriber', async (req, res) => {
   const { address } = req.body;
 
   try {
-    const subscribers = await getAddressSubscriptions(address);
-    if (!subscribers || !subscribers[0]) {
-      return rpcError(res, 'RECORD_NOT_FOUND', address);
-    }
-
-    return res.json(JSON.parse(subscribers[0].subscriptions as string));
+    return res.json(await getAddressSubscriptions(address));
   } catch (e: any) {
     console.log(e);
     return rpcError(res, e, address);

@@ -2,6 +2,7 @@ import db from './mysql';
 import { SUBSCRIPTION_TYPE } from '../templates';
 import type { Response } from 'express';
 import { OkPacket } from 'mysql';
+import { TemplateId } from '../../types';
 
 function currentTimestamp() {
   return (Date.now() / 1e3).toFixed();
@@ -111,15 +112,26 @@ export async function getEmailAddresses(email: string) {
 export async function getUniqueEmails(subscriptionType: string) {
   const subscription = sanitizeSubscriptions(subscriptionType)[0];
   return await db.queryAsync(
-    `SELECT DISTINCT email FROM subscribers WHERE verified > 0 AND JSON_CONTAINS(subscriptions, '"${subscription}"')`
+    `SELECT DISTINCT email FROM subscribers WHERE verified > 0 AND ` +
+      `(JSON_CONTAINS(subscriptions, '"${subscription}"') OR subscriptions IS NULL)`
   );
 }
 
-export async function getAddressSubscriptions(address: string) {
-  return await db.queryAsync(
-    'SELECT subscriptions from subscribers WHERE address = ? AND verified > 0 LIMIT 1',
+export async function getAddressSubscriptions(address: string): Promise<TemplateId[]> {
+  const subscriptions = await db.queryAsync(
+    'SELECT email, subscriptions from subscribers WHERE address = ? AND verified > 0 LIMIT 1',
     [address]
   );
+
+  if (!subscriptions[0]) {
+    throw new Error('RECORD_NOT_FOUND');
+  }
+
+  if (!subscriptions[0].subscriptions) {
+    return SUBSCRIPTION_TYPE;
+  }
+
+  return JSON.parse(subscriptions[0].subscriptions as string);
 }
 
 // RFC5322 standard, does support most format, but not all
