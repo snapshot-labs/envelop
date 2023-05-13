@@ -1,6 +1,7 @@
 import db from './mysql';
 import { SUBSCRIPTION_TYPE } from '../templates';
 import type { Response } from 'express';
+import { OkPacket } from 'mysql';
 
 function currentTimestamp() {
   return (Date.now() / 1e3).toFixed();
@@ -15,12 +16,19 @@ export function rpcSuccess(res: Response, result: string, id: string | number) {
 }
 
 export function rpcError(res: Response, code: number, e: unknown, id: string | number) {
-  res.status(code).json({
+  const message = e instanceof Error ? e.message : 'unauthorized';
+  const ERROR_CODES: Record<string, number> = {
+    RECORD_NOT_FOUND: 404,
+    ADDRESS_ALREADY_VERIFIED_WITH_ANOTHER_EMAIL: 400
+  };
+  const statusCode = ERROR_CODES[message] || code;
+
+  res.status(statusCode).json({
     jsonrpc: '2.0',
     error: {
-      code,
-      message: e instanceof Error ? e.message : 'unauthorized',
-      data: e
+      code: statusCode,
+      message,
+      data: {}
     },
     id
   });
@@ -51,10 +59,16 @@ export async function verify(email: string, address: string) {
     throw new Error('ADDRESS_ALREADY_VERIFIED_WITH_ANOTHER_EMAIL');
   }
 
-  return await db.queryAsync(
+  const a = (await db.queryAsync(
     'UPDATE subscribers SET verified = ? WHERE email = ? AND address = ? AND verified = ? LIMIT 1',
     [currentTimestamp(), email, address, 0]
-  );
+  )) as unknown as OkPacket;
+
+  if (a.changedRows === 0) {
+    throw new Error('RECORD_NOT_FOUND');
+  }
+
+  return true;
 }
 
 export async function update(email: string, address: string, subscriptions: string[]) {

@@ -83,9 +83,20 @@ describe('POST verify', () => {
         [emailB, addressB]
       );
 
-      expect(response.statusCode).toBe(500);
+      expect(response.statusCode).toBe(400);
       expect(response.body.error.message).toBe('ADDRESS_ALREADY_VERIFIED_WITH_ANOTHER_EMAIL');
       expect(result[0].verified).toBe(0);
+    });
+  });
+
+  describe('when the email does not exist', () => {
+    it('returns an error', async () => {
+      const response = await request(process.env.HOST)
+        .post('/')
+        .send(await subscriberData('test-not-exist@test.com', address));
+
+      expect(response.statusCode).toBe(404);
+      expect(response.body.error.message).toBe('RECORD_NOT_FOUND');
     });
   });
 
