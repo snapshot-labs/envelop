@@ -15,28 +15,37 @@ function eventToTemplate(event: string) {
   }
 }
 
-export default async (job: Job): Promise<any> => {
+export default async (job: Job): Promise<number> => {
   const { event, id } = job.data;
   const templateId = eventToTemplate(event);
   const proposal = await getProposal(id);
 
   if (!proposal) {
-    return true;
+    return 0;
   }
 
-  const subscriptions = new Map(
-    (await getVerifiedSubscriptions()).map(row => [row.address, row.email])
+  const subscribers = new Map(
+    (await getVerifiedSubscriptions()).map(row => [row.address as string, row.email as string])
   );
 
-  const addressesChunks = chunk(Array.from(subscriptions.keys()), 1000);
+  // Batch the function, as getFollows is limited to 1000 address per request
+  const addressesChunks = chunk(Array.from(subscribers.keys()), 1000);
+  const emails: string[] = [];
   for (const addressChunk of addressesChunks) {
-    const follows = await getFollows(addressChunk as string[], proposal.space.id);
-
-    follows.map(follow => {
-      proposalActivityQueue.add(templateId, {
-        email: subscriptions.get(follow.follower),
-        id
-      });
-    });
+    const follows = await getFollows(addressChunk, proposal.space.id);
+    emails.push(...follows.map(follow => subscribers.get(follow.follower) as string).flat());
   }
+
+  for (const email of emails) {
+    await proposalActivityQueue.add(
+      templateId,
+      {
+        email,
+        id
+      },
+      { jobId: `${templateId}-${email}-${id}` }
+    );
+  }
+
+  return emails.length;
 };

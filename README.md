@@ -118,6 +118,41 @@ yarn ts-node scripts/send-summary.ts [EMAIL] [SEND_DATE]
 - `EMAIL`: your email address (needs to already exist and verified in the database, in order to fetch the related wallet addresses)
 - `SEND_DATE`: a `yyyy-mm-dd` formatted date, to emulate the date the email is sent (affects the summary report time window)
 
+### To send a `newProposal` test email
+
+```bash
+yarn ts-node scripts/send-new-proposal.ts [EMAIL] [PROPOSAL-ID]
+// E.g.
+// yarn ts-node scripts/send-new-proposal.ts test@snapshot.org 0xeF8305E140ac520225DAf050e2f71d5fBcC543e7
+```
+
+- `EMAIL`: your email address (not required to already exist in the database)
+- `PROPOSAL-id`: a proposal ID
+
+### To send a `closedProposal` test email
+
+```bash
+yarn ts-node scripts/send-closed-proposal.ts [EMAIL] [PROPOSAL-ID]
+// E.g.
+// yarn ts-node scripts/send-closed-proposal.ts test@snapshot.org 0xeF8305E140ac520225DAf050e2f71d5fBcC543e7
+```
+
+- `EMAIL`: your email address (not required to already exist in the database)
+- `PROPOSAL-id`: a proposal ID
+
+### To trigger a `webhook` event
+
+Emulate an incoming webhook event (require that the envelop instance to be started, else the emails will just be queued without being sent)
+
+```bash
+yarn ts-node scripts/trigger-webhook-proposal.ts [EVENT] [ID]
+// E.g.
+// yarn ts-node scripts/trigger-webhook.ts proposal/created proposal/0x88583c43b196ec86cee45345611b582108f1d6933ab688a7cae992a6baa552a6
+```
+
+- `EVENT`: webhook event name
+- `ID`: webhook ID
+
 ## Production
 
 ```bash
