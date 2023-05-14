@@ -1,0 +1,104 @@
+.content-body-heading {
+  h1.long-title {
+    font-size: 1.75em;
+  }
+}
+
+.proposal-fullbody {
+  font-size: 1.1em;
+  line-height: 1.4em;
+  word-break: break-word;
+
+  padding-top: 1.5em;
+
+  a {
+    color: $primary-color;
+  }
+
+  h1,
+  h2 {
+    font-size: 1.5em;
+    margin: 1.5em 0 1em;
+  }
+
+  h3 {
+    font-size: 1.25em 0 1em;
+  }
+
+  hr {
+    margin: 0.5em 0;
+    border: 2px solid transparent;
+    border-color: $border-color;
+  }
+}
+
+.proposal {
+  &-space {
+    &-logo {
+      width: 1.5em;
+      padding-right: 0 !important;
+    }
+
+    &-avatar {
+      width: 1em;
+      height: 1em;
+
+      border-radius: 100%;
+    }
+  }
+
+  &-choices {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 0.5em;
+
+    &-item {
+      border-width: 1px;
+      border-style: solid;
+      border-color: $border-color;
+      border-radius: 3px;
+      padding: 0.5em 1em;
+      position: relative;
+
+      &.pending-result {
+        border-left-width: 5px;
+      }
+
+      &.winning {
+        font-weight: bold;
+      }
+
+      .progress {
+        background-color: $border-color;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1;
+      }
+
+      table {
+        z-index: 2;
+        position: relative;
+      }
+    }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  $border-color: #2d2d2d !important;
+
+  .proposal-choices-item {
+    border-color: $border-color;
+
+    .progress {
+      background-color: $border-color;
+    }
+  }
+
+  .proposal-fullbody {
+    hr {
+      border-color: $border-color;
+    }
+  }
+}

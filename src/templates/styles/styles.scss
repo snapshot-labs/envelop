@@ -54,7 +54,11 @@ h1 {
   font-size: 2em;
   font-weight: 700;
   color: $contrast-text-color;
-  margin: 0 0 0.15em;
+  margin: 0.15em;
+
+  a {
+    color: $contrast-text-color;
+  }
 }
 
 h2 {
@@ -71,6 +75,7 @@ p {
 
 a {
   text-decoration: none;
+  color: $content-muted-text-color;
 }
 
 table {
@@ -82,6 +87,7 @@ table {
 .logo-light,
 .logo-dark {
   height: 2em;
+  margin-bottom: 1.5em;
 }
 
 .logo-dark {
@@ -92,41 +98,30 @@ table {
   display: block;
 }
 
-.block {
-  background-color: $border-color;
-  border-radius: 5px;
-  padding: 1em;
-  font-size: 0.85em;
-  line-height: 1.5em;
-}
-
-.state-badge {
-  font-size: 16px;
-  vertical-align: middle;
-  padding: 4px 12px;
-  border-radius: 14px;
-  line-height: 24px;
-  color: #fff;
-  background-color: rgb(124, 58, 237);
-}
-
 .container {
   padding: 2em 1em;
-}
-
-.title-container {
-  padding: 1em 0;
 }
 
 .content {
   max-width: 600px;
   margin: 0 auto;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
 
   &-body {
     padding: 2.5em 2.5em 1em;
     border: 1px solid $border-color;
     background: $content-bg-color;
     border-radius: 0.25em;
+
+    &-preheading td {
+      padding: 0 0 0.5em;
+    }
+
+    &-heading {
+      padding: 0 0 1em;
+    }
   }
 
   &-footer {
@@ -151,156 +146,38 @@ table {
   text-decoration: none;
 }
 
-.space {
-  &-block {
-    border: 1px solid $border-color;
-    margin-bottom: 1em;
-
-    width: 100%;
-  }
-
-  &-title td {
-    font-weight: 500;
-    padding: 0.5em 1em;
-    border-bottom: 1px solid $border-color;
-  }
-
-  &-body {
-    padding: 1em 1em 0;
-  }
-
-  &-logo {
-    width: 1em;
-    padding-right: 0 !important;
-  }
-
-  &-avatar {
-    width: 1em;
-    height: 1em;
-
-    border-radius: 100%;
-  }
+.block {
+  background-color: $border-color;
+  border-radius: 5px;
+  padding: 1em;
+  font-size: 0.85em;
+  line-height: 1.5em;
 }
 
-.stats {
-  &-block {
-    border: 1px solid $border-color;
-    margin: 1em 0;
-
-    width: 100%;
-
-    td {
-      padding: 1em;
-
-      strong {
-        color: $mild-contrast-text-color;
-        font-size: 2em;
-        line-height: 1.25em;
-        display: block;
-      }
-
-      &.bordered {
-        border-right: 1px solid $border-color;
-      }
-    }
-  }
+.state-badge {
+  font-size: 16px;
+  vertical-align: middle;
+  padding: 4px 12px;
+  border-radius: 14px;
+  line-height: 24px;
+  text-transform: capitalize;
+  color: #fff;
 }
 
-.proposal {
-  &-title {
-    text-decoration: none;
-    color: $contrast-text-color;
-  }
-
-  &-body {
-    font-size: 0.85em;
-    margin: 0.5em 0 1em;
-
-    .has-voted {
-      color: $secondary-color;
-      display: block;
-      margin-top: 0.5em;
-    }
-  }
-
-  &-fullbody {
-    font-size: 1.1em;
-    line-height: 1.4em;
-    word-break: break-word;
-  }
-
-  &-space {
-    &-title {
-      font-size: 1.1em;
-      margin-top: 2em;
-    }
-
-    &-logo {
-      width: 1.5em;
-      padding-right: 0 !important;
-    }
-
-    &-avatar {
-      width: 1em;
-      height: 1em;
-
-      border-radius: 100%;
-    }
-  }
-
-  &-choices {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0 0.5em;
-
-    &-item {
-      border-width: 1px;
-      border-style: solid;
-      border-color: $border-color;
-      border-radius: 3px;
-      padding: 0.75em 1em;
-      position: relative;
-
-      &.pending-result {
-        border-left-width: 5px;
-      }
-
-      &.winning {
-        font-weight: bold;
-      }
-
-      .progress {
-        background-color: $border-color;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        z-index: 1;
-      }
-
-      table {
-        z-index: 2;
-        position: relative;
-      }
-    }
-  }
+.state-closed {
+  background-color: rgb(124, 58, 237);
 }
 
-.status-block {
-  padding-top: 1em;
+.state-pending {
+  background-color: rgb(107, 114, 128);
 }
 
-.break-line {
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-  word-break: break-word;
+.state-active {
+  background-color: rgb(33, 182, 111);
 }
 
-.break-line {
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-  word-break: break-word;
-}
+@import './summary.scss';
+@import './proposal-activity.scss';
 
 @media only screen and (max-width: 620px) {
   .container {
@@ -339,6 +216,10 @@ table {
 
   h1 {
     color: $contrast-text-color;
+
+    a {
+      color: $contrast-text-color;
+    }
   }
 
   h2 {
@@ -360,20 +241,16 @@ table {
     }
   }
 
-  .content-body,
-  .space-block,
-  .space-title td,
-  .stats-block,
-  .stats-block td.bordered {
+  .content-body {
     border-color: $border-color;
   }
 
   .block {
     background-color: $border-color;
-  }
 
-  .stats-block td strong {
-    color: $mild-contrast-text-color;
+    small {
+      font-size: 1em;
+    }
   }
 
   .logo-dark {
@@ -382,17 +259,5 @@ table {
 
   .logo-light {
     display: none !important;
-  }
-
-  .proposal-title {
-    color: $contrast-text-color;
-  }
-
-  .proposal-choices-item {
-    border-color: $border-color;
-
-    .progress {
-      background-color: $border-color;
-    }
   }
 }
