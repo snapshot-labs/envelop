@@ -30,6 +30,19 @@
     border: 2px solid transparent;
     border-color: $border-color;
   }
+
+  table {
+    border: 1px solid $border-color;
+    width: 100%;
+    margin: 1em 0;
+    font-size: 0.81em;
+
+    th,
+    td {
+      padding: 0.25em 0.5em;
+      border: 1px solid $border-color;
+    }
+  }
 }
 
 .proposal {

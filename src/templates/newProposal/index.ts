@@ -1,5 +1,5 @@
-import { marked } from 'marked';
 import buildMessage from '../builder';
+import { formatProposalHtmlBody } from '../utils';
 import { getProposal } from '../../helpers/snapshot';
 import type { TemplatePrepareParams } from '../../../types';
 
@@ -12,19 +12,14 @@ export default async function prepare(params: TemplatePrepareParams) {
 
   const BODY_LENGTH = 1000;
   const truncatedBody = proposal.body.slice(0, BODY_LENGTH);
+  const isTruncated = proposal.body.length > BODY_LENGTH;
 
   return buildMessage('newProposal', {
     ...params,
     proposal,
     formattedStartDate: new Date(proposal.start * 1000).toUTCString(),
     formattedEndDate: new Date(proposal.end * 1000).toUTCString(),
-    proposalTextBody: `${truncatedBody}${proposal.body.length > BODY_LENGTH ? ` [...]` : ''}`,
-    proposalHtmlBody: marked
-      .parse(
-        `${truncatedBody}${
-          proposal.body.length > BODY_LENGTH ? `... <a href="${proposal.link}">(read more)</a>` : ''
-        }`
-      )
-      .replace(/<img[^>]*>/g, '')
+    proposalTextBody: `${truncatedBody}${isTruncated ? ` [...]` : ''}`,
+    proposalHtmlBody: formatProposalHtmlBody(truncatedBody, isTruncated)
   });
 }
