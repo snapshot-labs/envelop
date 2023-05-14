@@ -9,7 +9,7 @@ describe('templates', () => {
     const result = await buildMessage('summary', { to: email });
     const escapedLink = link.replace(/&/g, '&amp;').replace(/=/g, '&#x3D;');
 
-    expect(result.text).toContain(escapedLink);
+    expect(result.text).toContain(link);
     expect(result.html).toContain(escapedLink);
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(result.headers!['List-Unsubscribe']).toEqual(`<${link}>`);
