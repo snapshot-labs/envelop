@@ -29,7 +29,7 @@ const templates: Templates = {
   },
   newProposal: {
     name: 'New proposal',
-    description: 'Notification when a new proposal is submitted in your followed spaces',
+    description: 'Notification when a new proposal in your followed spaces has been submitted',
     from: '',
     subject: '',
     text: '',
