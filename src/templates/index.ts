@@ -27,16 +27,18 @@ const templates: Templates = {
     subject: '[{{proposal.space.name}}] New proposal: {{proposal.title}}',
     text: fs.readFileSync('./src/templates/newProposal/text.hbs', 'utf-8'),
     preheader:
-      'Submitted by {{proposal.author}}, voting period from {{formattedStartDate}} to {{formattedEndDate}}',
+      'Submitted by {{proposal.author}}, ' +
+      'voting period from {{formattedStartDate}} to {{formattedEndDate}}',
     html: fs.readFileSync('./src/templates/newProposal/html.hbs', 'utf-8'),
     prepare: params => prepareNewProposal(params)
   },
   closedProposal: {
     from: 'Snapshot <notify@snapshot.org>',
-    subject:
-      'The proposal {{proposal.title}} is now closed: {{winningChoiceName}} {{winningChoicePercentage}}%',
+    subject: '[{{proposal.space.name}}] Closed proposal: {{proposal.title}}',
     text: fs.readFileSync('./src/templates/closedProposal/text.hbs', 'utf-8'),
-    preheader: '{{formattedVotesCount}} total votes | Voting ended on {{formattedEndDate}}',
+    preheader:
+      '{{winningChoiceName}} {{winningChoicePercentage}}% | ' +
+      '{{formattedVotesCount}} total votes | Voting ended on {{formattedEndDate}}',
     html: fs.readFileSync('./src/templates/closedProposal/html.hbs', 'utf-8'),
     prepare: params => prepareClosedProposal(params)
   }
