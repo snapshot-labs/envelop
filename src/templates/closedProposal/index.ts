@@ -18,7 +18,9 @@ export default async function prepare(params: TemplatePrepareParams) {
     proposal.choices?.map((choice, i) => {
       return {
         name: choice,
-        progress: Math.round((100 / proposal.scores_total!) * proposal.scores![i]),
+        progress: Math.round(
+          (100 / (proposal.scores_total || 1)) * (proposal.scores ? proposal.scores[i] : 1)
+        ),
         winning: i === winningChoice
       };
     }) || []

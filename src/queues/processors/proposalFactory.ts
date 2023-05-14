@@ -30,7 +30,7 @@ export default async (job: Job): Promise<any> => {
 
   const addressesChunks = chunk(Array.from(subscriptions.keys()), 1000);
   for (const addressChunk of addressesChunks) {
-    const follows = await getFollows(addressChunk, proposal.space.id);
+    const follows = await getFollows(addressChunk as string[], proposal.space.id);
 
     follows.map(follow => {
       proposalActivityQueue.add(templateId, {
