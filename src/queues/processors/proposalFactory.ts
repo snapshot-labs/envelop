@@ -44,14 +44,16 @@ export default async (job: Job): Promise<number> => {
   }
 
   const emails = await getSubscribersEmailFollowingSpace(proposal.space.id);
-  return emails.map(async email => {
-    await proposalActivityQueue.add(
-      templateId,
-      {
+  await proposalActivityQueue.addBulk(
+    emails.map(email => ({
+      name: templateId,
+      data: {
         email,
         id
       },
-      { jobId: `${templateId}-${email}-${id}` }
-    );
-  }).length;
+      opts: { jobId: `${templateId}-${email}-${id}` }
+    }))
+  );
+
+  return emails.length;
 };

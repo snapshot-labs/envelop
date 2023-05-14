@@ -7,7 +7,7 @@ export default async () => {
   const results = await getUniqueEmails();
   const summaryTimeRange = previousWeek(new Date(), constants.summary.timezone);
 
-  mailerQueue.addBulk(
+  await mailerQueue.addBulk(
     results.map(result => ({
       name: 'summary',
 
