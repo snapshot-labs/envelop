@@ -19,10 +19,12 @@ export default async function prepare(params: TemplatePrepareParams) {
     formattedStartDate: new Date(proposal.start * 1000).toUTCString(),
     formattedEndDate: new Date(proposal.end * 1000).toUTCString(),
     proposalTextBody: `${truncatedBody}${proposal.body.length > BODY_LENGTH ? ` [...]` : ''}`,
-    proposalHtmlBody: marked.parse(
-      `${truncatedBody}${
-        proposal.body.length > BODY_LENGTH ? `... <a href="${proposal.link}">(read more)</a>` : ''
-      }`
-    )
+    proposalHtmlBody: marked
+      .parse(
+        `${truncatedBody}${
+          proposal.body.length > BODY_LENGTH ? `... <a href="${proposal.link}">(read more)</a>` : ''
+        }`
+      )
+      .replace(/<img[^>]*>/g, '')
   });
 }

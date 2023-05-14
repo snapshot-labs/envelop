@@ -39,10 +39,12 @@ export default async function prepare(params: TemplatePrepareParams) {
     winningChoiceName: results[winningChoiceIndex].name,
     winningChoicePercentage: results[winningChoiceIndex].progress,
     proposalTextBody: `${truncatedBody}${proposal.body.length > BODY_LENGTH ? ` [...]` : ''}`,
-    proposalHtmlBody: marked.parse(
-      `${truncatedBody}${
-        proposal.body.length > BODY_LENGTH ? `... <a href="${proposal.link}">(read more)</a>` : ''
-      }`
-    )
+    proposalHtmlBody: marked
+      .parse(
+        `${truncatedBody}${
+          proposal.body.length > BODY_LENGTH ? `... <a href="${proposal.link}">(read more)</a>` : ''
+        }`
+      )
+      .replace(/<img[^>]*>/g, '')
   });
 }
