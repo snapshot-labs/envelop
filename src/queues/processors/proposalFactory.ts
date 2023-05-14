@@ -15,6 +15,25 @@ function eventToTemplate(event: string) {
   }
 }
 
+/**
+ * Return a list of email, for all subscribers following the given spaceId
+ */
+async function getSubscribersEmailFollowingSpace(spaceId: string) {
+  const subscribers = new Map(
+    (await getVerifiedSubscriptions()).map(row => [row.address as string, row.email as string])
+  );
+  const results = [];
+
+  // Batch the queries, as getFollows is limited to 1000 address per request
+  const addressesChunks = chunk(Array.from(subscribers.keys()), 1000);
+  for (const addressChunk of addressesChunks) {
+    const follows = await getFollows(addressChunk, spaceId);
+    results.push(...follows.map(follow => subscribers.get(follow.follower) as string).flat());
+  }
+
+  return results;
+}
+
 export default async (job: Job): Promise<number> => {
   const { event, id } = job.data;
   const templateId = eventToTemplate(event);
@@ -24,19 +43,8 @@ export default async (job: Job): Promise<number> => {
     return 0;
   }
 
-  const subscribers = new Map(
-    (await getVerifiedSubscriptions()).map(row => [row.address as string, row.email as string])
-  );
-
-  // Batch the function, as getFollows is limited to 1000 address per request
-  const addressesChunks = chunk(Array.from(subscribers.keys()), 1000);
-  const emails: string[] = [];
-  for (const addressChunk of addressesChunks) {
-    const follows = await getFollows(addressChunk, proposal.space.id);
-    emails.push(...follows.map(follow => subscribers.get(follow.follower) as string).flat());
-  }
-
-  for (const email of emails) {
+  const emails = await getSubscribersEmailFollowingSpace(proposal.space.id);
+  return emails.map(async email => {
     await proposalActivityQueue.add(
       templateId,
       {
@@ -45,7 +53,5 @@ export default async (job: Job): Promise<number> => {
       },
       { jobId: `${templateId}-${email}-${id}` }
     );
-  }
-
-  return emails.length;
+  }).length;
 };
