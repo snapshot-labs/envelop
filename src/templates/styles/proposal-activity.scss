@@ -53,28 +53,60 @@
     border-spacing: 0 0.5em;
 
     &-item {
-      border-width: 1px;
-      border-style: solid;
-      border-color: $border-color;
       border-radius: 3px;
       padding: 0.5em 1em;
       position: relative;
 
       &.pending-result {
+        border-width: 1px;
         border-left-width: 5px;
+        border-style: solid;
+        border-color: $border-color;
+
+        .vote-btn {
+          border-width: 1px;
+          border-style: solid;
+          border-color: $border-color;
+          border-radius: 100%;
+          width: 1em;
+          height: 1em;
+        }
       }
 
       &.winning {
         font-weight: bold;
+        border-width: 1px;
+        border-style: solid;
+        border-color: $border-color;
+        padding: 1em;
+
+        .progress {
+          .progress-bar {
+            background-color: $secondary-color;
+          }
+        }
+      }
+
+      .number {
+        text-align: right;
+        vertical-align: top;
+        padding-right: 1em;
+        width: 40px;
+        word-break: normal;
+        font-size: 1.125em;
       }
 
       .progress {
         background-color: $border-color;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        z-index: 1;
+        height: 4px;
+        border-radius: 4px;
+        margin-top: 0.25em;
+
+        .progress-bar {
+          height: 4px;
+          background-color: $primary-color;
+          border-radius: 4px;
+        }
       }
 
       table {
@@ -87,12 +119,21 @@
 
 @media (prefers-color-scheme: dark) {
   $border-color: #2d2d2d !important;
+  $content-text-color: #8b949e !important;
 
   .proposal-choices-item {
     border-color: $border-color;
 
+    .vote-btn {
+      border-color: $content-text-color;
+    }
+
     .progress {
       background-color: $border-color;
+    }
+
+    .winning {
+      border-color: $border-color;
     }
   }
 
