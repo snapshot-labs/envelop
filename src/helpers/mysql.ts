@@ -4,20 +4,30 @@ import Pool from 'mysql/lib/Pool';
 // @ts-ignore
 import Connection from 'mysql/lib/Connection';
 import bluebird from 'bluebird';
-import parse from 'connection-string';
+import { ConnectionString } from 'connection-string';
 
-// @ts-ignore
-const config = parse(process.env.DATABASE_URL);
-config.connectionLimit = 10;
-config.multipleStatements = true;
-config.database = config.path[0];
-config.host = config.hosts[0].name;
-config.port = config.hosts[0].port;
-config.connectTimeout = 60e3;
-config.acquireTimeout = 60e3;
-config.timeout = 60e3;
-config.charset = 'utf8mb4';
+type values = string | number | boolean;
+type SqlRow = Record<string, values>;
+type SqlQueryArgs = values | Record<string, values>;
+interface PromisedPool {
+  queryAsync: (query: string, args?: SqlQueryArgs | SqlQueryArgs[]) => Promise<SqlRow[]>;
+  endAsync: () => Promise<any>;
+}
+
+const config = new ConnectionString(process.env.DATABASE_URL || '');
 bluebird.promisifyAll([Pool, Connection]);
-const db = mysql.createPool(config);
 
-export default db as any;
+const db: PromisedPool = mysql.createPool({
+  ...config,
+  host: config.hosts?.[0].name,
+  port: config.hosts?.[0].port,
+  connectionLimit: parseInt(process.env.CONNECTION_LIMIT || '10'),
+  multipleStatements: true,
+  connectTimeout: 60e3,
+  acquireTimeout: 60e3,
+  timeout: 60e3,
+  charset: 'utf8mb4',
+  database: config.path?.[0]
+}) as mysql.Pool & PromisedPool;
+
+export default db;

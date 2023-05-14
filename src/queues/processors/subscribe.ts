@@ -3,7 +3,7 @@ import templates from '../../templates';
 import type { Job } from 'bull';
 import type { Message } from '../../../types';
 
-export default async (job: Job): Promise<any> => {
+export default async (job: Job) => {
   const { email, address } = job.data;
   const msg = await templates.subscribe.prepare({
     to: email,

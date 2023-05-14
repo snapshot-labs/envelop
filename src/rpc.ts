@@ -1,24 +1,34 @@
 import express from 'express';
+import { isAddress } from '@ethersproject/address';
 import {
   subscribe,
   verify,
   unsubscribe,
   rpcError,
   rpcSuccess,
-  isValidEmail,
-  isValidAddress
+  isValidEmail
 } from './helpers/utils';
 import { verifySubscribe, verifyUnsubscribe } from './sign';
 import { queueSubscribe, queueProposalActivity } from './queues';
+import { version, name } from '../package.json';
 
 const router = express.Router();
+
+router.get('/', (req, res) => {
+  const commit = process.env.COMMIT_HASH || '';
+  const v = commit ? `${version}#${commit.substr(0, 7)}` : version;
+  return res.json({
+    name,
+    version: v
+  });
+});
 
 router.post('/', async (req, res) => {
   const { id, method, params } = req.body;
 
   try {
     if (method === 'snapshot.subscribe') {
-      if (!isValidEmail(params.email) || !isValidAddress(params.address)) {
+      if (!isValidEmail(params.email) || !isAddress(params.address)) {
         return rpcError(res, 400, 'Invalid params', id);
       }
 
