@@ -1,8 +1,6 @@
 # Envelop
 
-Envelop is the service sending the snapshot weekly report email to subscribers.
-
-The API also handle adding and removing users from the subscription list.
+Envelop is the service behind Snapshot mailing list .
 
 This service is API only, and should be used together with [Envelop-UI](https://github.com/snapshot-labs/envelop-ui) to handle all front-end related matters.
 
@@ -14,7 +12,7 @@ This service is API only, and should be used together with [Envelop-UI](https://
 
 This service depends on a couple of services:
 
-- Node.js (>= 18)
+- Node.js (~ 16)
 - MySQL5+
 - A sendgrid account (email provider)
 - An [Envelop-UI](https://github.com/snapshot-labs/envelop-ui) instance
@@ -77,19 +75,6 @@ You can optionally run these tasks automatically on commit and on push by instal
 ```bash
 yarn husky install
 ```
-
-## Production
-
-```bash
-// Build the project
-yarn build
-// Start the app
-yarn start
-```
-
-## Contributing
-
-See [the contribution guideline](.github/CONTRIBUTING.md)
 
 ## Sending test emails
 
@@ -161,6 +146,10 @@ yarn build
 // Start the service
 yarn start
 ```
+
+## Contributing
+
+See [the contribution guideline](.github/CONTRIBUTING.md)
 
 ## Licence
 
