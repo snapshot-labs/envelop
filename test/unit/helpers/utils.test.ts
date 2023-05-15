@@ -1,17 +1,6 @@
-import db from '../../../src/helpers/mysql';
-import {
-  getUniqueEmails,
-  isValidEmail,
-  sanitizeSubscriptions,
-  update
-} from '../../../src/helpers/utils';
-import { cleanupDb } from '../../utils';
+import { isValidEmail, sanitizeSubscriptions } from '../../../src/helpers/utils';
 
 describe('utils', () => {
-  afterAll(async () => {
-    await db.endAsync();
-  });
-
   describe('isvalidEmail', () => {
     it.each([
       'valid@example.com',

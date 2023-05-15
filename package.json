@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "license": "MIT",
   "scripts": {
-    "lint:nofix": "eslint src/ --ext .ts",
+    "lint:nofix": "eslint src/ test/ --ext .ts",
     "lint": "yarn lint:nofix --fix",
     "build": "tsc -p tsconfig.json",
     "dev": "nodemon src/index.ts -e js,ts,hbs,json",
