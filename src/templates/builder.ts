@@ -31,6 +31,7 @@ export default async function buildMessage(id: TemplateId, params: TemplatePrepa
     to: params.to,
     from: compile(template.from)(params),
     subject: compile(template.subject)(params),
+    preheader: compile(template.preheader)(params),
     text: compile(template.text)({
       ...params,
       ...extraParams
