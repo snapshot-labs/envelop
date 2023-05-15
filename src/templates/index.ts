@@ -10,7 +10,7 @@ const templates: Templates = {
     from: 'Snapshot <notify@snapshot.org>',
     subject: 'Verify your email address',
     text: fs.readFileSync('./src/templates/subscribe/text.hbs', 'utf-8'),
-    preheader: 'Verify your email to confirm your weekly summary subscription',
+    preheader: 'Verify your email to confirm your subscription to Snapshot mailing list',
     html: fs.readFileSync('./src/templates/subscribe/html.hbs', 'utf-8'),
     prepare: params => prepareSubscribe(params)
   },
