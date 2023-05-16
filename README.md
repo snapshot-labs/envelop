@@ -40,6 +40,13 @@ Start the service with
 yarn dev
 ```
 
+### Development with docker
+You don't need to run `yarn` or any other preparations, just run:
+```bash
+docker-compose up
+```
+It automatically builds the image(if needed) and runs the container. Additionally, it starts the database and the envelop-ui service. Base environment variables is setted in .env.example file. You can override them in .env file and add missing variables (ask your teammates for them).
+
 ### Running tests and linters
 
 #### Unit tests
