@@ -27,8 +27,8 @@ const templates: Templates = {
     subject: '[{{proposal.space.name}}] New proposal: {{proposal.title}}',
     text: fs.readFileSync('./src/templates/newProposal/text.hbs', 'utf-8'),
     preheader:
-      'Submitted by {{proposal.author}}, ' +
-      'voting period from {{formattedStartDate}} to {{formattedEndDate}}',
+      'Voting period from {{formattedStartDate}} to {{formattedEndDate}} - ' +
+      'Submitted by {{proposal.author}}',
     html: fs.readFileSync('./src/templates/newProposal/html.hbs', 'utf-8'),
     prepare: params => prepareNewProposal(params)
   },
@@ -37,8 +37,8 @@ const templates: Templates = {
     subject: '[{{proposal.space.name}}] Closed proposal: {{proposal.title}}',
     text: fs.readFileSync('./src/templates/closedProposal/text.hbs', 'utf-8'),
     preheader:
-      '{{winningChoiceName}} {{winningChoicePercentage}}% | ' +
-      '{{formattedVotesCount}} total votes | Voting ended on {{formattedEndDate}}',
+      '{{winningChoiceName}} {{winningChoicePercentage}}% - ' +
+      '{{formattedVotesCount}} total votes - Voting ended on {{formattedEndDate}}',
     html: fs.readFileSync('./src/templates/closedProposal/html.hbs', 'utf-8'),
     prepare: params => prepareClosedProposal(params)
   }

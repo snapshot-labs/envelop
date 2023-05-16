@@ -19,7 +19,7 @@ export default async function buildMessage(id: TemplateId, params: TemplatePrepa
   } = {
     host: process.env.HOST as string,
     subject: template.subject,
-    preheader: template.preheader
+    preheader: compile(template.preheader)(params)
   };
 
   if (id !== 'subscribe') {
@@ -27,11 +27,17 @@ export default async function buildMessage(id: TemplateId, params: TemplatePrepa
     headers['List-Unsubscribe'] = `<${extraParams.unsubscribeLink}>`;
   }
 
+  if (extraParams.preheader.length > 0) {
+    extraParams.preheader = `${extraParams.preheader}${'&nbsp;&zwnj;'.repeat(
+      150 - extraParams.preheader.length
+    )}`;
+  }
+
   return {
     to: params.to,
     from: compile(template.from)(params),
     subject: compile(template.subject)(params),
-    preheader: compile(template.preheader)(params),
+    preheader: extraParams.preheader,
     text: compile(template.text)({
       ...params,
       ...extraParams
