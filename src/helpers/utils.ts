@@ -63,12 +63,12 @@ export async function verify(email: string, address: string) {
     throw new Error('ADDRESS_ALREADY_VERIFIED_WITH_ANOTHER_EMAIL');
   }
 
-  const a = (await db.queryAsync(
+  const updateResult = (await db.queryAsync(
     'UPDATE subscribers SET verified = ? WHERE email = ? AND address = ? AND verified = ? LIMIT 1',
     [currentTimestamp(), email, address, 0]
   )) as unknown as OkPacket;
 
-  if (a.changedRows === 0) {
+  if (updateResult.changedRows === 0) {
     throw new Error('RECORD_NOT_FOUND');
   }
 
