@@ -4,11 +4,12 @@ import templates from '../../templates';
 import type { Job } from 'bull';
 import type { Message } from '../../../types';
 
-export default async (job: Job): Promise<any> => {
-  const { email, endTimestamp } = job.data;
+export default async (job: Job) => {
+  const { email, startTimestamp, endTimestamp } = job.data;
   const msg = await templates.summary.prepare({
     to: email,
     addresses: (await getEmailAddresses(email)).map(data => data.address),
+    startDate: new Date(startTimestamp),
     endDate: new Date(endTimestamp)
   });
 
@@ -16,5 +17,5 @@ export default async (job: Job): Promise<any> => {
     return Promise.resolve('Skipped');
   }
 
-  return Promise.resolve(await send(msg as Message));
+  return await send(msg as Message);
 };

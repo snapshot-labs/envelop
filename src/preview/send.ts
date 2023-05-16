@@ -22,7 +22,7 @@ router.get('/send/:template', async (req, res) => {
 
   let msg;
   try {
-    msg = await buildMessage(templateId, req.query.to ? { to: req.query.to } : {});
+    msg = await buildMessage(templateId, req.query.to ? { to: req.query.to as string } : {});
   } catch (e) {
     return rpcError(res, 404, e, templateId);
   }

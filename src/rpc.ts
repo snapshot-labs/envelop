@@ -1,25 +1,39 @@
 import express from 'express';
-import { subscribe, verify, unsubscribe, rpcError, rpcSuccess } from './helpers/utils';
+import { isAddress } from '@ethersproject/address';
+import {
+  subscribe,
+  verify,
+  unsubscribe,
+  rpcError,
+  rpcSuccess,
+  isValidEmail
+} from './helpers/utils';
 import { verifySubscribe, verifyUnsubscribe } from './sign';
-import { send } from './helpers/mail';
-import templates from './templates';
-import type { Message } from '../types';
+import { queueSubscribe } from './queues';
+import { version, name } from '../package.json';
 
 const router = express.Router();
+
+router.get('/', (req, res) => {
+  const commit = process.env.COMMIT_HASH || '';
+  const v = commit ? `${version}#${commit.substr(0, 7)}` : version;
+  return res.json({
+    name,
+    version: v
+  });
+});
 
 router.post('/', async (req, res) => {
   const { id, method, params } = req.body;
 
   try {
     if (method === 'snapshot.subscribe') {
-      await subscribe(params.email, params.address);
+      if (!isValidEmail(params.email) || !isAddress(params.address)) {
+        return rpcError(res, 400, 'Invalid params', id);
+      }
 
-      await send(
-        (await templates.subscribe.prepare({
-          to: params.email,
-          address: params.address
-        })) as Message
-      );
+      await subscribe(params.email, params.address);
+      queueSubscribe(params.email, params.address);
 
       return rpcSuccess(res, 'OK', id);
     } else if (method === 'snapshot.verify') {

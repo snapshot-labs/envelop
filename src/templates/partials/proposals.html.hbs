@@ -16,6 +16,9 @@
           <a href="{{link}}" target="_blank" class="proposal-title">{{title}}</a>
           <p class="proposal-body">
             {{shortBody}}
+            {{#if voted}}
+              <small class="has-voted">You voted in this proposal</small>
+            {{/if}}
           </p>
         {{/each}}
       </td>
