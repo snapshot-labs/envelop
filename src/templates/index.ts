@@ -19,7 +19,7 @@ const templates: Templates = {
   },
   summary: {
     name: 'Weekly digest',
-    description: "Weekly report of your followed spaces's activites",
+    description: 'Get a weekly report detailing the activity in your followed spaces.',
     from: 'Snapshot <notify@snapshot.org>',
     subject: 'Your weekly Snapshot summary - {{formattedStartDate}} to {{formattedEndDate}}',
     text: fs.readFileSync('./src/templates/summary/text.hbs', 'utf-8'),
@@ -28,8 +28,8 @@ const templates: Templates = {
     prepare: params => prepareSummary(params)
   },
   newProposal: {
-    name: 'New proposal',
-    description: 'Notification when a new proposal in your followed spaces has been submitted',
+    name: 'Proposal creation',
+    description: 'Get informed when a new proposal is submitted in your followed spaces.',
     from: '',
     subject: '',
     text: '',
@@ -40,8 +40,8 @@ const templates: Templates = {
     }
   },
   closedProposal: {
-    name: 'Closed proposal',
-    description: 'Notification when a proposal in your followed spaces has closed',
+    name: 'Proposal closure',
+    description: 'Get informed when a proposal is closed in your followed spaces.',
     from: '',
     subject: '',
     text: '',
