@@ -66,7 +66,8 @@ export function verifyUnsubscribe(email: string, signature: string, signer?: str
 }
 
 export function update(email: string, address: string, subscriptions: string[]) {
-  return sign({ email, address, subscriptions }, SubscriptionsTypes);
+  const normalizedAddress = address.length > 0 ? address : wallet.address;
+  return sign({ email, address: normalizedAddress, subscriptions }, SubscriptionsTypes);
 }
 
 export function verifyUpdate(
@@ -75,5 +76,11 @@ export function verifyUpdate(
   subscriptions: string[],
   signature: string
 ) {
-  return verify({ email, address, subscriptions }, address, signature, SubscriptionsTypes);
+  const normalizedAddress = address.length > 0 ? address : wallet.address;
+  return verify(
+    { email, address: normalizedAddress, subscriptions },
+    normalizedAddress,
+    signature,
+    SubscriptionsTypes
+  );
 }

@@ -21,13 +21,30 @@ describe('POST update', () => {
 
   beforeEach(async () => {
     await cleanupDb();
-    await db.queryAsync(
-      'INSERT INTO subscribers (created, email, address, subscriptions, verified) VALUES (?, ?, ?, ?, ?)',
-      [+new Date() / 1e3, email, address, JSON.stringify(['summary']), +new Date() / 1e3]
-    );
-    await db.queryAsync(
-      'INSERT INTO subscribers (created, email, address, subscriptions, verified) VALUES (?, ?, ?, ?, ?)',
-      [+new Date() / 1e3, email, '0x0', JSON.stringify(['summary']), +new Date() / 1e3]
+    Promise.all(
+      [
+        [+new Date() / 1e3, email, address, JSON.stringify(['summary']), +new Date() / 1e3],
+        [+new Date() / 1e3, 'unverified@test.com', address, JSON.stringify(['summary']), 0],
+        [
+          +new Date() / 1e3,
+          email,
+          '0xA57Dc1C30536B26A24d6804EBA33A586439652F2',
+          JSON.stringify(['summary']),
+          +new Date() / 1e3
+        ],
+        [
+          +new Date() / 1e3,
+          email,
+          '0xc2E7Ba8b2D297CE5c227B79D82AD1c11B5596307',
+          JSON.stringify(['summary']),
+          0
+        ]
+      ].map(async data => {
+        await db.queryAsync(
+          'INSERT INTO subscribers (created, email, address, subscriptions, verified) VALUES (?, ?, ?, ?, ?)',
+          data
+        );
+      })
     );
   });
 
@@ -61,7 +78,7 @@ describe('POST update', () => {
       const result = await db.queryAsync('SELECT * FROM subscribers WHERE email = ?', [email]);
 
       expect(response.statusCode).toBe(200);
-      expect(result.length).toBe(1);
+      expect(result.length).toBe(2);
     });
   });
 
@@ -80,6 +97,59 @@ describe('POST update', () => {
     });
   });
 
+  describe('when passing only the address', () => {
+    it('only updates the subscriptions related to the given address', async () => {
+      const response = await request(process.env.HOST)
+        .post('/')
+        .send({
+          method: 'snapshot.update',
+          params: {
+            email: '',
+            address,
+            subscriptions: ['newProposal'],
+            signature: await update('', address, ['newProposal'])
+          }
+        });
+      const result = await db.queryAsync('SELECT * FROM subscribers WHERE address = ?', [address]);
+
+      expect(response.statusCode).toBe(200);
+      expect(result.filter(r => (r.verified as number) > 0)[0].subscriptions).toEqual(
+        JSON.stringify(['newProposal'])
+      );
+      expect(result.filter(r => (r.verified as number) === 0)[0].subscriptions).toEqual(
+        JSON.stringify(['summary'])
+      );
+    });
+  });
+
+  describe('when passing only the email', () => {
+    it('updates all subscriptions associated to the verified email', async () => {
+      const response = await request(process.env.HOST)
+        .post('/')
+        .send({
+          method: 'snapshot.update',
+          params: {
+            email,
+            address: '',
+            subscriptions: ['newProposal'],
+            signature: await update(email, '', ['newProposal'])
+          }
+        });
+      const unverified = await db.queryAsync(
+        'SELECT * FROM subscribers WHERE email = ? AND verified = 0',
+        [email]
+      );
+      const verified = await db.queryAsync(
+        'SELECT DISTINCT(subscriptions) FROM subscribers WHERE email = ? AND verified > 0',
+        [email]
+      );
+
+      expect(response.statusCode).toBe(200);
+      expect(unverified[0].subscriptions).toEqual(JSON.stringify(['summary']));
+      expect(verified[0].subscriptions).toEqual(JSON.stringify(['newProposal']));
+    });
+  });
+
   it('returns an error code when the signature is not valid', async () => {
     const response = await request(process.env.HOST)
       .post('/')
@@ -95,6 +165,6 @@ describe('POST update', () => {
     const result = await db.queryAsync('SELECT * FROM subscribers WHERE email = ?', [email]);
 
     expect(response.statusCode).toBe(401);
-    expect(result.length).toBe(2);
+    expect(result.length).toBe(3);
   });
 });
