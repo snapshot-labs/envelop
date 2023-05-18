@@ -15,6 +15,9 @@ export default async () => {
         email: result.email,
         startTimestamp: +summaryTimeRange.start,
         endTimestamp: +summaryTimeRange.end
+      },
+      opts: {
+        jobId: `summary-${result.email}-${+summaryTimeRange.start}`
       }
     }))
   );

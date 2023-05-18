@@ -7,7 +7,7 @@ import send from './preview/send';
 import { start as startQueue, shutdown as shutdownQueue } from './queues';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3006;
 
 startQueue();
 
