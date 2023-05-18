@@ -16,7 +16,7 @@ This service depends on a couple of services:
 
 - Node.js (>= 18)
 - MySQL5+
-- A sendgrid account (email provider)
+- A [sendgrid](https://sendgrid.com/) account (email provider)
 - An [Envelop-UI](https://github.com/snapshot-labs/envelop-ui) instance
 
 ### Install
@@ -29,8 +29,12 @@ yarn
 
 Make a copy of `.env.example` and rename it as `.env`. Then update the credentials in the file to the correct values for your local setup.
 
-- `HOST`: hostname of the current envelop instance (eg: `http://localhost:3000`)
+- `HOST`: hostname of the current envelop instance (eg: `http://localhost:3006`)
 - `FRONT_HOST`: hostname of the envelop-ui instance (eg: `http://localhost:8080`)
+- `WALLET_PRIVATE_KEY`: private key of the wallet used to sign the emails (eg: `0x...`)
+- `DATABASE_URL`: URL of the MySQL database (eg: `mysql://root:root@localhost:3306/envelop`)
+- `REDIS_URL`: URL of the Redis database (eg: `redis://localhost:6379`)
+- `SENDGRID_API_KEY`: API key of the sendgrid account
 
 ### Development
 
@@ -142,21 +146,6 @@ yarn ts-node scripts/send-summary.ts [EMAIL] [SEND_DATE]
 
 - `EMAIL`: your email address (needs to already exist and verified in the database, in order to fetch the related wallet addresses)
 - `SEND_DATE`: a `yyyy-mm-dd` formatted date, to emulate the date the email is sent (affects the summary report time window)
-
-## Error
-
-All endpoints will respond with a [JSON-RPC 2.0](https://www.jsonrpc.org/specification) error response on error:
-
-```bash
-{
-  "jsonrpc":"2.0",
-  "error":{
-    "code": CODE,
-    "message": MESSAGE
-  },
-  "id": ID
-}
-```
 
 ## Licence
 
