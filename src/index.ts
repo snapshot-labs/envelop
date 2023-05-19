@@ -19,7 +19,7 @@ app.use('/', rpc);
 app.use('/', preview);
 app.use('/', send);
 
-const server = app.listen(PORT, () => console.log(`Listening at http://localhost:${PORT}`));
+const server = app.listen(PORT, () => console.log(`[http] Listening at http://localhost:${PORT}`));
 
 function shutdown() {
   if (server.listening) {
