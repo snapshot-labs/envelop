@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
+import morgan from 'morgan';
 import cors from 'cors';
 import rpc from './rpc';
 import preview from './preview';
@@ -14,6 +15,13 @@ startQueue();
 app.use(express.json({ limit: '4mb' }));
 app.use(express.urlencoded({ limit: '4mb', extended: false }));
 app.use(express.static('./public'));
+app.use(
+  morgan(
+    '[http] :remote-addr - :remote-user [:date[clf]] ' +
+      '":method :url HTTP/:http-version" :status :res[content-length] ' +
+      '":referrer" ":user-agent" - :response-time ms'
+  )
+);
 app.use(cors({ maxAge: 86400 }));
 app.use('/', rpc);
 app.use('/', preview);
