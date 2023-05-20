@@ -3,18 +3,19 @@ import { subscribe, update, verifySubscribe, verifyUpdate } from '../../../src/s
 describe('sign', () => {
   const email = 'test@test.com';
   const address = '0x123D816BF0b002bEA83a804e5cf1d2797Fcfc77d';
+  const salt = `${Math.floor(+new Date() / 1e3)}`;
 
   describe('verifySubscribe()', () => {
     it('returns true when the signature is valid', async () => {
-      const signature = await subscribe(email, address);
+      const signature = await subscribe(email, address, salt);
 
-      expect(verifySubscribe(email, address, signature)).toBe(true);
+      expect(verifySubscribe(email, address, salt, signature)).toBe(true);
     });
 
     it('returns false when the signature is not valid', () => {
       const signature = 'invalid-signature';
 
-      expect(verifySubscribe(email, address, signature)).toBe(false);
+      expect(verifySubscribe(email, address, salt, signature)).toBe(false);
     });
   });
 

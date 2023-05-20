@@ -35,13 +35,15 @@ router.post('/', async (req, res) => {
         return rpcError(res, 'INVALID_PARAMS', id);
       }
 
-      await subscribe(params.email, params.address);
-      queueSubscribe(params.email, params.address);
+      const result = await subscribe(params.email, params.address);
+      if (result[0]) {
+        queueSubscribe(params.email, params.address, result[0].created as string);
+      }
 
       return rpcSuccess(res, 'OK', id);
     } else if (method === 'snapshot.verify') {
-      if (verifySubscribe(params.email, params.address, params.signature)) {
-        await verify(params.email, params.address);
+      if (verifySubscribe(params.email, params.address, params.salt, params.signature)) {
+        await verify(params.email, params.address, params.salt);
         return rpcSuccess(res, 'OK', id);
       }
 

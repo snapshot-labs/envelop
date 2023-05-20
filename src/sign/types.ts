@@ -1,7 +1,8 @@
 export const SubscribeTypes = {
   Subscribe: [
     { name: 'address', type: 'address' },
-    { name: 'email', type: 'string' }
+    { name: 'email', type: 'string' },
+    { name: 'salt', type: 'string' }
   ]
 };
 

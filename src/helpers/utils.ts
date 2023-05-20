@@ -46,14 +46,19 @@ export function sanitizeSubscriptions(list?: string | string[]) {
 
 export async function subscribe(email: string, address: string) {
   const subscriber = { email, address, created: currentTimestamp() };
-  return await db.queryAsync('INSERT IGNORE INTO subscribers SET ?', [subscriber]);
+  await db.queryAsync('INSERT IGNORE INTO subscribers SET ?', [subscriber]);
+
+  return await db.queryAsync(
+    'SELECT * FROM subscribers WHERE email = ? AND address = ? and created = ?',
+    [email, address, subscriber.created]
+  );
 }
 
-export async function verify(email: string, address: string) {
+export async function verify(email: string, address: string, salt: string) {
   const existingVerifiedEmail = (
     await db.queryAsync(
-      `SELECT email FROM subscribers WHERE address = ? AND verified > 0 LIMIT 1`,
-      [address]
+      `SELECT email FROM subscribers WHERE address = ? AND created = ? AND verified > 0 LIMIT 1`,
+      [address, salt]
     )
   )[0]?.email;
 
@@ -64,8 +69,8 @@ export async function verify(email: string, address: string) {
   }
 
   const updateResult = (await db.queryAsync(
-    'UPDATE subscribers SET verified = ? WHERE email = ? AND address = ? AND verified = ? LIMIT 1',
-    [currentTimestamp(), email, address, 0]
+    'UPDATE subscribers SET verified = ? WHERE email = ? AND address = ? AND created = ? AND verified = ? LIMIT 1',
+    [currentTimestamp(), email, address, salt, 0]
   )) as unknown as OkPacket;
 
   if (updateResult.changedRows === 0) {
