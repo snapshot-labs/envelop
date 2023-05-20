@@ -44,10 +44,11 @@ services:
     volumes:
       - mysql:/var/lib/mysql
       - ./src/helpers/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - ./src/helpers/fixtures.sql:/docker-entrypoint-initdb.d/x_fixtures.sql
     command: --default-authentication-plugin=mysql_native_password
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_DATABASE: ${MYSQL_DATABASE_NAME}
 
 volumes:
   mysql:

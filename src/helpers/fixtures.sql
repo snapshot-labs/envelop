@@ -1,0 +1,1 @@
+INSERT INTO `subscribers` (`email`, `address`, `subscriptions`, `created`, `verified`) VALUES ('test@gmail.com', '0xC8CD2BE653759aed7B0996315821AAe71e1FEAdF', '[\"summary\"]', '1684595721', '1684595721');
