@@ -47,8 +47,8 @@ router.post('/', async (req, res) => {
 
       return rpcError(res, 'UNAUTHORIZED', id);
     } else if (method === 'snapshot.unsubscribe') {
-      if (verifyUnsubscribe(params.email, params.signature)) {
-        await unsubscribe(params.email, params.subscriptions);
+      if (verifyUnsubscribe(params.email, params.address, params.signature)) {
+        await unsubscribe(params.email, params.address);
         return rpcSuccess(res, 'OK', id);
       }
 

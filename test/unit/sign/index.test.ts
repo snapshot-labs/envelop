@@ -1,4 +1,11 @@
-import { subscribe, update, verifySubscribe, verifyUpdate } from '../../../src/sign';
+import {
+  subscribe,
+  update,
+  unsubscribe,
+  verifySubscribe,
+  verifyUpdate,
+  verifyUnsubscribe
+} from '../../../src/sign';
 
 describe('sign', () => {
   const email = 'test@test.com';
@@ -45,6 +52,26 @@ describe('sign', () => {
       const signature = await update(email, address, ['s']);
 
       expect(verifyUpdate(email, address, ['sss'], signature)).toBe(false);
+    });
+  });
+
+  describe('verifyUnsubscribe()', () => {
+    it('accepts an empty email', async () => {
+      const signature = await unsubscribe('', address);
+
+      expect(verifyUnsubscribe('', address, signature)).toBe(true);
+    });
+
+    it('accepts an empty address', async () => {
+      const signature = await unsubscribe(email, '');
+
+      expect(verifyUnsubscribe(email, '', signature)).toBe(true);
+    });
+
+    it('accepts a missing address', async () => {
+      const signature = await unsubscribe(email);
+
+      expect(verifyUnsubscribe(email, '', signature)).toBe(true);
     });
   });
 });

@@ -14,5 +14,8 @@ export const SubscriptionsTypes = {
 };
 
 export const UnsubscribeTypes = {
-  Unsubscribe: [{ name: 'email', type: 'string' }]
+  Unsubscribe: [
+    { name: 'address', type: 'address' },
+    { name: 'email', type: 'string' }
+  ]
 };

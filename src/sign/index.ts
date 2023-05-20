@@ -6,7 +6,7 @@ import type { TypedDataField } from '@ethersproject/abstract-signer';
 const NAME = 'snapshot';
 const VERSION = '0.1.4';
 
-const domain = {
+export const domain = {
   name: NAME,
   version: VERSION
 };
@@ -57,16 +57,23 @@ export function verifySubscribe(
   );
 }
 
-export function unsubscribe(email: string) {
-  return sign({ email }, UnsubscribeTypes);
+export function unsubscribe(email: string, address?: string) {
+  const normalizedAddress = address && address.length > 0 ? getAddress(address) : wallet.address;
+  return sign({ email, address: normalizedAddress }, UnsubscribeTypes);
 }
 
-export function verifyUnsubscribe(email: string, signature: string, signer?: string) {
-  return verify({ email }, signer || wallet.address, signature, UnsubscribeTypes);
+export function verifyUnsubscribe(email: string, address: string, signature: string) {
+  const normalizedAddress = address && address.length > 0 ? getAddress(address) : wallet.address;
+  return verify(
+    { email, address: normalizedAddress },
+    normalizedAddress,
+    signature,
+    UnsubscribeTypes
+  );
 }
 
 export function update(email: string, address: string, subscriptions: string[]) {
-  const normalizedAddress = address.length > 0 ? address : wallet.address;
+  const normalizedAddress = address && address.length > 0 ? getAddress(address) : wallet.address;
   return sign({ email, address: normalizedAddress, subscriptions }, SubscriptionsTypes);
 }
 
@@ -76,7 +83,7 @@ export function verifyUpdate(
   subscriptions: string[],
   signature: string
 ) {
-  const normalizedAddress = address.length > 0 ? address : wallet.address;
+  const normalizedAddress = address && address.length > 0 ? getAddress(address) : wallet.address;
   return verify(
     { email, address: normalizedAddress, subscriptions },
     normalizedAddress,
