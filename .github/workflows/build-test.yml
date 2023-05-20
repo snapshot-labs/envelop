@@ -15,7 +15,7 @@ jobs:
       - name: Set up MySQL
         run: |
           sudo /etc/init.d/mysql start
-          mysql -e 'CREATE DATABASE $MYSQL_DATABASE_NAME;' -uroot -proot
+          mysql -e "CREATE DATABASE $MYSQL_DATABASE_NAME;" -uroot -proot
           mysql -uroot -proot $MYSQL_DATABASE_NAME < src/helpers/schema.sql
           mysql -uroot -proot -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root';"
           mysql -uroot -proot -e "FLUSH PRIVILEGES;"
