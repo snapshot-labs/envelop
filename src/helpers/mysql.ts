@@ -13,8 +13,8 @@ interface PromisedPool {
   queryAsync: (query: string, args?: SqlQueryArgs | SqlQueryArgs[]) => Promise<SqlRow[]>;
   endAsync: () => Promise<any>;
 }
-
-const config = new ConnectionString(process.env.DATABASE_URL || '');
+const mysqlUrl = `${process.env.DATABASE_URL}/${process.env.MYSQL_DATABASE_NAME}` || '';
+const config = new ConnectionString(mysqlUrl);
 bluebird.promisifyAll([Pool, Connection]);
 
 const db: PromisedPool = mysql.createPool({
