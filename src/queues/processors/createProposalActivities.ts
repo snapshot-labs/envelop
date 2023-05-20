@@ -1,8 +1,8 @@
 import chunk from 'lodash.chunk';
-import { proposalActivityQueue } from '../index';
+import { sendNewProposalQueue, sendClosedProposalQueue } from '../index';
 import { getFollows, getProposal } from '../../helpers/snapshot';
 import { getVerifiedSubscriptions } from '../../helpers/utils';
-import type { Job } from 'bull';
+import type { Job } from 'bullmq';
 
 function eventToTemplate(event: string) {
   switch (event) {
@@ -10,6 +10,17 @@ function eventToTemplate(event: string) {
       return 'newProposal';
     case 'end':
       return 'closedProposal';
+    default:
+      throw new Error('Invalid proposal activity event type');
+  }
+}
+
+function queue(event: string) {
+  switch (event) {
+    case 'created':
+      return sendNewProposalQueue;
+    case 'end':
+      return sendClosedProposalQueue;
     default:
       throw new Error('Invalid proposal activity event type');
   }
@@ -44,7 +55,7 @@ export default async (job: Job): Promise<number> => {
   }
 
   const emails = await getSubscribersEmailFollowingSpace(proposal.space.id);
-  await proposalActivityQueue.addBulk(
+  await queue(event).addBulk(
     emails.map(email => ({
       name: templateId,
       data: {

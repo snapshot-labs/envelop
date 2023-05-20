@@ -1,6 +1,6 @@
 import 'dotenv/config';
-import { Job } from 'bull';
-import closedProposal from '../src/queues/processors/closedProposal';
+import { Job } from 'bullmq';
+import sendClosedProposal from '../src/queues/processors/sendClosedProposal';
 
 async function main() {
   if (process.argv.length < 3) {
@@ -9,8 +9,8 @@ async function main() {
   }
   const [, , email, id] = process.argv;
 
-  return await closedProposal({
-    name: 'closedProposal',
+  return await sendClosedProposal({
+    name: 'send-closedProposal',
     data: { email, id }
   } as Job);
 }

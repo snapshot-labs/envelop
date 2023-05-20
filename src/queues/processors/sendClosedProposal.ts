@@ -1,13 +1,13 @@
 import { send } from '../../helpers/mail';
 import templates from '../../templates';
-import type { Job } from 'bull';
+import type { Job } from 'bullmq';
 import type { Message } from '../../../types';
 
-export default async (job: Job) => {
-  const { email, address } = job.data;
-  const msg = await templates.subscribe.prepare({
+export default async (job: Job): Promise<any> => {
+  const { email, id } = job.data;
+  const msg = await templates.closedProposal.prepare({
     to: email,
-    address
+    id
   });
 
   return await send(msg as Message);

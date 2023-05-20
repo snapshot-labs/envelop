@@ -1,6 +1,6 @@
 import 'dotenv/config';
-import { Job } from 'bull';
-import proposalFactory from '../src/queues/processors/proposalFactory';
+import { Job } from 'bullmq';
+import createProposalActivities from '../src/queues/processors/createProposalActivities';
 
 async function main() {
   if (process.argv.length < 3) {
@@ -9,8 +9,8 @@ async function main() {
   }
   const [, , event, id] = process.argv;
 
-  const count = await proposalFactory({
-    name: 'proposalFactory',
+  const count = await createProposalActivities({
+    name: 'create-proposal-activities',
     data: { event: event.replace('proposal/', ''), id: id.replace('proposal/', '') }
   } as Job);
 

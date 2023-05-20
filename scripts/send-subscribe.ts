@@ -1,6 +1,6 @@
 import 'dotenv/config';
-import { Job } from 'bull';
-import subscribe from '../src/queues/processors/subscribe';
+import { Job } from 'bullmq';
+import sendSubscribe from '../src/queues/processors/sendSubscribe';
 
 async function main() {
   if (process.argv.length < 3) {
@@ -9,8 +9,8 @@ async function main() {
   }
   const [, , email, address] = process.argv;
 
-  return await subscribe({
-    name: '',
+  return await sendSubscribe({
+    name: 'send-subscribe',
     data: { email, address }
   } as Job);
 }

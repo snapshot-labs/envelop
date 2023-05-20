@@ -1,61 +1,64 @@
-import Queue from 'bull';
+import { JobsOptions, Queue, Worker } from 'bullmq';
 import Redis from 'ioredis';
-import summaryProcessor from './processors/summary';
-import schedulerProcessor from './processors/scheduler';
 import constants from '../helpers/constants.json';
-import subscribeProcessor from './processors/subscribe';
-import proposalFactoryProcessor from './processors/proposalFactory';
-import newProposalProcessor from './processors/newProposal';
-import closedProposalProcessor from './processors/closedProposal';
-
-const REDIS_URL = (process.env.REDIS_URL as string) || 'redis://127.0.0.1:6379';
-const REDIS_OPTS = { maxRetriesPerRequest: null, enableReadyCheck: false };
-
-const client = new Redis(REDIS_URL, REDIS_OPTS);
-const subscriber = new Redis(REDIS_URL, REDIS_OPTS);
+import createProposalActivitiesProcessor from './processors/createProposalActivities';
+import createSummariesProcessor from './processors/createSummaries';
+import sendSubscribeProcessor from './processors/sendSubscribe';
+import sendSummaryProcessor from './processors/sendSummary';
+import sendNewProposalProcessor from './processors/sendNewProposal';
+import sendClosedProposalProcessor from './processors/sendClosedProposal';
 
 const opts = {
-  createClient: function (type: string) {
-    switch (type) {
-      case 'client':
-        return client;
-      case 'subscriber':
-        return subscriber;
-      default:
-        return new Redis(REDIS_URL, REDIS_OPTS);
-    }
-  }
+  connection: new Redis((process.env.REDIS_URL as string) || 'redis://127.0.0.1:6379', {
+    maxRetriesPerRequest: null,
+    enableReadyCheck: false
+  })
 };
 
-export const mailerQueue = new Queue('mailer', opts);
-export const scheduleQueue = new Queue('scheduler', opts);
-export const proposalActivityQueue = new Queue('proposal-activities', opts);
+// Factory queues, dedicated to queue jobs into send email queues
+export const createSummariesQueue = new Queue('create-summaries', opts);
+export const createProposalActivitiesQueue = new Queue('create-proposal-activities', opts);
+// Send email queues, 1 queue for each email type
+export const sendSubscribeQueue = new Queue('send-subscribe', opts);
+export const sendSummaryQueue = new Queue('send-summary', opts);
+export const sendNewProposalQueue = new Queue('send-new-proposal', opts);
+export const sendClosedProposalQueue = new Queue('send-closed-proposal', opts);
+
+const workers: Worker[] = [];
 
 export function start() {
-  console.log('[QUEUE-MAILER] Starting queue mailer');
+  console.log('[queue-mailer] Starting queue mailer');
 
-  mailerQueue.process('summary', summaryProcessor);
-  mailerQueue.process('subscribe', subscribeProcessor);
-  scheduleQueue.process(schedulerProcessor);
-  proposalActivityQueue.process('proposalFactory', proposalFactoryProcessor);
-  proposalActivityQueue.process('newProposal', newProposalProcessor);
-  proposalActivityQueue.process('closedProposal', closedProposalProcessor);
+  workers.concat([
+    new Worker(createSummariesQueue.name, createSummariesProcessor, opts),
+    new Worker(createProposalActivitiesQueue.name, createProposalActivitiesProcessor, opts),
+    new Worker(sendSubscribeQueue.name, sendSubscribeProcessor, opts),
+    new Worker(sendSummaryQueue.name, sendSummaryProcessor, opts),
+    new Worker(sendNewProposalQueue.name, sendNewProposalProcessor, opts),
+    new Worker(sendClosedProposalQueue.name, sendClosedProposalProcessor, opts)
+  ]);
 
-  queueScheduler({ repeat: { cron: '0 1 * * MON', tz: constants.summary.timezone } });
+  console.log(`[queue-mailer] Started ${workers.length} workers`);
+
+  queueCreateSummaries({ repeat: { pattern: '0 1 * * MON', tz: constants.summary.timezone } });
 }
 
 export function shutdown() {
-  return [mailerQueue.close(), scheduleQueue.close()];
+  return workers.map(async worker => await worker.close());
 }
 
-export function queueScheduler(options: Queue.JobOptions = {}) {
-  return scheduleQueue.add({}, options);
+export function queueSendSubscribe(email: string, address: string) {
+  return sendSubscribeQueue.add('send-subscribe', { email, address });
 }
 
-export function queueSubscribe(email: string, address: string) {
-  return mailerQueue.add('subscribe', { email, address });
+export function queueCreateSummaries(options: JobsOptions = {}) {
+  return createSummariesQueue.add('create-summaries', {}, options);
 }
 
-export function queueProposalActivity(event: string, id: string) {
-  return proposalActivityQueue.add('proposalFactory', { event, id });
+export function queueCreateProposalActivities(event: string, id: string) {
+  return createProposalActivitiesQueue.add(
+    'create-proposal-activities',
+    { event, id },
+    { jobId: `create-proposal-activities-${event}-${id}` }
+  );
 }

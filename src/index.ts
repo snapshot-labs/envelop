@@ -19,12 +19,14 @@ app.use('/', rpc);
 app.use('/', preview);
 app.use('/', send);
 
-const server = app.listen(PORT, () => console.log(`Listening at http://localhost:${PORT}`));
+const server = app.listen(PORT, () => console.log(`[http] Listening at http://localhost:${PORT}`));
 
 function shutdown() {
+  console.log('[queue-mailer] Start queue shutdown');
   if (server.listening) {
     server.close(async () => {
       await Promise.all(shutdownQueue());
+      console.log('[queue-mailer] Shutdown complete');
       process.exit(0);
     });
   }

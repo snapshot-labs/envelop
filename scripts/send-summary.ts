@@ -1,6 +1,6 @@
 import 'dotenv/config';
-import { Job } from 'bull';
-import summary from '../src/queues/processors/summary';
+import { Job } from 'bullmq';
+import sendSummary from '../src/queues/processors/sendSummary';
 import { previousWeek } from '../src/helpers/date';
 import constants from '../src/helpers/constants.json';
 
@@ -12,8 +12,8 @@ async function main() {
   const [, , email, sendDate] = process.argv;
   const summaryTimeRange = previousWeek(new Date(Date.parse(sendDate)), constants.summary.timezone);
 
-  return await summary({
-    name: '',
+  return await sendSummary({
+    name: 'send-summary',
     data: { email, startTimestamp: +summaryTimeRange.start, endTimestamp: +summaryTimeRange.end }
   } as Job);
 }

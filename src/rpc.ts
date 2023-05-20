@@ -9,7 +9,7 @@ import {
   isValidEmail
 } from './helpers/utils';
 import { verifySubscribe, verifyUnsubscribe } from './sign';
-import { queueSubscribe, queueProposalActivity } from './queues';
+import { queueSendSubscribe, queueCreateProposalActivities } from './queues';
 import { version, name } from '../package.json';
 
 const router = express.Router();
@@ -33,7 +33,7 @@ router.post('/', async (req, res) => {
       }
 
       await subscribe(params.email, params.address);
-      queueSubscribe(params.email, params.address);
+      queueSendSubscribe(params.email, params.address);
 
       return rpcSuccess(res, 'OK', id);
     } else if (method === 'snapshot.verify') {
@@ -75,7 +75,7 @@ router.post('/webhook', async (req, res) => {
   }
 
   try {
-    queueProposalActivity(event.replace('proposal/', ''), id);
+    queueCreateProposalActivities(event.replace('proposal/', ''), id);
     return rpcSuccess(res, 'OK', id);
   } catch (e) {
     return rpcError(res, 500, 'Internal error', id);
