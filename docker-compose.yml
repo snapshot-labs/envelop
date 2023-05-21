@@ -47,7 +47,7 @@ services:
       - ./src/helpers/fixtures.sql:/docker-entrypoint-initdb.d/x_fixtures.sql
     command: --default-authentication-plugin=mysql_native_password
     environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE_NAME}
 
 volumes:
