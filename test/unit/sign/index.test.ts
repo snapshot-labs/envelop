@@ -21,13 +21,13 @@ describe('sign', () => {
     it('returns true when the signature is valid', async () => {
       const signature = await signFromUserWallet({ email, address, salt }, SubscribeTypes);
 
-      expect(verifySubscribe(email, address, salt, signature)).toBe(true);
+      expect(verifySubscribe(email, address, signature)).toBe(true);
     });
 
     it('returns false when the signature is not valid', () => {
       const signature = 'invalid-signature';
 
-      expect(verifySubscribe(email, address, salt, signature)).toBe(false);
+      expect(verifySubscribe(email, address, signature)).toBe(false);
     });
   });
 
