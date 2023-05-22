@@ -1,6 +1,6 @@
 import request from 'supertest';
 import db from '../../src/helpers/mysql';
-import { update } from '../../src/sign';
+import { signUpdate } from '../../src/sign';
 import { cleanupDb } from '../utils';
 
 describe('POST update', () => {
@@ -14,7 +14,7 @@ describe('POST update', () => {
         email,
         address,
         subscriptions,
-        signature: await update(email, address, subscriptions)
+        signature: await signUpdate(email, address, subscriptions)
       }
     };
   }
@@ -111,7 +111,7 @@ describe('POST update', () => {
             email: '',
             address,
             subscriptions: ['newProposal'],
-            signature: await update('', address, ['newProposal'])
+            signature: await signUpdate('', address, ['newProposal'])
           }
         });
       const result = await db.queryAsync('SELECT * FROM subscribers WHERE address = ?', [address]);
@@ -136,7 +136,7 @@ describe('POST update', () => {
             email,
             address: '',
             subscriptions: ['newProposal'],
-            signature: await update(email, '', ['newProposal'])
+            signature: await signUpdate(email, '', ['newProposal'])
           }
         });
       const unverified = await db.queryAsync(

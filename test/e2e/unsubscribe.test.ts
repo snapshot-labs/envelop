@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { Wallet } from '@ethersproject/wallet';
 import db from '../../src/helpers/mysql';
-import { domain, unsubscribe } from '../../src/sign';
+import { domain, signUnsubscribe } from '../../src/sign';
 import { cleanupDb } from '../utils';
 import { UnsubscribeTypes } from '../../src/sign/types';
 import type { TypedDataField } from '@ethersproject/abstract-signer';
@@ -31,7 +31,7 @@ describe('POST unsubscribe', () => {
       method: 'snapshot.unsubscribe',
       params: {
         email,
-        signature: await unsubscribe(email)
+        signature: await signUnsubscribe(email)
       }
     };
   });
