@@ -82,7 +82,7 @@ export function verifyUnsubscribe(email: string, signature: string, signer?: str
   return verify({ email }, signer || wallet.address, signature, UnsubscribeTypes);
 }
 
-export function update(email: string, address: string, subscriptions: string[]) {
+export function signUpdate(email: string, address: string, subscriptions: string[]) {
   const normalizedAddress = address.length > 0 ? address : wallet.address;
   return sign({ email, address: normalizedAddress, subscriptions }, SubscriptionsTypes);
 }
@@ -90,7 +90,7 @@ export function update(email: string, address: string, subscriptions: string[]) 
 /**
  * Verify the UPDATE transaction signature
  *
- * The signature returned by `update()` can be signed by either:
+ * The signature returned by `signUpdate()` can be signed by either:
  * - the backend (when `address` params is empty),
  * - the user himself (when the `address` params is present)
  */

@@ -1,5 +1,5 @@
 import { Wallet } from '@ethersproject/wallet';
-import { domain, verifySubscribe, update, verifyUpdate } from '../../../src/sign';
+import { domain, verifySubscribe, signUpdate, verifyUpdate } from '../../../src/sign';
 import { SubscribeTypes, SubscriptionsTypes } from '../../../src/sign/types';
 import type { TypedDataField } from '@ethersproject/abstract-signer';
 
@@ -32,23 +32,23 @@ describe('sign', () => {
 
   describe('update()', () => {
     it('returns a signature when all params are set', async () => {
-      expect(await update(email, address, ['s'])).toHaveLength(132);
+      expect(await signUpdate(email, address, ['s'])).toHaveLength(132);
     });
 
     it('returns a signature when subscriptions is empty', async () => {
-      expect(await update(email, address, [])).toHaveLength(132);
+      expect(await signUpdate(email, address, [])).toHaveLength(132);
     });
 
     it('returns an error when address is not an address', () => {
       expect(async () => {
-        await update(email, 'test', ['s']);
+        await signUpdate(email, 'test', ['s']);
       }).rejects.toThrow();
     });
   });
 
   describe('verifyUpdate()', () => {
     it('returns true when the signature signed by backend is valid', async () => {
-      const signature = await update(email, '', ['s']);
+      const signature = await signUpdate(email, '', ['s']);
 
       expect(verifyUpdate(email, '', ['s'], signature)).toBe(true);
     });
@@ -72,7 +72,7 @@ describe('sign', () => {
     });
 
     it('returns false when the signature is invalid', async () => {
-      const signature = await update(email, address, ['s']);
+      const signature = await signUpdate(email, address, ['s']);
 
       expect(verifyUpdate(email, address, ['sss'], signature)).toBe(false);
     });
