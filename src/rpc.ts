@@ -1,5 +1,4 @@
 import express from 'express';
-import { isAddress } from '@ethersproject/address';
 import {
   subscribe,
   verify,
@@ -10,7 +9,7 @@ import {
   isValidEmail,
   getAddressSubscriptions
 } from './helpers/utils';
-import { verifySubscribe, verifyUnsubscribe, verifyUpdate } from './sign';
+import { verifySubscribe, verifyUnsubscribe, verifyVerify, verifyUpdate } from './sign';
 import { queueSubscribe } from './queues';
 import { version, name } from '../package.json';
 import { SUBSCRIPTION_TYPE, default as templates } from './templates';
@@ -31,18 +30,21 @@ router.post('/', async (req, res) => {
 
   try {
     if (method === 'snapshot.subscribe') {
-      if (!isValidEmail(params.email) || !isAddress(params.address)) {
+      if (!isValidEmail(params.email)) {
         return rpcError(res, 'INVALID_PARAMS', id);
       }
 
-      const result = await subscribe(params.email, params.address);
-      if (result[0]) {
-        queueSubscribe(params.email, params.address, result[0].created as string);
+      if (verifySubscribe(params.email, params.address, params.signature)) {
+        const result = await subscribe(params.email, params.address);
+        if (result[0]) {
+          queueSubscribe(params.email, params.address, result[0].created as string);
+        }
+        return rpcSuccess(res, 'OK', id);
       }
 
-      return rpcSuccess(res, 'OK', id);
+      return rpcError(res, 'UNAUTHORIZED', id);
     } else if (method === 'snapshot.verify') {
-      if (verifySubscribe(params.email, params.address, params.salt, params.signature)) {
+      if (verifyVerify(params.email, params.address, params.salt, params.signature)) {
         await verify(params.email, params.address, params.salt);
         return rpcSuccess(res, 'OK', id);
       }

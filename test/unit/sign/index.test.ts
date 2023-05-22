@@ -1,13 +1,25 @@
-import { subscribe, update, verifySubscribe, verifyUpdate } from '../../../src/sign';
+import { Wallet } from '@ethersproject/wallet';
+import { domain, verifySubscribe, signUpdate, verifyUpdate } from '../../../src/sign';
+import { SubscribeTypes, SubscriptionsTypes } from '../../../src/sign/types';
+import type { TypedDataField } from '@ethersproject/abstract-signer';
 
 describe('sign', () => {
   const email = 'test@test.com';
-  const address = '0x123D816BF0b002bEA83a804e5cf1d2797Fcfc77d';
   const salt = `${Math.floor(+new Date() / 1e3)}`;
+  const privateKey = '0a5b35deb46ca896e63fcbfbce3b7fd40991b37bb313e8f9e713e9a04317053a';
+  const wallet = new Wallet(privateKey);
+  const address = wallet.address;
 
-  describe('verifySubscribe()', () => {
+  async function signFromUserWallet(
+    message: Record<string, any>,
+    type: Record<string, Array<TypedDataField>>
+  ) {
+    return await wallet._signTypedData(domain, type, message);
+  }
+
+  describe('verifySubscribe', () => {
     it('returns true when the signature is valid', async () => {
-      const signature = await subscribe(email, address, salt);
+      const signature = await signFromUserWallet({ email, address, salt }, SubscribeTypes);
 
       expect(verifySubscribe(email, address, salt, signature)).toBe(true);
     });
@@ -21,29 +33,47 @@ describe('sign', () => {
 
   describe('update()', () => {
     it('returns a signature when all params are set', async () => {
-      expect(await update(email, address, ['s'])).toHaveLength(132);
+      expect(await signUpdate(email, address, ['s'])).toHaveLength(132);
     });
 
     it('returns a signature when subscriptions is empty', async () => {
-      expect(await update(email, address, [])).toHaveLength(132);
+      expect(await signUpdate(email, address, [])).toHaveLength(132);
     });
 
     it('returns an error when address is not an address', () => {
       expect(async () => {
-        await update(email, 'test', ['s']);
+        await signUpdate(email, 'test', ['s']);
       }).rejects.toThrow();
     });
   });
 
   describe('verifyUpdate()', () => {
-    it('returns true when the signature is valid', async () => {
-      const signature = await update(email, address, ['s']);
+    it('returns true when the signature signed by backend is valid', async () => {
+      const signature = await signUpdate(email, '', ['s']);
+
+      expect(verifyUpdate(email, '', ['s'], signature)).toBe(true);
+    });
+
+    it('returns true when the signature signed by user is valid', async () => {
+      const signature = await signFromUserWallet(
+        { email, address, subscriptions: ['s'] },
+        SubscriptionsTypes
+      );
 
       expect(verifyUpdate(email, address, ['s'], signature)).toBe(true);
     });
 
+    it('returns true when the signature signed by user is valid (without email)', async () => {
+      const signature = await signFromUserWallet(
+        { email: '', address, subscriptions: ['s'] },
+        SubscriptionsTypes
+      );
+
+      expect(verifyUpdate('', address, ['s'], signature)).toBe(true);
+    });
+
     it('returns false when the signature is invalid', async () => {
-      const signature = await update(email, address, ['s']);
+      const signature = await signUpdate(email, address, ['s']);
 
       expect(verifyUpdate(email, address, ['sss'], signature)).toBe(false);
     });

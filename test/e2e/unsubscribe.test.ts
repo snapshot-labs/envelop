@@ -1,6 +1,6 @@
 import request from 'supertest';
 import db from '../../src/helpers/mysql';
-import { unsubscribe } from '../../src/sign';
+import { signUnsubscribe } from '../../src/sign';
 import { cleanupDb } from '../utils';
 
 describe('POST unsubscribe', () => {
@@ -22,7 +22,7 @@ describe('POST unsubscribe', () => {
       method: 'snapshot.unsubscribe',
       params: {
         email,
-        signature: await unsubscribe(email)
+        signature: await signUnsubscribe(email)
       }
     };
   });
