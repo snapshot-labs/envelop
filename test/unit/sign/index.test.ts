@@ -7,7 +7,7 @@ import {
   signUnsubscribe,
   verifyUnsubscribe
 } from '../../../src/sign';
-import { SubscribeTypes, SubscriptionsTypes } from '../../../src/sign/types';
+import { SubscribeTypes, SubscriptionsTypes, UnsubscribeTypes } from '../../../src/sign/types';
 import type { TypedDataField } from '@ethersproject/abstract-signer';
 
 describe('sign', () => {
@@ -87,7 +87,7 @@ describe('sign', () => {
 
   describe('verifyUnsubscribe()', () => {
     it('accepts an empty email', async () => {
-      const signature = await signUnsubscribe('', address);
+      const signature = await signFromUserWallet({ email: '', address }, UnsubscribeTypes);
 
       expect(verifyUnsubscribe('', address, signature)).toBe(true);
     });
