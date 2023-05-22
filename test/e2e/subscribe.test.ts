@@ -1,11 +1,11 @@
 import request from 'supertest';
 import db from '../../src/helpers/mysql';
 import { cleanupDb } from '../utils';
+import { subscriptionPayload } from '../fixtures/subscriptionPayload';
 
 describe('POST subscribe', () => {
-  const email = 'test-subscribe@test.com';
-  const address = '0xDBDd4c5473692Fa0490bfF6AAbf1181f29Ca851e';
   let subscriberData: Record<string, any>;
+  const { email, address, signature } = subscriptionPayload;
 
   beforeEach(async () => {
     await cleanupDb();
@@ -13,7 +13,8 @@ describe('POST subscribe', () => {
       method: 'snapshot.subscribe',
       params: {
         email,
-        address
+        address,
+        signature
       }
     };
   });
@@ -56,7 +57,8 @@ describe('POST subscribe', () => {
         method: 'snapshot.subscribe',
         params: {
           email: 'test@test.com',
-          address: '0xDB'
+          address: '0xDB',
+          signature
         }
       });
 
@@ -64,27 +66,37 @@ describe('POST subscribe', () => {
   });
 
   it('returns an error code if the email is missing', async () => {
-    const response = await request(process.env.HOST)
-      .post('/')
-      .send({
-        method: 'snapshot.subscribe',
-        params: {
-          address: '0xDBDd4c5473692Fa0490bfF6AAbf1181f29Ca851e'
-        }
-      });
+    const response = await request(process.env.HOST).post('/').send({
+      method: 'snapshot.subscribe',
+      params: {
+        address,
+        signature
+      }
+    });
 
     expect(response.statusCode).toBe(400);
   });
 
   it('returns an error code if the address is missing', async () => {
-    const response = await request(process.env.HOST)
-      .post('/')
-      .send({
-        method: 'snapshot.subscribe',
-        params: {
-          email: 'test@test.com'
-        }
-      });
+    const response = await request(process.env.HOST).post('/').send({
+      method: 'snapshot.subscribe',
+      params: {
+        email,
+        signature
+      }
+    });
+
+    expect(response.statusCode).toBe(400);
+  });
+
+  it('returns an error code if the signature is missing', async () => {
+    const response = await request(process.env.HOST).post('/').send({
+      method: 'snapshot.subscribe',
+      params: {
+        email,
+        address
+      }
+    });
 
     expect(response.statusCode).toBe(400);
   });
