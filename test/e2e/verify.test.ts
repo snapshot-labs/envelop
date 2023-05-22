@@ -1,6 +1,6 @@
 import request from 'supertest';
 import db from '../../src/helpers/mysql';
-import { subscribe } from '../../src/sign';
+import { signVerify } from '../../src/sign';
 import { cleanupDb } from '../utils';
 
 describe('POST verify', () => {
@@ -16,7 +16,7 @@ describe('POST verify', () => {
       params: {
         email,
         address,
-        signature: signature || (await subscribe(email, address))
+        signature: signature || (await signVerify(email, address))
       }
     };
   }

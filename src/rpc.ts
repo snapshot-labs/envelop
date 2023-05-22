@@ -41,7 +41,7 @@ router.post('/', async (req, res) => {
         return rpcSuccess(res, 'OK', id);
       }
 
-      return rpcError(res, 'Unable to authenticate the request', id);
+      return rpcError(res, 'UNAUTHORIZED', id);
     } else if (method === 'snapshot.verify') {
       if (verifyVerify(params.email, params.address, params.signature)) {
         await verify(params.email, params.address);

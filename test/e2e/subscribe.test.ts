@@ -98,6 +98,6 @@ describe('POST subscribe', () => {
       }
     });
 
-    expect(response.statusCode).toBe(400);
+    expect(response.statusCode).toBe(401);
   });
 });

@@ -46,9 +46,7 @@ export function verifySubscribe(email: string, address: string, signature: strin
       email,
       address: getAddress(address)
     },
-
     getAddress(address),
-
     signature,
     SubscribeTypes
   );
@@ -89,6 +87,13 @@ export function update(email: string, address: string, subscriptions: string[]) 
   return sign({ email, address: normalizedAddress, subscriptions }, SubscriptionsTypes);
 }
 
+/**
+ * Verify the UPDATE transaction signature
+ *
+ * The signature returned by `update()` can be signed by either:
+ * - the backend (when `address` params is empty),
+ * - the user himself (when the `address` params is present)
+ */
 export function verifyUpdate(
   email: string,
   address: string,
