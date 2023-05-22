@@ -1,5 +1,4 @@
 import express from 'express';
-import { isAddress } from '@ethersproject/address';
 import {
   subscribe,
   verify,
@@ -31,7 +30,7 @@ router.post('/', async (req, res) => {
 
   try {
     if (method === 'snapshot.subscribe') {
-      if (!isValidEmail(params.email) || !isAddress(params.address)) {
+      if (!isValidEmail(params.email)) {
         return rpcError(res, 'INVALID_PARAMS', id);
       }
 
