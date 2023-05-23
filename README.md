@@ -12,7 +12,7 @@ This service is API only, and should be used together with [Envelop-UI](https://
 
 This service depends on a couple of services:
 
-- Node.js (~ 16)
+- Node.js "^16.0.0"
 - MySQL5+
 - A [sendgrid](https://sendgrid.com/) account (email provider)
 - An [Envelop-UI](https://github.com/snapshot-labs/envelop-ui) instance
