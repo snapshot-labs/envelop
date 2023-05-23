@@ -28,7 +28,7 @@ async function getSubscribersEmailFollowingSpace(spaceId: string) {
   const addressesChunks = chunk(Array.from(subscribers.keys()), 1000);
   for (const addressChunk of addressesChunks) {
     const follows = await getFollows(addressChunk, spaceId);
-    results.push(...follows.map(follow => subscribers.get(follow.follower) as string).flat());
+    results.push(...follows.map(follow => subscribers.get(follow.follower) as string));
   }
 
   return results;
