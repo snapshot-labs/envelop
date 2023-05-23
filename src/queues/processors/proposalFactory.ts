@@ -19,9 +19,9 @@ function eventToTemplate(event: string) {
  * Return a list of email, for all subscribers following the given spaceId
  */
 async function getSubscribersEmailFollowingSpace(spaceId: string) {
-  const subscribers = new Map(
-    (await getVerifiedSubscriptions()).map(row => [row.address as string, row.email as string])
-  );
+  const subscriberEntries = await getVerifiedSubscriptions();
+  const subscriberKeyValuePairs: Iterable<[string, string]> = subscriberEntries.map(row => [row.address as string, row.email as string]);
+  const subscribers = new Map(subscriberKeyValuePairs);
   const results = [];
 
   // Batch the queries, as getFollows is limited to 1000 address per request
