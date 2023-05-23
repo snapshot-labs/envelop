@@ -1,4 +1,4 @@
-import db from './mysql';
+import db, { SqlRow } from './mysql';
 import type { Response } from 'express';
 
 export function rpcSuccess(res: Response, result: string, id: string | number) {
@@ -45,8 +45,25 @@ export async function getEmailAddresses(email: string) {
   ]);
 }
 
-export async function getVerifiedSubscriptions() {
-  return await db.queryAsync('SELECT email, address FROM subscribers WHERE verified > 0');
+export async function getVerifiedSubscriptions(batchSize = 1000) {
+  let page = 0;
+  const results: SqlRow[] = [];
+
+  while (true) {
+    const result = await db.queryAsync(
+      'SELECT email, address FROM subscribers WHERE verified > 0 ORDER BY created LIMIT ? OFFSET ?',
+      [batchSize, page * batchSize]
+    );
+
+    if (result.length === 0) {
+      break;
+    }
+
+    page += 1;
+    results.concat(result);
+  }
+
+  return results;
 }
 
 export async function getUniqueEmails() {
