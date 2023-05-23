@@ -4,6 +4,8 @@ import { getFollows, getProposal } from '../../helpers/snapshot';
 import { getVerifiedSubscriptions } from '../../helpers/utils';
 import type { Job } from 'bull';
 
+const NEW_PROPOSAL_DELAY = 600000; // 10 minutes
+
 function eventToTemplate(event: string) {
   switch (event) {
     case 'created':
@@ -54,7 +56,10 @@ export default async (job: Job): Promise<number> => {
         email,
         id
       },
-      opts: { jobId: `${templateId}-${email}-${id}` }
+      opts: {
+        jobId: `${templateId}-${email}-${id}`,
+        delay: templateId === 'newProposal' ? NEW_PROPOSAL_DELAY : 0
+      }
     }))
   );
 
