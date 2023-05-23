@@ -4,8 +4,14 @@ import type { Response } from 'express';
 import { OkPacket } from 'mysql';
 import { TemplateId } from '../../types';
 
+type Subscriber = {
+  email: string;
+  address: string;
+  created: number;
+};
+
 function currentTimestamp() {
-  return (Date.now() / 1e3).toFixed();
+  return Math.round(Date.now() / 1e3);
 }
 
 export function rpcSuccess(res: Response, result: string, id: string | number) {
@@ -45,13 +51,16 @@ export function sanitizeSubscriptions(list?: string | string[]) {
 }
 
 export async function subscribe(email: string, address: string) {
-  const subscriber = { email, address, created: currentTimestamp() };
-  await db.queryAsync('INSERT IGNORE INTO subscribers SET ?', [subscriber]);
+  const subscriber: Subscriber = { email, address, created: currentTimestamp() };
+  const insertResponse = (await db.queryAsync('INSERT IGNORE INTO subscribers SET ?', [
+    subscriber
+  ])) as unknown as OkPacket;
 
-  return await db.queryAsync(
-    'SELECT * FROM subscribers WHERE email = ? AND address = ? and created = ?',
-    [email, address, subscriber.created]
-  );
+  if (insertResponse.affectedRows > 0) {
+    return subscriber;
+  }
+
+  return null;
 }
 
 export async function verify(email: string, address: string, salt: string) {

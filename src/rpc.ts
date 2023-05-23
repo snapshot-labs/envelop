@@ -35,9 +35,9 @@ router.post('/', async (req, res) => {
       }
 
       if (verifySubscribe(params.email, params.address, params.signature)) {
-        const result = await subscribe(params.email, params.address);
-        if (result[0]) {
-          queueSubscribe(params.email, params.address, result[0].created as string);
+        const subscriber = await subscribe(params.email, params.address);
+        if (subscriber) {
+          queueSubscribe(subscriber.email, subscriber.address, subscriber.created);
         }
         return rpcSuccess(res, 'OK', id);
       }
