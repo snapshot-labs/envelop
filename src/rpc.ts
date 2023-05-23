@@ -68,7 +68,7 @@ router.post('/', async (req, res) => {
       return rpcError(res, 'UNAUTHORIZED', id);
     }
   } catch (e: any) {
-    console.log(e);
+    console.error(e);
     return rpcError(res, e, id);
   }
 });
