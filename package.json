@@ -41,6 +41,7 @@
     "graphql": "^16.6.0",
     "handlebars": "^4.7.7",
     "juice": "^8.1.0",
+    "morgan": "^1.10.0",
     "mysql": "^2.18.1",
     "remove-markdown": "^0.5.0",
     "ts-node": "^10.8.1"
@@ -55,6 +56,7 @@
     "@types/cors": "^2.8.13",
     "@types/express": "^4.17.17",
     "@types/jest": "^29.5.1",
+    "@types/morgan": "^1.9.4",
     "@types/mysql": "^2.15.21",
     "@types/node": "^18.11.6",
     "@types/remove-markdown": "^0.3.1",
