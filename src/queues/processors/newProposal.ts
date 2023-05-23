@@ -10,5 +10,5 @@ export default async (job: Job): Promise<any> => {
     id
   });
 
-  return await send(msg as Message);
+  return send(msg as Message);
 };
