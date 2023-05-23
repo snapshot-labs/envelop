@@ -38,8 +38,8 @@ export function start() {
   mailerQueue.process('subscribe', subscribeProcessor);
   scheduleQueue.process(schedulerProcessor);
   proposalActivityQueue.process('proposalFactory', proposalFactoryProcessor);
-  proposalActivityQueue.process('newProposal', newProposalProcessor);
-  proposalActivityQueue.process('closedProposal', closedProposalProcessor);
+  mailerQueue.process('newProposal', newProposalProcessor);
+  mailerQueue.process('closedProposal', closedProposalProcessor);
 
   queueScheduler({ repeat: { cron: '0 1 * * MON', tz: constants.summary.timezone } });
 }

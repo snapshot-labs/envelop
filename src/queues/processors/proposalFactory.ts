@@ -1,5 +1,5 @@
 import chunk from 'lodash.chunk';
-import { proposalActivityQueue } from '../index';
+import { mailerQueue } from '../index';
 import { getFollows, getProposal } from '../../helpers/snapshot';
 import { getVerifiedSubscriptions } from '../../helpers/utils';
 import type { Job } from 'bull';
@@ -44,7 +44,7 @@ export default async (job: Job): Promise<number> => {
   }
 
   const emails = await getSubscribersEmailFollowingSpace(proposal.space.id);
-  await proposalActivityQueue.addBulk(
+  await mailerQueue.addBulk(
     emails.map(email => ({
       name: templateId,
       data: {
