@@ -8,7 +8,7 @@ import {
   rpcSuccess,
   isValidEmail
 } from './helpers/utils';
-import { verifySubscribe, verifyUnsubscribe } from './sign';
+import { verifySubscribe, verifyUnsubscribe, verifyVerify } from './sign';
 import { queueSubscribe } from './queues';
 import { version, name } from '../package.json';
 
@@ -28,16 +28,19 @@ router.post('/', async (req, res) => {
 
   try {
     if (method === 'snapshot.subscribe') {
-      if (!isValidEmail(params.email) || !isAddress(params.address)) {
+      if (!isValidEmail(params.email) || !isAddress(params.address) || !params.signature) {
         return rpcError(res, 400, 'Invalid params', id);
       }
 
-      await subscribe(params.email, params.address);
-      queueSubscribe(params.email, params.address);
-
-      return rpcSuccess(res, 'OK', id);
-    } else if (method === 'snapshot.verify') {
       if (verifySubscribe(params.email, params.address, params.signature)) {
+        await subscribe(params.email, params.address);
+        queueSubscribe(params.email, params.address);
+        return rpcSuccess(res, 'OK', id);
+      }
+
+      return rpcError(res, 500, 'Unable to authenticate the request', id);
+    } else if (method === 'snapshot.verify') {
+      if (verifyVerify(params.email, params.address, params.signature)) {
         await verify(params.email, params.address);
         return rpcSuccess(res, 'OK', id);
       }

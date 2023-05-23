@@ -1,14 +1,24 @@
-process.env.WALLET_PRIVATE_KEY = '1c35d78975cadb12e4047a70a38bade91d2fd9d502884785797db3e9148ec5e2';
-
-import { subscribe, verifySubscribe } from '../../../src/sign';
+import { Wallet } from '@ethersproject/wallet';
+import { domain, verifySubscribe } from '../../../src/sign';
+import { SubscribeTypes } from '../../../src/sign/types';
+import type { TypedDataField } from '@ethersproject/abstract-signer';
 
 describe('sign', () => {
   describe('verifySubscribe', () => {
     const email = 'test@test.com';
-    const address = '0x606535Dd25917855384811C9850D00d011EC1Eb8';
+    const privateKey = '0a5b35deb46ca896e63fcbfbce3b7fd40991b37bb313e8f9e713e9a04317053a';
+    const wallet = new Wallet(privateKey);
+    const address = wallet.address;
+
+    async function signSubscribe(
+      message: Record<string, any>,
+      type: Record<string, Array<TypedDataField>>
+    ) {
+      return await wallet._signTypedData(domain, type, message);
+    }
 
     it('returns true when the signature is valid', async () => {
-      const signature = await subscribe(email, address);
+      const signature = await signSubscribe({ email, address }, SubscribeTypes);
 
       expect(verifySubscribe(email, address, signature)).toBe(true);
     });

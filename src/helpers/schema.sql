@@ -4,5 +4,6 @@ CREATE TABLE subscribers (
   created BIGINT NOT NULL,
   verified BIGINT NOT NULL DEFAULT 0,
   PRIMARY KEY (email, address),
+  UNIQUE KEY idx_address_email (address, email),
   INDEX created (created)
 );
