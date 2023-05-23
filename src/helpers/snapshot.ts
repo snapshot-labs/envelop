@@ -2,10 +2,10 @@ import { gql, ApolloClient, InMemoryCache, HttpLink } from '@apollo/client/core'
 import fetch from 'cross-fetch';
 import removeMd from 'remove-markdown';
 
-const SNAPSHOT_HUB_URL = 'https://hub.snapshot.org/graphql';
+const HUB_URL = `${process.env.HUB_URL || 'https://hub.snapshot.org'}/graphql`;
 
 const client = new ApolloClient({
-  link: new HttpLink({ uri: SNAPSHOT_HUB_URL, fetch }),
+  link: new HttpLink({ uri: HUB_URL, fetch }),
   cache: new InMemoryCache({
     addTypename: false
   }),
