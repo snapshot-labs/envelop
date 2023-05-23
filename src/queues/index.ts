@@ -32,7 +32,7 @@ export const scheduleQueue = new Queue('scheduler', opts);
 export const proposalActivityQueue = new Queue('proposal-activities', opts);
 
 export function start() {
-  console.log('[QUEUE-MAILER] Starting queue mailer');
+  console.log('[queue-mailer] Starting queue mailer');
 
   mailerQueue.process('summary', summaryProcessor);
   mailerQueue.process('subscribe', subscribeProcessor);

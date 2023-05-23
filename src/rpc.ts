@@ -55,7 +55,7 @@ router.post('/', async (req, res) => {
       return rpcError(res, 500, 'Unable to authenticate your verification link', id);
     }
   } catch (e) {
-    console.log(e);
+    console.error(e);
     return rpcError(res, 500, e, id);
   }
 });
