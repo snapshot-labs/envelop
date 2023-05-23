@@ -20,7 +20,10 @@ function eventToTemplate(event: string) {
  */
 async function getSubscribersEmailFollowingSpace(spaceId: string) {
   const subscriberEntries = await getVerifiedSubscriptions();
-  const subscriberKeyValuePairs: Iterable<[string, string]> = subscriberEntries.map(row => [row.address as string, row.email as string]);
+  const subscriberKeyValuePairs: Iterable<[string, string]> = subscriberEntries.map(row => [
+    row.address as string,
+    row.email as string
+  ]);
   const subscribers = new Map(subscriberKeyValuePairs);
   const results = [];
 
