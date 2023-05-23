@@ -85,17 +85,15 @@ export async function update(email: string, address: string, subscriptions: stri
   }
 
   const subs = sanitizeSubscriptions(subscriptions);
+  const whereQueryChunk = Object.keys(fields).join(' AND ');
+
   if (subs.length === 0) {
-    return await db.queryAsync(
-      `DELETE FROM subscribers WHERE ${Object.keys(fields).join(' AND ')}`,
-      Object.values(fields)
-    );
+    return db.queryAsync(`DELETE FROM subscribers WHERE ${whereQueryChunk}`, Object.values(fields));
   } else {
-    return await db.queryAsync(
-      `UPDATE subscribers SET subscriptions = ? WHERE ${Object.keys(fields).join(
-        ' AND '
-      )} AND verified > 0`,
-      [JSON.stringify(sanitizeSubscriptions(subscriptions)), ...Object.values(fields)]
+    const stringifiedSubs = JSON.stringify(subs);
+    return db.queryAsync(
+      `UPDATE subscribers SET subscriptions = ? WHERE ${whereQueryChunk} AND verified > 0`,
+      [stringifiedSubs, ...Object.values(fields)]
     );
   }
 }
