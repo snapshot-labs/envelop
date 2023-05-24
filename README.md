@@ -147,6 +147,6 @@ yarn ts-node scripts/send-summary.ts [EMAIL] [SEND_DATE]
 - `EMAIL`: your email address (needs to already exist and verified in the database, in order to fetch the related wallet addresses)
 - `SEND_DATE`: a `yyyy-mm-dd` formatted date, to emulate the date the email is sent (affects the summary report time window)
 
-## License
+## Licence
 
 Envelop is open-sourced software licensed under the © [MIT license](LICENSE).
