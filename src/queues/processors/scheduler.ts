@@ -3,8 +3,8 @@ import { previousWeek } from '../../helpers/date';
 import { mailerQueue } from '../index';
 import constants from '../../helpers/constants.json';
 
-export default async () => {
-  const results = await getUniqueEmails();
+export default async (): Promise<number> => {
+  const results = await getUniqueEmails('summary');
   const summaryTimeRange = previousWeek(new Date(), constants.summary.timezone);
 
   mailerQueue.addBulk(

@@ -6,9 +6,9 @@ import Connection from 'mysql/lib/Connection';
 import bluebird from 'bluebird';
 import { ConnectionString } from 'connection-string';
 
-type values = string | number | boolean;
+type values = string | number | boolean | null;
 type SqlRow = Record<string, values>;
-type SqlQueryArgs = values | Record<string, values>;
+type SqlQueryArgs = values | values[] | Record<string, values>;
 interface PromisedPool {
   queryAsync: (query: string, args?: SqlQueryArgs | SqlQueryArgs[]) => Promise<SqlRow[]>;
   endAsync: () => Promise<any>;

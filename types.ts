@@ -10,6 +10,8 @@ export type Message = {
 };
 
 export type Template = {
+  name: string;
+  description: string;
   from: string;
   subject: string;
   text: string;
@@ -20,5 +22,5 @@ export type Template = {
 
 export type TemplatePrepareParams = Record<string, any>;
 
-export type TemplateId = 'summary' | 'subscribe';
+export type TemplateId = 'summary' | 'subscribe' | 'newProposal' | 'closedProposal';
 export type Templates = Record<TemplateId, Template>;
