@@ -80,6 +80,31 @@ You can optionally run these tasks automatically on commit and on push by instal
 yarn husky install
 ```
 
+## Errors
+
+All endpoints will respond with a [JSON-RPC 2.0](https://www.jsonrpc.org/specification) error response on error:
+
+```bash
+{
+  "jsonrpc":"2.0",
+  "error":{
+    "code": CODE,
+    "message": MESSAGE
+  },
+  "id": ID
+}
+```
+
+| Description                                                     | `CODE` | `MESSAGE`                                   |
+| --------------------------------------------------------------- | ------ | ------------------------------------------- |
+| Request contains invalid data                                   | 400    | INVALID_PARAMS                              |
+| Verifying an address already attached to another verified email | 400    | ADDRESS_ALREADY_VERIFIED_WITH_ANOTHER_EMAIL |
+| Signature is not valid                                          | 401    | UNAUTHORIZED                                |
+| Address / email does not exist                                  | 404    | RECORD_NOT_FOUND                            |
+| Server error                                                    | 500    | SERVER_ERROR                                |
+
+Take advantage of the `MESSAGE` code to show meaningful error message to your end user.
+
 ## Sending test emails
 
 As triggering emails involve a few tedious steps on the UI, a few CLI scripts are provided to

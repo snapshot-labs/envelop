@@ -10,6 +10,8 @@ export type Message = {
 };
 
 export type Template = {
+  name: string;
+  description: string;
   from: string;
   subject: string;
   text: string;

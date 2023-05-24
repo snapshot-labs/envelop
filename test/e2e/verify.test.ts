@@ -1,28 +1,41 @@
 import request from 'supertest';
 import db from '../../src/helpers/mysql';
 import { signVerify } from '../../src/sign';
-import { cleanupDb } from './utils';
+import { cleanupDb } from '../utils';
 
 describe('POST verify', () => {
   const email = 'test-verify@test.com';
+  const emailB = 'test-verify-b@test.com';
+  const emailC = 'test-verify-c@test.com';
   const address = '0xDBDd4c5473692Fa0490bfF6AAbf1181f29Ca851e';
-  let subscriberData: Record<string, any>;
+  const addressB = '0x54C8b17E5c46B97d25498205182e0382234B2532';
 
-  beforeEach(async () => {
-    await cleanupDb();
-    await db.queryAsync(
-      'INSERT INTO subscribers (created, email, address, verified) VALUES (?, ?, ?, 0)',
-      [+new Date() / 1e3, email, address]
-    );
-
-    subscriberData = {
+  async function subscriberData(email: string, address: string, signature?: string) {
+    return {
       method: 'snapshot.verify',
       params: {
         email,
         address,
-        signature: await signVerify(email, address)
+        signature: signature || (await signVerify(email, address))
       }
     };
+  }
+
+  beforeEach(async () => {
+    await cleanupDb();
+
+    await Promise.all(
+      [
+        [+new Date() / 1e3, email, address, 0],
+        [+new Date() / 1e3, emailB, addressB, 0],
+        [+new Date() / 1e3, emailC, addressB, 1]
+      ].map(async data => {
+        await db.queryAsync(
+          'INSERT INTO subscribers (created, email, address, verified) VALUES (?, ?, ?, ?)',
+          data
+        );
+      })
+    );
   });
 
   afterAll(async () => {
@@ -30,32 +43,73 @@ describe('POST verify', () => {
     await db.endAsync();
   });
 
-  it('verify the email', async () => {
-    const response = await request(process.env.HOST).post('/').send(subscriberData);
-    const result = await db.queryAsync('SELECT verified FROM subscribers WHERE email = ? LIMIT 1', [
-      email
-    ]);
+  describe('when the email is not verified yet', () => {
+    it('verifies the email', async () => {
+      const response = await request(process.env.HOST)
+        .post('/')
+        .send(await subscriberData(email, address));
+      const result = await db.queryAsync(
+        'SELECT verified FROM subscribers WHERE email = ? AND address = ? LIMIT 1',
+        [email, address]
+      );
 
-    expect(response.statusCode).toBe(200);
-    expect(result[0].verified).toBeGreaterThanOrEqual(0);
+      expect(response.statusCode).toBe(200);
+      expect(result[0].verified).toBeGreaterThanOrEqual(0);
+    });
+  });
+
+  describe('when the email is already verified', () => {
+    it('returns a success status', async () => {
+      const response = await request(process.env.HOST)
+        .post('/')
+        .send(await subscriberData(emailC, addressB));
+      const result = await db.queryAsync(
+        'SELECT verified FROM subscribers WHERE email = ? AND address = ? LIMIT 1',
+        [emailC, addressB]
+      );
+
+      expect(response.statusCode).toBe(200);
+      expect(result[0].verified).toBe(1);
+    });
+  });
+
+  describe('when the address is already verified with another email', () => {
+    it('returns an error', async () => {
+      const response = await request(process.env.HOST)
+        .post('/')
+        .send(await subscriberData(emailB, addressB));
+      const result = await db.queryAsync(
+        'SELECT verified FROM subscribers WHERE email = ? AND address = ? LIMIT 1',
+        [emailB, addressB]
+      );
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body.error.message).toBe('ADDRESS_ALREADY_VERIFIED_WITH_ANOTHER_EMAIL');
+      expect(result[0].verified).toBe(0);
+    });
+  });
+
+  describe('when the email does not exist', () => {
+    it('returns an error', async () => {
+      const response = await request(process.env.HOST)
+        .post('/')
+        .send(await subscriberData('test-not-exist@test.com', address));
+
+      expect(response.statusCode).toBe(404);
+      expect(response.body.error.message).toBe('RECORD_NOT_FOUND');
+    });
   });
 
   it('returns an error when the signature is not valid', async () => {
     const response = await request(process.env.HOST)
       .post('/')
-      .send({
-        method: 'snapshot.verify',
-        params: {
-          email,
-          address,
-          signature: 'not-valid'
-        }
-      });
-    const result = await db.queryAsync('SELECT verified FROM subscribers WHERE email = ? LIMIT 1', [
-      email
-    ]);
+      .send(await subscriberData(email, address, 'not-valid'));
+    const result = await db.queryAsync(
+      'SELECT verified FROM subscribers WHERE email = ? AND address = ? LIMIT 1',
+      [email, address]
+    );
 
-    expect(response.statusCode).toBe(500);
+    expect(response.statusCode).toBe(401);
     expect(result[0].verified).toBe(0);
   });
 });
