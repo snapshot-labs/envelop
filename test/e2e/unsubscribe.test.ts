@@ -25,6 +25,7 @@ describe('POST unsubscribe', () => {
     );
     await db.queryAsync(
       'INSERT INTO subscribers (created, email, address, subscriptions, verified) VALUES (?, ?, ?, ?, ?)',
+
       [+new Date() / 1e3, email, '0x0', JSON.stringify(['summary']), +new Date() / 1e3]
     );
     subscriberData = {

@@ -88,11 +88,13 @@ export async function update(email: string, address: string, subscriptions: stri
     throw new Error('INVALID_PARAMS');
   }
 
-  return await db.queryAsync(
-    `UPDATE subscribers SET subscriptions = ? WHERE ${Object.keys(fields).join(
-      ' AND '
-    )} AND verified > 0`,
-    [JSON.stringify(sanitizeSubscriptions(subscriptions)), ...Object.values(fields)]
+  const subs = sanitizeSubscriptions(subscriptions);
+  const whereQueryChunk = Object.keys(fields).join(' AND ');
+  const stringifiedSubs = JSON.stringify(subs);
+
+  return db.queryAsync(
+    `UPDATE subscribers SET subscriptions = ? WHERE ${whereQueryChunk} AND verified > 0`,
+    [stringifiedSubs, ...Object.values(fields)]
   );
 }
 
