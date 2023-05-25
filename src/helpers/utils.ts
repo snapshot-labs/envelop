@@ -47,7 +47,7 @@ export async function getEmailAddresses(email: string) {
 
 export async function getVerifiedSubscriptions(batchSize = 1000) {
   let page = 0;
-  const results: SqlRow[] = [];
+  let results: SqlRow[] = [];
 
   while (true) {
     const result = await db.queryAsync(
@@ -60,7 +60,7 @@ export async function getVerifiedSubscriptions(batchSize = 1000) {
     }
 
     page += 1;
-    results.concat(result);
+    results = results.concat(result);
   }
 
   return results;
