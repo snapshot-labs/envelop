@@ -66,7 +66,7 @@ router.post('/', async (req, res) => {
         verifyUpdate(
           params.email,
           params.address,
-          params.address.length > 0 ? params.subscriptions : [],
+          params.address && params.address.length > 0 ? params.subscriptions : [],
           params.signature
         )
       ) {
