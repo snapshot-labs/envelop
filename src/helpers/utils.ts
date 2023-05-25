@@ -39,12 +39,6 @@ export async function unsubscribe(email: string) {
   return await db.queryAsync('DELETE FROM subscribers WHERE email = ?', [email]);
 }
 
-export async function getEmailAddresses(email: string) {
-  return await db.queryAsync('SELECT address FROM subscribers WHERE email = ? AND verified > 0', [
-    email
-  ]);
-}
-
 export async function getVerifiedSubscriptions(batchSize = 1000) {
   let page = 0;
   let results: SqlRow[] = [];
