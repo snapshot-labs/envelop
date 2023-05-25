@@ -60,10 +60,6 @@ export async function getVerifiedSubscriptions(batchSize = 1000) {
   return results;
 }
 
-export async function getUniqueEmails() {
-  return await db.queryAsync('SELECT DISTINCT email FROM subscribers WHERE verified > 0');
-}
-
 // RFC5322 standard, does support most format, but not all
 // See test files for list of tested formats
 export function isValidEmail(input: string) {
