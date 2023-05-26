@@ -4,8 +4,14 @@ import type { Response } from 'express';
 import { OkPacket } from 'mysql';
 import { TemplateId } from '../../types';
 
+type Subscriber = {
+  email: string;
+  address: string;
+  created: number;
+};
+
 function currentTimestamp() {
-  return (Date.now() / 1e3).toFixed();
+  return Math.round(Date.now() / 1e3);
 }
 
 export function rpcSuccess(res: Response, result: string, id: string | number) {
@@ -45,15 +51,23 @@ export function sanitizeSubscriptions(list?: string | string[]) {
 }
 
 export async function subscribe(email: string, address: string) {
-  const subscriber = { email, address, created: currentTimestamp() };
-  return await db.queryAsync('INSERT IGNORE INTO subscribers SET ?', [subscriber]);
+  const subscriber: Subscriber = { email, address, created: currentTimestamp() };
+  const insertResponse = (await db.queryAsync('INSERT IGNORE INTO subscribers SET ?', [
+    subscriber
+  ])) as unknown as OkPacket;
+
+  if (insertResponse.affectedRows > 0) {
+    return subscriber;
+  }
+
+  return null;
 }
 
-export async function verify(email: string, address: string) {
+export async function verify(email: string, address: string, salt: string) {
   const existingVerifiedEmail = (
     await db.queryAsync(
-      `SELECT email FROM subscribers WHERE address = ? AND verified > 0 LIMIT 1`,
-      [address]
+      `SELECT email FROM subscribers WHERE address = ? AND created = ? AND verified > 0 LIMIT 1`,
+      [address, salt]
     )
   )[0]?.email;
 
@@ -64,8 +78,8 @@ export async function verify(email: string, address: string) {
   }
 
   const updateResult = (await db.queryAsync(
-    'UPDATE subscribers SET verified = ? WHERE email = ? AND address = ? AND verified = ? LIMIT 1',
-    [currentTimestamp(), email, address, 0]
+    'UPDATE subscribers SET verified = ? WHERE email = ? AND address = ? AND created = ? AND verified = ? LIMIT 1',
+    [currentTimestamp(), email, address, salt, 0]
   )) as unknown as OkPacket;
 
   if (updateResult.changedRows === 0) {

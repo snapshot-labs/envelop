@@ -35,15 +35,17 @@ router.post('/', async (req, res) => {
       }
 
       if (verifySubscribe(params.email, params.address, params.signature)) {
-        await subscribe(params.email, params.address);
-        queueSubscribe(params.email, params.address);
+        const subscriber = await subscribe(params.email, params.address);
+        if (subscriber) {
+          queueSubscribe(subscriber.email, subscriber.address, subscriber.created);
+        }
         return rpcSuccess(res, 'OK', id);
       }
 
       return rpcError(res, 'UNAUTHORIZED', id);
     } else if (method === 'snapshot.verify') {
-      if (verifyVerify(params.email, params.address, params.signature)) {
-        await verify(params.email, params.address);
+      if (verifyVerify(params.email, params.address, params.salt, params.signature)) {
+        await verify(params.email, params.address, params.salt);
         return rpcSuccess(res, 'OK', id);
       }
 
