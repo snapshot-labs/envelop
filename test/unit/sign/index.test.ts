@@ -1,6 +1,13 @@
 import { Wallet } from '@ethersproject/wallet';
-import { domain, verifySubscribe, signUpdate, verifyUpdate } from '../../../src/sign';
-import { SubscribeTypes, SubscriptionsTypes } from '../../../src/sign/types';
+import {
+  domain,
+  verifySubscribe,
+  signUpdate,
+  verifyUpdate,
+  signUnsubscribe,
+  verifyUnsubscribe
+} from '../../../src/sign';
+import { SubscribeTypes, SubscriptionsTypes, UnsubscribeTypes } from '../../../src/sign/types';
 import type { TypedDataField } from '@ethersproject/abstract-signer';
 
 describe('sign', () => {
@@ -76,6 +83,26 @@ describe('sign', () => {
       const signature = await signUpdate(email, address, ['s']);
 
       expect(verifyUpdate(email, address, ['sss'], signature)).toBe(false);
+    });
+  });
+
+  describe('verifyUnsubscribe()', () => {
+    it('accepts an empty email', async () => {
+      const signature = await signFromUserWallet({ email: '', address }, UnsubscribeTypes);
+
+      expect(verifyUnsubscribe('', address, signature)).toBe(true);
+    });
+
+    it('accepts an empty address', async () => {
+      const signature = await signUnsubscribe(email, '');
+
+      expect(verifyUnsubscribe(email, '', signature)).toBe(true);
+    });
+
+    it('accepts a missing address', async () => {
+      const signature = await signUnsubscribe(email);
+
+      expect(verifyUnsubscribe(email, '', signature)).toBe(true);
     });
   });
 });

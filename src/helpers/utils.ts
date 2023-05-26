@@ -91,38 +91,44 @@ export async function verify(email: string, address: string, salt: string) {
 
 export async function update(email: string, address: string, subscriptions: string[]) {
   const fields: Record<string, string> = {};
-  if (email.length > 0) {
+  if (email && email.length > 0) {
     fields['email = ?'] = email;
   }
-  if (address.length > 0) {
+  if (address && address.length > 0) {
     fields['address = ?'] = address;
+  }
+
+  if (Object.keys(fields).length === 0) {
+    throw new Error('INVALID_PARAMS');
   }
 
   const subs = sanitizeSubscriptions(subscriptions);
   const whereQueryChunk = Object.keys(fields).join(' AND ');
+  const stringifiedSubs = JSON.stringify(subs);
 
-  if (subs.length === 0) {
-    return db.queryAsync(`DELETE FROM subscribers WHERE ${whereQueryChunk}`, Object.values(fields));
-  } else {
-    const stringifiedSubs = JSON.stringify(subs);
-    return db.queryAsync(
-      `UPDATE subscribers SET subscriptions = ? WHERE ${whereQueryChunk} AND verified > 0`,
-      [stringifiedSubs, ...Object.values(fields)]
-    );
-  }
+  return db.queryAsync(
+    `UPDATE subscribers SET subscriptions = ? WHERE ${whereQueryChunk} AND verified > 0`,
+    [stringifiedSubs, ...Object.values(fields)]
+  );
 }
 
-export async function unsubscribe(email: string, subscriptions?: string[]) {
-  const subs = sanitizeSubscriptions(subscriptions);
-
-  if (subs.length === 0) {
-    return await db.queryAsync('DELETE FROM subscribers WHERE email = ?', [email]);
-  } else {
-    return await db.queryAsync('UPDATE subscribers SET subscriptions = ? WHERE email = ?', [
-      JSON.stringify(subs),
-      email
-    ]);
+export async function unsubscribe(email: string, address: string) {
+  const fields: Record<string, string> = {};
+  if (email && email.length > 0) {
+    fields['email = ?'] = email;
   }
+  if (address && address.length > 0) {
+    fields['address = ?'] = address;
+  }
+
+  if (Object.keys(fields).length === 0) {
+    throw new Error('INVALID_PARAMS');
+  }
+
+  return await db.queryAsync(
+    `DELETE FROM subscribers WHERE ${Object.keys(fields).join(' AND ')}`,
+    Object.values(fields)
+  );
 }
 
 export async function getEmailAddresses(email: string) {

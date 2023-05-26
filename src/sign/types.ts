@@ -22,5 +22,8 @@ export const VerifyTypes = {
 };
 
 export const UnsubscribeTypes = {
-  Unsubscribe: [{ name: 'email', type: 'string' }]
+  Unsubscribe: [
+    { name: 'address', type: 'address' },
+    { name: 'email', type: 'string' }
+  ]
 };
