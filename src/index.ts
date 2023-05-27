@@ -28,7 +28,7 @@ app.use('/', rpc);
 app.use('/', preview);
 app.use('/', send);
 
-app.use((req, res) => {
+app.use((_, res) => {
   rpcError(res, 'RECORD_NOT_FOUND', '');
 });
 
