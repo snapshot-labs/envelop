@@ -6,6 +6,7 @@ import rpc from './rpc';
 import preview from './preview';
 import send from './preview/send';
 import { start as startQueue, shutdown as shutdownQueue } from './queues';
+import { rpcError } from './helpers/utils';
 
 const app = express();
 const PORT = process.env.PORT || 3006;
@@ -26,6 +27,10 @@ app.use(cors({ maxAge: 86400 }));
 app.use('/', rpc);
 app.use('/', preview);
 app.use('/', send);
+
+app.use((req, res) => {
+  rpcError(res, 'RECORD_NOT_FOUND', '');
+});
 
 const server = app.listen(PORT, () => console.log(`[http] Listening at http://localhost:${PORT}`));
 
