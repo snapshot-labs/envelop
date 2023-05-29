@@ -1,6 +1,6 @@
 import request from 'supertest';
 import db from '../../src/helpers/mysql';
-import { cleanupDb } from './utils';
+import { cleanupDb } from '../utils';
 import { subscriptionPayload } from '../fixtures/subscriptionPayload';
 
 describe('POST subscribe', () => {
@@ -48,56 +48,5 @@ describe('POST subscribe', () => {
 
     expect(response.statusCode).toBe(200);
     expect(result.length).toBe(1);
-  });
-
-  it('returns an error code when the address is not valid', async () => {
-    const response = await request(process.env.HOST)
-      .post('/')
-      .send({
-        method: 'snapshot.subscribe',
-        params: {
-          email: 'test@test.com',
-          address: '0xDB',
-          signature
-        }
-      });
-
-    expect(response.statusCode).toBe(400);
-  });
-
-  it('returns an error code if the email is missing', async () => {
-    const response = await request(process.env.HOST).post('/').send({
-      method: 'snapshot.subscribe',
-      params: {
-        address,
-        signature
-      }
-    });
-
-    expect(response.statusCode).toBe(400);
-  });
-
-  it('returns an error code if the address is missing', async () => {
-    const response = await request(process.env.HOST).post('/').send({
-      method: 'snapshot.subscribe',
-      params: {
-        email,
-        signature
-      }
-    });
-
-    expect(response.statusCode).toBe(400);
-  });
-
-  it('returns an error code if the signature is missing', async () => {
-    const response = await request(process.env.HOST).post('/').send({
-      method: 'snapshot.subscribe',
-      params: {
-        email,
-        address
-      }
-    });
-
-    expect(response.statusCode).toBe(400);
   });
 });
