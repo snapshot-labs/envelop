@@ -3,12 +3,12 @@
   "version": "0.1.0",
   "license": "MIT",
   "scripts": {
-    "lint:nofix": "eslint src/ --ext .ts",
+    "lint:nofix": "eslint src/ test/ --ext .ts",
     "lint": "yarn lint:nofix --fix",
     "build": "tsc -p tsconfig.json",
     "dev": "nodemon src/index.ts -e js,ts,hbs,json",
     "start": "node dist/src/index.js",
-    "start:test": "dotenv -e test/.env.test yarn start",
+    "start:test": "dotenv -e test/.env.test yarn dev",
     "test": "dotenv -e test/.env.test jest test/unit/",
     "test:e2e": "PORT=3030 start-server-and-test 'yarn start:test' 3030 'jest --runInBand test/e2e/'",
     "typecheck": "tsc --noEmit"
@@ -46,7 +46,7 @@
     "morgan": "^1.10.0",
     "mysql": "^2.18.1",
     "remove-markdown": "^0.5.0",
-    "ts-node": "^10.8.1"
+    "ts-node": "^10.9.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.6.3",
@@ -75,7 +75,7 @@
     "sass": "^1.59.2",
     "start-server-and-test": "^2.0.0",
     "supertest": "^6.3.3",
-    "ts-jest": "^29.0.5",
-    "typescript": "<5"
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.0.0"
   }
 }

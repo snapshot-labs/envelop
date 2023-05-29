@@ -1,5 +1,18 @@
 import db, { SqlRow } from './mysql';
+import { SUBSCRIPTION_TYPE } from '../templates';
 import type { Response } from 'express';
+import type { OkPacket } from 'mysql';
+import type { TemplateId } from '../../types';
+
+type Subscriber = {
+  email: string;
+  address: string;
+  created: number;
+};
+
+function currentTimestamp() {
+  return Math.round(Date.now() / 1e3);
+}
 
 export function rpcSuccess(res: Response, result: string, id: string | number) {
   res.json({
@@ -9,34 +22,113 @@ export function rpcSuccess(res: Response, result: string, id: string | number) {
   });
 }
 
-export function rpcError(res: Response, code: number, e: unknown, id: string | number) {
-  res.status(code).json({
+export function rpcError(res: Response, e: Error | string, id: string | number) {
+  const message = e instanceof Error ? e.message : e;
+  const ERROR_CODES: Record<string, number> = {
+    INVALID_PARAMS: 400,
+    ADDRESS_ALREADY_VERIFIED_WITH_ANOTHER_EMAIL: 400,
+    UNAUTHORIZED: 401,
+    RECORD_NOT_FOUND: 404,
+    SERVER_ERROR: 500
+  };
+  const statusCode = ERROR_CODES[message] || 500;
+
+  res.status(statusCode).json({
     jsonrpc: '2.0',
     error: {
-      code,
-      message: 'unauthorized',
-      data: e
+      code: statusCode,
+      message,
+      data: {}
     },
     id
   });
 }
 
-export async function subscribe(email: string, address: string) {
-  const created = (Date.now() / 1e3).toFixed();
-  const subscriber = { email, address, created };
-  return await db.queryAsync('INSERT IGNORE INTO subscribers SET ?', [subscriber]);
+export function sanitizeSubscriptions(list?: string | string[]) {
+  return (Array.isArray(list) ? list : [list]).filter((item: any) =>
+    SUBSCRIPTION_TYPE.includes(item)
+  ) as typeof SUBSCRIPTION_TYPE;
 }
 
-export async function verify(email: string, address: string) {
-  const verified = (Date.now() / 1e3).toFixed();
-  return await db.queryAsync(
-    'UPDATE subscribers SET verified = ? WHERE email = ? AND address = ? AND verified = ? LIMIT 1',
-    [verified, email, address, 0]
+export async function subscribe(email: string, address: string) {
+  const subscriber: Subscriber = { email, address, created: currentTimestamp() };
+  const insertResponse = (await db.queryAsync('INSERT IGNORE INTO subscribers SET ?', [
+    subscriber
+  ])) as unknown as OkPacket;
+
+  if (insertResponse.affectedRows > 0) {
+    return subscriber;
+  }
+
+  return null;
+}
+
+export async function verify(email: string, address: string, salt: string) {
+  const existingVerifiedEmail = (
+    await db.queryAsync(
+      `SELECT email FROM subscribers WHERE address = ? AND created = ? AND verified > 0 LIMIT 1`,
+      [address, salt]
+    )
+  )[0]?.email;
+
+  if (existingVerifiedEmail === email) {
+    return true;
+  } else if (!!existingVerifiedEmail) {
+    throw new Error('ADDRESS_ALREADY_VERIFIED_WITH_ANOTHER_EMAIL');
+  }
+
+  const updateResult = (await db.queryAsync(
+    'UPDATE subscribers SET verified = ? WHERE email = ? AND address = ? AND created = ? AND verified = ? LIMIT 1',
+    [currentTimestamp(), email, address, salt, 0]
+  )) as unknown as OkPacket;
+
+  if (updateResult.changedRows === 0) {
+    throw new Error('RECORD_NOT_FOUND');
+  }
+
+  return true;
+}
+
+export async function update(email: string, address: string, subscriptions: string[]) {
+  const fields: Record<string, string> = {};
+  if (email && email.length > 0) {
+    fields['email = ?'] = email;
+  }
+  if (address && address.length > 0) {
+    fields['address = ?'] = address;
+  }
+
+  if (Object.keys(fields).length === 0) {
+    throw new Error('INVALID_PARAMS');
+  }
+
+  const subs = sanitizeSubscriptions(subscriptions);
+  const whereQueryChunk = Object.keys(fields).join(' AND ');
+  const stringifiedSubs = JSON.stringify(subs);
+
+  return db.queryAsync(
+    `UPDATE subscribers SET subscriptions = ? WHERE ${whereQueryChunk} AND verified > 0`,
+    [stringifiedSubs, ...Object.values(fields)]
   );
 }
 
-export async function unsubscribe(email: string) {
-  return await db.queryAsync('DELETE FROM subscribers WHERE email = ?', [email]);
+export async function unsubscribe(email: string, address: string) {
+  const fields: Record<string, string> = {};
+  if (email && email.length > 0) {
+    fields['email = ?'] = email;
+  }
+  if (address && address.length > 0) {
+    fields['address = ?'] = address;
+  }
+
+  if (Object.keys(fields).length === 0) {
+    throw new Error('INVALID_PARAMS');
+  }
+
+  return await db.queryAsync(
+    `DELETE FROM subscribers WHERE ${Object.keys(fields).join(' AND ')}`,
+    Object.values(fields)
+  );
 }
 
 export async function getVerifiedSubscriptions(batchSize = 1000) {
@@ -58,6 +150,23 @@ export async function getVerifiedSubscriptions(batchSize = 1000) {
   }
 
   return results;
+}
+
+export async function getAddressSubscriptions(address: string): Promise<TemplateId[]> {
+  const subscriptions = await db.queryAsync(
+    'SELECT email, subscriptions from subscribers WHERE address = ? AND verified > 0 LIMIT 1',
+    [address]
+  );
+
+  if (!subscriptions[0]) {
+    throw new Error('RECORD_NOT_FOUND');
+  }
+
+  if (!subscriptions[0].subscriptions) {
+    return SUBSCRIPTION_TYPE;
+  }
+
+  return JSON.parse(subscriptions[0].subscriptions as string);
 }
 
 // RFC5322 standard, does support most format, but not all

@@ -33,3 +33,11 @@ export function formatProposalHtmlBody(body: string, isTruncated: boolean) {
     (isTruncated ? '<a href="${proposal.link}">(read more)</a>' : '')
   );
 }
+
+export function formatPreheader(text: string, maxLength = 150) {
+  if (text.length > 0 && text.length < maxLength) {
+    return `${text}${'&nbsp;&zwnj;'.repeat(maxLength - text.length)}`;
+  }
+
+  return text;
+}

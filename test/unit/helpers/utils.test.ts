@@ -1,4 +1,4 @@
-import { isValidEmail } from '../../../src/helpers/utils';
+import { isValidEmail, sanitizeSubscriptions } from '../../../src/helpers/utils';
 
 describe('utils', () => {
   describe('isvalidEmail', () => {
@@ -109,6 +109,21 @@ describe('utils', () => {
       // '(unbalancedcomment@example.com'
     ])('returns false on invalid email %s', email => {
       expect(isValidEmail(email)).toBe(false);
+    });
+  });
+
+  describe('sanitizeSubscriptions()', () => {
+    it('filters out invalid types', () => {
+      expect(sanitizeSubscriptions(['summary', 'test'])).toEqual(['summary']);
+    });
+
+    it('also takes a string as argument', () => {
+      expect(sanitizeSubscriptions('summary')).toEqual(['summary']);
+    });
+
+    it('always returns an array', () => {
+      expect(sanitizeSubscriptions([])).toEqual([]);
+      expect(sanitizeSubscriptions(['invalid'])).toEqual([]);
     });
   });
 });

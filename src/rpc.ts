@@ -1,16 +1,18 @@
 import express from 'express';
-import { isAddress } from '@ethersproject/address';
 import {
   subscribe,
   verify,
   unsubscribe,
+  update,
   rpcError,
   rpcSuccess,
-  isValidEmail
+  isValidEmail,
+  getAddressSubscriptions
 } from './helpers/utils';
-import { verifySubscribe, verifyUnsubscribe, verifyVerify } from './sign';
+import { verifySubscribe, verifyUnsubscribe, verifyVerify, verifyUpdate } from './sign';
 import { queueSubscribe, queueProposalActivity } from './queues';
 import { version, name } from '../package.json';
+import { SUBSCRIPTION_TYPE, default as templates } from './templates';
 
 const router = express.Router();
 
@@ -28,35 +30,48 @@ router.post('/', async (req, res) => {
 
   try {
     if (method === 'snapshot.subscribe') {
-      if (!isValidEmail(params.email) || !isAddress(params.address) || !params.signature) {
-        return rpcError(res, 400, 'Invalid params', id);
+      if (!isValidEmail(params.email)) {
+        return rpcError(res, 'INVALID_PARAMS', id);
       }
 
       if (verifySubscribe(params.email, params.address, params.signature)) {
-        await subscribe(params.email, params.address);
-        queueSubscribe(params.email, params.address);
+        const subscriber = await subscribe(params.email, params.address);
+        if (subscriber) {
+          queueSubscribe(subscriber.email, subscriber.address, subscriber.created);
+        }
         return rpcSuccess(res, 'OK', id);
       }
 
-      return rpcError(res, 500, 'Unable to authenticate the request', id);
+      return rpcError(res, 'UNAUTHORIZED', id);
     } else if (method === 'snapshot.verify') {
-      if (verifyVerify(params.email, params.address, params.signature)) {
-        await verify(params.email, params.address);
+      if (verifyVerify(params.email, params.address, params.salt, params.signature)) {
+        await verify(params.email, params.address, params.salt);
         return rpcSuccess(res, 'OK', id);
       }
 
-      return rpcError(res, 500, 'Unable to authenticate your verification link', id);
+      return rpcError(res, 'UNAUTHORIZED', id);
     } else if (method === 'snapshot.unsubscribe') {
-      if (verifyUnsubscribe(params.email, params.signature)) {
-        await unsubscribe(params.email);
+      if (verifyUnsubscribe(params.email, params.address, params.signature)) {
+        await unsubscribe(params.email, params.address);
         return rpcSuccess(res, 'OK', id);
       }
 
-      return rpcError(res, 500, 'Unable to authenticate your verification link', id);
+      return rpcError(res, 'UNAUTHORIZED', id);
+    } else if (method === 'snapshot.update') {
+      if (!Array.isArray(params.subscriptions)) {
+        return rpcError(res, 'INVALID_PARAMS', id);
+      }
+
+      if (verifyUpdate(params.email, params.address, params.subscriptions, params.signature)) {
+        await update(params.email, params.address, params.subscriptions);
+        return rpcSuccess(res, 'OK', id);
+      }
+
+      return rpcError(res, 'UNAUTHORIZED', id);
     }
-  } catch (e) {
+  } catch (e: any) {
     console.error(e);
-    return rpcError(res, 500, e, id);
+    return rpcError(res, e, id);
   }
 });
 
@@ -66,11 +81,11 @@ router.post('/webhook', async (req, res) => {
   const id = body.id.toString().replace('proposal/', '');
 
   if (req.headers['authenticate'] !== `${process.env.WEBHOOK_AUTH_TOKEN || ''}`) {
-    return rpcError(res, 401, 'Unauthorized', id);
+    return rpcError(res, 'UNAUTHORIZED', id);
   }
 
   if (!event || !id) {
-    return rpcError(res, 400, 'Invalid Request', id);
+    return rpcError(res, 'INVALID_PARAMS', id);
   }
 
   if (!['proposal/end', 'proposal/created'].includes(event)) {
@@ -80,9 +95,31 @@ router.post('/webhook', async (req, res) => {
   try {
     queueProposalActivity(event.replace('proposal/', ''), id);
     return rpcSuccess(res, 'OK', id);
-  } catch (e) {
-    return rpcError(res, 500, 'Internal error', id);
+  } catch (e: any) {
+    return rpcError(res, e, id);
   }
+});
+
+router.post('/subscriber', async (req, res) => {
+  const { address } = req.body;
+
+  try {
+    return res.json(await getAddressSubscriptions(address));
+  } catch (e: any) {
+    console.log(e);
+    return rpcError(res, e, address);
+  }
+});
+
+router.get('/subscriptionsList', (req, res) => {
+  return res.json(
+    Object.fromEntries(
+      SUBSCRIPTION_TYPE.map(k => [
+        k,
+        { name: templates[k].name, description: templates[k].description }
+      ])
+    )
+  );
 });
 
 export default router;

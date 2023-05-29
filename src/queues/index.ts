@@ -52,8 +52,8 @@ export function queueScheduler(options: Queue.JobOptions = {}) {
   return scheduleQueue.add({}, options);
 }
 
-export function queueSubscribe(email: string, address: string) {
-  return mailerQueue.add('subscribe', { email, address });
+export function queueSubscribe(email: string, address: string, salt: number) {
+  return mailerQueue.add('subscribe', { email, address, salt });
 }
 
 export function queueProposalActivity(event: string, id: string) {
