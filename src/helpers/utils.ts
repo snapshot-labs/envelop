@@ -1,8 +1,8 @@
-import db from './mysql';
+import db, { SqlRow } from './mysql';
 import { SUBSCRIPTION_TYPE } from '../templates';
 import type { Response } from 'express';
-import { OkPacket } from 'mysql';
-import { TemplateId } from '../../types';
+import type { OkPacket } from 'mysql';
+import type { TemplateId } from '../../types';
 
 type Subscriber = {
   email: string;
@@ -137,8 +137,25 @@ export async function getEmailAddresses(email: string) {
   ]);
 }
 
-export async function getVerifiedSubscriptions() {
-  return await db.queryAsync('SELECT email, address FROM subscribers WHERE verified > 0');
+export async function getVerifiedSubscriptions(batchSize = 1000) {
+  let page = 0;
+  let results: SqlRow[] = [];
+
+  while (true) {
+    const result = await db.queryAsync(
+      'SELECT email, address FROM subscribers WHERE verified > 0 ORDER BY created LIMIT ? OFFSET ?',
+      [batchSize, page * batchSize]
+    );
+
+    if (result.length === 0) {
+      break;
+    }
+
+    page += 1;
+    results = results.concat(result);
+  }
+
+  return results;
 }
 
 export async function getUniqueEmails(subscriptionType: string) {
