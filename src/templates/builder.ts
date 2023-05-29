@@ -1,7 +1,7 @@
 import { compile } from 'handlebars';
 import juice from 'juice';
 import sass from 'sass';
-import { unsubscribeLink, loadPartials } from './utils';
+import { unsubscribeLink, loadPartials, formatPreheader } from './utils';
 import templates from './';
 import type { Message, TemplatePrepareParams, TemplateId } from '../../types';
 
@@ -27,11 +27,7 @@ export default async function buildMessage(id: TemplateId, params: TemplatePrepa
     headers['List-Unsubscribe'] = `<${extraParams.unsubscribeLink}>`;
   }
 
-  if (extraParams.preheader.length > 0) {
-    extraParams.preheader = `${extraParams.preheader}${'&nbsp;&zwnj;'.repeat(
-      150 - extraParams.preheader.length
-    )}`;
-  }
+  extraParams.preheader = formatPreheader(extraParams.preheader);
 
   return {
     to: params.to,
