@@ -4,8 +4,14 @@ import type { Response } from 'express';
 import type { OkPacket } from 'mysql';
 import type { TemplateId } from '../../types';
 
+type Subscriber = {
+  email: string;
+  address: string;
+  created: number;
+};
+
 function currentTimestamp() {
-  return (Date.now() / 1e3).toFixed();
+  return Math.round(Date.now() / 1e3);
 }
 
 export function rpcSuccess(res: Response, result: string, id: string | number) {
@@ -45,15 +51,23 @@ export function sanitizeSubscriptions(list?: string | string[]) {
 }
 
 export async function subscribe(email: string, address: string) {
-  const subscriber = { email, address, created: currentTimestamp() };
-  return await db.queryAsync('INSERT IGNORE INTO subscribers SET ?', [subscriber]);
+  const subscriber: Subscriber = { email, address, created: currentTimestamp() };
+  const insertResponse = (await db.queryAsync('INSERT IGNORE INTO subscribers SET ?', [
+    subscriber
+  ])) as unknown as OkPacket;
+
+  if (insertResponse.affectedRows > 0) {
+    return subscriber;
+  }
+
+  return null;
 }
 
-export async function verify(email: string, address: string) {
+export async function verify(email: string, address: string, salt: string) {
   const existingVerifiedEmail = (
     await db.queryAsync(
-      `SELECT email FROM subscribers WHERE address = ? AND verified > 0 LIMIT 1`,
-      [address]
+      `SELECT email FROM subscribers WHERE address = ? AND created = ? AND verified > 0 LIMIT 1`,
+      [address, salt]
     )
   )[0]?.email;
 
@@ -64,8 +78,8 @@ export async function verify(email: string, address: string) {
   }
 
   const updateResult = (await db.queryAsync(
-    'UPDATE subscribers SET verified = ? WHERE email = ? AND address = ? AND verified = ? LIMIT 1',
-    [currentTimestamp(), email, address, 0]
+    'UPDATE subscribers SET verified = ? WHERE email = ? AND address = ? AND created = ? AND verified = ? LIMIT 1',
+    [currentTimestamp(), email, address, salt, 0]
   )) as unknown as OkPacket;
 
   if (updateResult.changedRows === 0) {
@@ -77,38 +91,44 @@ export async function verify(email: string, address: string) {
 
 export async function update(email: string, address: string, subscriptions: string[]) {
   const fields: Record<string, string> = {};
-  if (email.length > 0) {
+  if (email && email.length > 0) {
     fields['email = ?'] = email;
   }
-  if (address.length > 0) {
+  if (address && address.length > 0) {
     fields['address = ?'] = address;
+  }
+
+  if (Object.keys(fields).length === 0) {
+    throw new Error('INVALID_PARAMS');
   }
 
   const subs = sanitizeSubscriptions(subscriptions);
   const whereQueryChunk = Object.keys(fields).join(' AND ');
+  const stringifiedSubs = JSON.stringify(subs);
 
-  if (subs.length === 0) {
-    return db.queryAsync(`DELETE FROM subscribers WHERE ${whereQueryChunk}`, Object.values(fields));
-  } else {
-    const stringifiedSubs = JSON.stringify(subs);
-    return db.queryAsync(
-      `UPDATE subscribers SET subscriptions = ? WHERE ${whereQueryChunk} AND verified > 0`,
-      [stringifiedSubs, ...Object.values(fields)]
-    );
-  }
+  return db.queryAsync(
+    `UPDATE subscribers SET subscriptions = ? WHERE ${whereQueryChunk} AND verified > 0`,
+    [stringifiedSubs, ...Object.values(fields)]
+  );
 }
 
-export async function unsubscribe(email: string, subscriptions?: string[]) {
-  const subs = sanitizeSubscriptions(subscriptions);
-
-  if (subs.length === 0) {
-    return await db.queryAsync('DELETE FROM subscribers WHERE email = ?', [email]);
-  } else {
-    return await db.queryAsync('UPDATE subscribers SET subscriptions = ? WHERE email = ?', [
-      JSON.stringify(subs),
-      email
-    ]);
+export async function unsubscribe(email: string, address: string) {
+  const fields: Record<string, string> = {};
+  if (email && email.length > 0) {
+    fields['email = ?'] = email;
   }
+  if (address && address.length > 0) {
+    fields['address = ?'] = address;
+  }
+
+  if (Object.keys(fields).length === 0) {
+    throw new Error('INVALID_PARAMS');
+  }
+
+  return await db.queryAsync(
+    `DELETE FROM subscribers WHERE ${Object.keys(fields).join(' AND ')}`,
+    Object.values(fields)
+  );
 }
 
 export async function getEmailAddresses(email: string) {

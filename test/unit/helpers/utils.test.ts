@@ -120,5 +120,10 @@ describe('utils', () => {
     it('also takes a string as argument', () => {
       expect(sanitizeSubscriptions('summary')).toEqual(['summary']);
     });
+
+    it('always returns an array', () => {
+      expect(sanitizeSubscriptions([])).toEqual([]);
+      expect(sanitizeSubscriptions(['invalid'])).toEqual([]);
+    });
   });
 });

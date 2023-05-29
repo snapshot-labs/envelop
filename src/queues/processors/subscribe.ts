@@ -4,10 +4,11 @@ import type { Job } from 'bull';
 import type { Message } from '../../../types';
 
 export default async (job: Job) => {
-  const { email, address } = job.data;
+  const { email, address, salt } = job.data;
   const msg = await templates.subscribe.prepare({
     to: email,
-    address
+    address,
+    salt
   });
 
   return await send(msg as Message);
