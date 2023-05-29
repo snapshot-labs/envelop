@@ -71,14 +71,18 @@ describe('POST update', () => {
   });
 
   describe('with an empty subscriptions option', () => {
-    it('removes the email from the database when passing en empty array', async () => {
+    it('sets the subscriptions to an empty array', async () => {
       const response = await request(process.env.HOST)
         .post('/')
         .send(await subscriberData([]));
-      const result = await db.queryAsync('SELECT * FROM subscribers WHERE email = ?', [email]);
+      const result = await db.queryAsync(
+        'SELECT DISTINCT(subscriptions) FROM subscribers WHERE email = ? and ADDRESS = ? AND verified > 0',
+        [email, address]
+      );
 
       expect(response.statusCode).toBe(200);
-      expect(result.length).toBe(2);
+      expect(result[0].subscriptions).toEqual(JSON.stringify([]));
+      expect(result.length).toBe(1);
     });
   });
 

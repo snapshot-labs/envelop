@@ -1,10 +1,18 @@
 import { Wallet } from '@ethersproject/wallet';
-import { domain, verifySubscribe, signUpdate, verifyUpdate } from '../../../src/sign';
-import { SubscribeTypes, SubscriptionsTypes } from '../../../src/sign/types';
+import {
+  domain,
+  verifySubscribe,
+  signUpdate,
+  verifyUpdate,
+  signUnsubscribe,
+  verifyUnsubscribe
+} from '../../../src/sign';
+import { SubscribeTypes, SubscriptionsTypes, UnsubscribeTypes } from '../../../src/sign/types';
 import type { TypedDataField } from '@ethersproject/abstract-signer';
 
 describe('sign', () => {
   const email = 'test@test.com';
+  const salt = `${Math.floor(+new Date() / 1e3)}`;
   const privateKey = '0a5b35deb46ca896e63fcbfbce3b7fd40991b37bb313e8f9e713e9a04317053a';
   const wallet = new Wallet(privateKey);
   const address = wallet.address;
@@ -18,7 +26,7 @@ describe('sign', () => {
 
   describe('verifySubscribe', () => {
     it('returns true when the signature is valid', async () => {
-      const signature = await signFromUserWallet({ email, address }, SubscribeTypes);
+      const signature = await signFromUserWallet({ email, address, salt }, SubscribeTypes);
 
       expect(verifySubscribe(email, address, signature)).toBe(true);
     });
@@ -75,6 +83,26 @@ describe('sign', () => {
       const signature = await signUpdate(email, address, ['s']);
 
       expect(verifyUpdate(email, address, ['sss'], signature)).toBe(false);
+    });
+  });
+
+  describe('verifyUnsubscribe()', () => {
+    it('accepts an empty email', async () => {
+      const signature = await signFromUserWallet({ email: '', address }, UnsubscribeTypes);
+
+      expect(verifyUnsubscribe('', address, signature)).toBe(true);
+    });
+
+    it('accepts an empty address', async () => {
+      const signature = await signUnsubscribe(email, '');
+
+      expect(verifyUnsubscribe(email, '', signature)).toBe(true);
+    });
+
+    it('accepts a missing address', async () => {
+      const signature = await signUnsubscribe(email);
+
+      expect(verifyUnsubscribe(email, '', signature)).toBe(true);
     });
   });
 });
