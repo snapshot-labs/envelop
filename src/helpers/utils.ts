@@ -131,12 +131,6 @@ export async function unsubscribe(email: string, address: string) {
   );
 }
 
-export async function getEmailAddresses(email: string) {
-  return await db.queryAsync('SELECT address FROM subscribers WHERE email = ? AND verified > 0', [
-    email
-  ]);
-}
-
 export async function getVerifiedSubscriptions(batchSize = 1000) {
   let page = 0;
   let results: SqlRow[] = [];
@@ -156,14 +150,6 @@ export async function getVerifiedSubscriptions(batchSize = 1000) {
   }
 
   return results;
-}
-
-export async function getUniqueEmails(subscriptionType: string) {
-  const subscription = sanitizeSubscriptions(subscriptionType)[0];
-  return await db.queryAsync(
-    `SELECT DISTINCT email FROM subscribers WHERE verified > 0 AND ` +
-      `(JSON_CONTAINS(subscriptions, '"${subscription}"') OR subscriptions IS NULL)`
-  );
 }
 
 export async function getAddressSubscriptions(address: string): Promise<TemplateId[]> {
