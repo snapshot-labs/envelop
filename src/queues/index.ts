@@ -59,7 +59,3 @@ export function queueSubscribe(email: string, address: string, salt: number) {
 export function queueProposalActivity(event: string, id: string) {
   return proposalActivityQueue.add('proposalFactory', { event, id });
 }
-
-export function queueProposalActivity(event: string, id: string) {
-  return proposalActivityQueue.add('proposalFactory', { event, id });
-}
