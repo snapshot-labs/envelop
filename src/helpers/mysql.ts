@@ -6,7 +6,7 @@ import Connection from 'mysql/lib/Connection';
 import bluebird from 'bluebird';
 import { ConnectionString } from 'connection-string';
 
-type values = string | number | boolean;
+type values = string | number | boolean | null;
 export type SqlRow = Record<string, values>;
 type SqlQueryArgs = values | Record<string, values>;
 
