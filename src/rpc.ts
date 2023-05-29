@@ -10,7 +10,7 @@ import {
   getAddressSubscriptions
 } from './helpers/utils';
 import { verifySubscribe, verifyUnsubscribe, verifyVerify, verifyUpdate } from './sign';
-import { queueSubscribe } from './queues';
+import { queueSubscribe, queueProposalActivity } from './queues';
 import { version, name } from '../package.json';
 import { SUBSCRIPTION_TYPE, default as templates } from './templates';
 
@@ -71,6 +71,31 @@ router.post('/', async (req, res) => {
     }
   } catch (e: any) {
     console.error(e);
+    return rpcError(res, e, id);
+  }
+});
+
+router.post('/webhook', async (req, res) => {
+  const body = req.body || {};
+  const event = body.event.toString();
+  const id = body.id.toString().replace('proposal/', '');
+
+  if (req.headers['authenticate'] !== `${process.env.WEBHOOK_AUTH_TOKEN || ''}`) {
+    return rpcError(res, 'UNAUTHORIZED', id);
+  }
+
+  if (!event || !id) {
+    return rpcError(res, 'INVALID_PARAMS', id);
+  }
+
+  if (!['proposal/end', 'proposal/created'].includes(event)) {
+    return rpcSuccess(res, 'Event skipped', id);
+  }
+
+  try {
+    queueProposalActivity(event.replace('proposal/', ''), id);
+    return rpcSuccess(res, 'OK', id);
+  } catch (e: any) {
     return rpcError(res, e, id);
   }
 });

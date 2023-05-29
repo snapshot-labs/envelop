@@ -15,6 +15,7 @@ router.get('/preview/:template', async (req, res) => {
       id: req.query.id
     });
   } catch (e) {
+    console.log(e);
     return res.sendStatus(404);
   }
 

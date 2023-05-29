@@ -29,11 +29,7 @@
   <body class="body" xml:lang="en">
     {{#if preheader}}
       <div style="display: none; max-height: 0px; overflow: hidden;">
-        {{preheader}}
-      </div>
-
-      <div style="display: none; max-height: 0px; overflow: hidden;">
-        &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279; &#847; &zwnj; &nbsp; &#8199; &#65279;
+        {{{preheader}}}
       </div>
     {{/if}}
     <div class="container" role="article" aria-roledescription="email" aria-label="{{subject}}" lang="en" dir="ltr" style="font-size:medium; font-size:max(16px, 1em);">
@@ -62,7 +58,7 @@
             <tr>
               <td>
                 {{#if unsubscribeLink}}
-                  You are receiving this email because you are subscribed to Snapshot summary report.
+                  You are receiving this email because you are subscribed to Snapshot mailing list.
                   <br/>
                   <a href="{{unsubscribeLink}}">Unsubscribe</a> to stop receiving this kind of email.
                 {{/if}}

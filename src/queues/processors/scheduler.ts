@@ -7,7 +7,7 @@ export default async (): Promise<number> => {
   const results = await getUniqueEmails('summary');
   const summaryTimeRange = previousWeek(new Date(), constants.summary.timezone);
 
-  mailerQueue.addBulk(
+  await mailerQueue.addBulk(
     results.map(result => ({
       name: 'summary',
 

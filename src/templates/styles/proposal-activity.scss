@@ -1,0 +1,158 @@
+.content-body-heading {
+  h1.long-title {
+    font-size: 1.75em;
+  }
+}
+
+.proposal-fullbody {
+  font-size: 1.1em;
+  line-height: 1.4em;
+  word-break: break-word;
+
+  padding-top: 1.5em;
+
+  a {
+    color: $primary-color;
+  }
+
+  h1,
+  h2 {
+    font-size: 1.5em;
+    margin: 1.5em 0 1em;
+  }
+
+  h3 {
+    font-size: 1.25em 0 1em;
+  }
+
+  hr {
+    margin: 0.5em 0;
+    border: 2px solid transparent;
+    border-color: $border-color;
+  }
+
+  table {
+    border: 1px solid $border-color;
+    width: 100%;
+    margin: 1em 0;
+    font-size: 0.81em;
+
+    th,
+    td {
+      padding: 0.25em 0.5em;
+      border: 1px solid $border-color;
+    }
+  }
+}
+
+.proposal {
+  &-space {
+    &-logo {
+      width: 1.5em;
+      padding-right: 0 !important;
+    }
+
+    &-avatar {
+      width: 1em;
+      height: 1em;
+
+      border-radius: 100%;
+    }
+  }
+
+  &-choices {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 0.5em;
+
+    &-item {
+      border-radius: 3px;
+      padding: 0.5em 1em;
+      position: relative;
+
+      &.pending-result {
+        border-width: 1px;
+        border-left-width: 5px;
+        border-style: solid;
+        border-color: $border-color;
+
+        .vote-btn {
+          border-width: 1px;
+          border-style: solid;
+          border-color: $border-color;
+          border-radius: 100%;
+          width: 1em;
+          height: 1em;
+        }
+      }
+
+      &.winning {
+        font-weight: bold;
+        border-width: 1px;
+        border-style: solid;
+        border-color: $border-color;
+        padding: 1em;
+
+        .progress {
+          .progress-bar {
+            background-color: $secondary-color;
+          }
+        }
+      }
+
+      .number {
+        text-align: right;
+        vertical-align: top;
+        padding-right: 1em;
+        width: 40px;
+        word-break: normal;
+        font-size: 1.125em;
+      }
+
+      .progress {
+        background-color: $border-color;
+        height: 4px;
+        border-radius: 4px;
+        margin-top: 0.25em;
+
+        .progress-bar {
+          height: 4px;
+          background-color: $primary-color;
+          border-radius: 4px;
+        }
+      }
+
+      table {
+        z-index: 2;
+        position: relative;
+      }
+    }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  $border-color: #2d2d2d !important;
+  $content-text-color: #8b949e !important;
+
+  .proposal-choices-item {
+    border-color: $border-color;
+
+    .vote-btn {
+      border-color: $content-text-color;
+    }
+
+    .progress {
+      background-color: $border-color;
+    }
+
+    .winning {
+      border-color: $border-color;
+    }
+  }
+
+  .proposal-fullbody {
+    hr {
+      border-color: $border-color;
+    }
+  }
+}

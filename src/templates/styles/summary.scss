@@ -1,0 +1,116 @@
+.space {
+  &-block {
+    border: 1px solid $border-color;
+    margin-bottom: 1em;
+
+    width: 100%;
+  }
+
+  &-title td {
+    font-weight: 500;
+    padding: 0.5em 1em;
+    border-bottom: 1px solid $border-color;
+  }
+
+  &-body {
+    padding: 1em 1em 0;
+  }
+
+  &-logo {
+    width: 1em;
+    padding-right: 0 !important;
+  }
+
+  &-avatar {
+    width: 1em;
+    height: 1em;
+
+    border-radius: 100%;
+  }
+}
+
+.stats {
+  &-block {
+    border: 1px solid $border-color;
+    margin: 1em 0;
+
+    width: 100%;
+
+    td {
+      padding: 1em;
+
+      strong {
+        color: $mild-contrast-text-color;
+        font-size: 2em;
+        line-height: 1.25em;
+        display: block;
+      }
+
+      &.bordered {
+        border-right: 1px solid $border-color;
+      }
+    }
+  }
+}
+
+.status-block {
+  padding-top: 1em;
+
+  .proposal {
+    &-title {
+      text-decoration: none;
+      color: $contrast-text-color;
+    }
+
+    &-body {
+      font-size: 0.85em;
+      margin: 0.5em 0 1em;
+
+      .has-voted {
+        color: $secondary-color;
+        display: block;
+        margin-top: 0.5em;
+      }
+    }
+
+    &-space {
+      &-title {
+        font-size: 1.1em;
+        margin-top: 2em;
+      }
+
+      &-logo {
+        width: 1.5em;
+        padding-right: 0 !important;
+      }
+
+      &-avatar {
+        width: 1em;
+        height: 1em;
+
+        border-radius: 100%;
+      }
+    }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  $border-color: #2d2d2d !important;
+  $contrast-text-color: #ffffff !important;
+  $mild-contrast-text-color: #c5cacf !important;
+
+  .space-block,
+  .space-title td,
+  .stats-block,
+  .stats-block td.bordered {
+    border-color: $border-color;
+  }
+
+  .stats-block td strong {
+    color: $mild-contrast-text-color;
+  }
+
+  .proposal-title {
+    color: $contrast-text-color;
+  }
+}

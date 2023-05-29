@@ -137,6 +137,10 @@ export async function getEmailAddresses(email: string) {
   ]);
 }
 
+export async function getVerifiedSubscriptions() {
+  return await db.queryAsync('SELECT email, address FROM subscribers WHERE verified > 0');
+}
+
 export async function getUniqueEmails(subscriptionType: string) {
   const subscription = sanitizeSubscriptions(subscriptionType)[0];
   return await db.queryAsync(
