@@ -80,7 +80,7 @@ router.post('/webhook', async (req, res) => {
   const event = body.event.toString();
   const id = body.id.toString().replace('proposal/', '');
 
-  if (req.headers['authenticate'] !== `${process.env.WEBHOOK_AUTH_TOKEN || ''}`) {
+  if (req.headers['Authentication'] !== `${process.env.WEBHOOK_AUTH_TOKEN || ''}`) {
     return rpcError(res, 'UNAUTHORIZED', id);
   }
 
