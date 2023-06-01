@@ -60,16 +60,7 @@ router.post('/', async (req, res) => {
         return rpcError(res, 'INVALID_PARAMS', id);
       }
 
-      // Do not check `subscriptions` for requests coming from
-      // envelop-ui, signed by backend
-      const isValidSignature = verifyUpdate(
-        params.email,
-        params.address,
-        params.address && params.address.length > 0 ? params.subscriptions : [],
-        params.signature
-      );
-
-      if (isValidSignature) {
+      if (verifyUpdate(params.email, params.address, params.subscriptions, params.signature)) {
         await update(params.email, params.address, params.subscriptions);
         return rpcSuccess(res, 'OK', id);
       }
