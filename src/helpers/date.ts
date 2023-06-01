@@ -18,6 +18,6 @@ export function previousWeek(date: Date, tz: string) {
   };
 }
 
-export function formatShortDate(date: Date, tz: string) {
+export function formatShortDate(date: Date, tz = 'UTC') {
   return dayjs(date).tz(tz).format('MMMM Do, YYYY');
 }

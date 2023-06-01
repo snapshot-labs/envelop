@@ -1,0 +1,17 @@
+{{proposal.title}}
+==================================
+{{proposal.link}}
+
+Submitted by {{proposal.author}} on {{proposal.space.name}}
+Voting period from {{formattedStartDate}} to {{formattedEndDate}}
+
+{{proposalTextBody}}
+
+--------------
+Cast you votes
+--------------
+{{#each proposal.choices}}
+[ ] {{this}}
+{{/each}}
+
+To vote, visit: {{proposal.link}}

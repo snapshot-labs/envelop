@@ -30,11 +30,12 @@ function verify(
   }
 }
 
-export function subscribe(email: string, address: string) {
+export function subscribe(email: string, address: string, salt: string) {
   return sign(
     {
       email,
-      address: getAddress(address)
+      address: getAddress(address),
+      salt
     },
     SubscribeTypes
   );
@@ -52,21 +53,23 @@ export function verifySubscribe(email: string, address: string, signature: strin
   );
 }
 
-export function signVerify(email: string, address: string) {
+export function signVerify(email: string, address: string, salt: string) {
   return sign(
     {
       email,
-      address: getAddress(address)
+      address: getAddress(address),
+      salt
     },
     VerifyTypes
   );
 }
 
-export function verifyVerify(email: string, address: string, signature: string) {
+export function verifyVerify(email: string, address: string, salt: string, signature: string) {
   return verify(
     {
       email,
-      address: getAddress(address)
+      address: getAddress(address),
+      salt
     },
     wallet.address,
     signature,
