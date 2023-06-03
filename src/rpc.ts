@@ -77,10 +77,10 @@ router.post('/', async (req, res) => {
 
 router.post('/webhook', async (req, res) => {
   const body = req.body || {};
-  const event = body.event.toString();
-  const id = body.id.toString().replace('proposal/', '');
+  const event = body.event?.toString() ?? '';
+  const id = body.id?.toString().replace('proposal/', '') ?? '';
 
-  if (req.headers['Authentication'] !== `${process.env.WEBHOOK_AUTH_TOKEN || ''}`) {
+  if (req.headers['authentication'] !== `${process.env.WEBHOOK_AUTH_TOKEN || ''}`) {
     return rpcError(res, 'UNAUTHORIZED', id);
   }
 
