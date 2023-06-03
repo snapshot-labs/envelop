@@ -1,8 +1,6 @@
 import fs from 'fs';
 import prepareSubscribe from './subscribe';
 import prepareSummary from './summary';
-import prepareNewProposal from './newProposal';
-import prepareClosedProposal from './closedProposal';
 import type { Templates, TemplateId } from '../../types';
 
 // List of subscriptions type, excluding system emails
@@ -15,7 +13,7 @@ const templates: Templates = {
     from: 'Snapshot <notify@snapshot.org>',
     subject: 'Verify your email address',
     text: fs.readFileSync('./src/templates/subscribe/text.hbs', 'utf-8'),
-    preheader: 'Verify your email to confirm your subscription to Snapshot mailing list',
+    preheader: 'Verify your email to confirm your weekly summary subscription',
     html: fs.readFileSync('./src/templates/subscribe/html.hbs', 'utf-8'),
     prepare: params => prepareSubscribe(params)
   },
@@ -32,26 +30,26 @@ const templates: Templates = {
   newProposal: {
     name: 'Proposal creation',
     description: 'Get informed when a new proposal is submitted in your followed spaces.',
-    from: 'Snapshot <notify@snapshot.org>',
-    subject: '[{{proposal.space.name}}] New proposal: {{proposal.title}}',
-    text: fs.readFileSync('./src/templates/newProposal/text.hbs', 'utf-8'),
-    preheader:
-      'Voting period from {{formattedStartDate}} to {{formattedEndDate}} - ' +
-      'Submitted by {{proposal.author}}',
-    html: fs.readFileSync('./src/templates/newProposal/html.hbs', 'utf-8'),
-    prepare: params => prepareNewProposal(params)
+    from: '',
+    subject: '',
+    text: '',
+    preheader: '',
+    html: '',
+    prepare: params => {
+      return Promise.resolve({});
+    }
   },
   closedProposal: {
     name: 'Proposal closure',
     description: 'Get informed when a proposal is closed in your followed spaces.',
-    from: 'Snapshot <notify@snapshot.org>',
-    subject: '[{{proposal.space.name}}] Closed proposal: {{proposal.title}}',
-    text: fs.readFileSync('./src/templates/closedProposal/text.hbs', 'utf-8'),
-    preheader:
-      '{{winningChoiceName}} {{winningChoicePercentage}}% - ' +
-      '{{formattedVotesCount}} total votes - Voting ended on {{formattedEndDate}}',
-    html: fs.readFileSync('./src/templates/closedProposal/html.hbs', 'utf-8'),
-    prepare: params => prepareClosedProposal(params)
+    from: '',
+    subject: '',
+    text: '',
+    preheader: '',
+    html: '',
+    prepare: params => {
+      return Promise.resolve({});
+    }
   }
 };
 

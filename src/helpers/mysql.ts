@@ -7,9 +7,8 @@ import bluebird from 'bluebird';
 import { ConnectionString } from 'connection-string';
 
 type values = string | number | boolean | null;
-export type SqlRow = Record<string, values>;
-type SqlQueryArgs = values | Record<string, values>;
-
+type SqlRow = Record<string, values>;
+type SqlQueryArgs = values | values[] | Record<string, values>;
 interface PromisedPool {
   queryAsync: (query: string, args?: SqlQueryArgs | SqlQueryArgs[]) => Promise<SqlRow[]>;
   endAsync: () => Promise<any>;

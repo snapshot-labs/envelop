@@ -17,9 +17,8 @@ const client = new ApolloClient({
 });
 
 const FOLLOWS_QUERY = gql`
-  query Follows($follower_in: [String], $space: String) {
-    follows(where: { follower_in: $follower_in, space: $space }, first: 100) {
-      follower
+  query Follows($follower_in: [String]) {
+    follows(where: { follower_in: $follower_in }, first: 100) {
       space {
         id
       }
@@ -48,29 +47,6 @@ const PROPOSALS_QUERY = gql`
   }
 `;
 
-const PROPOSAL_QUERY = gql`
-  query Proposal($id: String) {
-    proposal(id: $id) {
-      id
-      body
-      title
-      start
-      end
-      state
-      link
-      choices
-      scores
-      scores_total
-      votes
-      author
-      space {
-        id
-        name
-      }
-    }
-  }
-`;
-
 const VOTES_QUERY = gql`
   query Votes($proposal_in: [String], $voter_in: [String]) {
     votes(where: { proposal_in: $proposal_in, voter_in: $voter_in }, first: 100) {
@@ -83,7 +59,7 @@ const VOTES_QUERY = gql`
 `;
 
 type Space = { id: string; name?: string };
-type Follow = { space: Space; follower: string };
+type Follow = { space: Space };
 export type Proposal = {
   id: string;
   body: string;
@@ -93,12 +69,8 @@ export type Proposal = {
   state: string;
   link: string;
   space: Space;
-  choices?: string[];
-  scores?: number[];
-  scores_total?: number;
   shortBody?: string;
   voted?: boolean;
-  votes?: number;
 };
 export type Vote = {
   id: string;
@@ -184,31 +156,4 @@ export async function getProposals(
   });
 
   return groupedProposals;
-}
-
-export async function getProposal(id: string) {
-  const {
-    data: { proposal }
-  }: { data: { proposal: Proposal | null } } = await client.query({
-    query: PROPOSAL_QUERY,
-    variables: {
-      id
-    }
-  });
-
-  return proposal;
-}
-
-export async function getFollows(followers: string[], space?: string) {
-  const {
-    data: { follows }
-  }: { data: { follows: Follow[] } } = await client.query({
-    query: FOLLOWS_QUERY,
-    variables: {
-      follower_in: followers,
-      space
-    }
-  });
-
-  return follows;
 }

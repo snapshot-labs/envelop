@@ -9,7 +9,6 @@ describe('POST verify', () => {
   const emailC = 'test-verify-c@test.com';
   const address = '0xDBDd4c5473692Fa0490bfF6AAbf1181f29Ca851e';
   const addressB = '0x54C8b17E5c46B97d25498205182e0382234B2532';
-  const timestamp = `${Math.floor(+new Date() / 1e3)}`;
 
   async function subscriberData(email: string, address: string, signature?: string) {
     return {
@@ -17,8 +16,7 @@ describe('POST verify', () => {
       params: {
         email,
         address,
-        salt: timestamp,
-        signature: signature || (await signVerify(email, address, timestamp))
+        signature: signature || (await signVerify(email, address))
       }
     };
   }
@@ -28,9 +26,9 @@ describe('POST verify', () => {
 
     await Promise.all(
       [
-        [timestamp, email, address, 0],
-        [timestamp, emailB, addressB, 0],
-        [timestamp, emailC, addressB, 1]
+        [+new Date() / 1e3, email, address, 0],
+        [+new Date() / 1e3, emailB, addressB, 0],
+        [+new Date() / 1e3, emailC, addressB, 1]
       ].map(async data => {
         await db.queryAsync(
           'INSERT INTO subscribers (created, email, address, verified) VALUES (?, ?, ?, ?)',
