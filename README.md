@@ -1,8 +1,6 @@
 # Envelop
 
-Envelop is the service sending the snapshot weekly report email to subscribers.
-
-The API also handle adding and removing users from the subscription list.
+Envelop is the service behind Snapshot mailing list .
 
 This service is API only, and should be used together with [Envelop-UI](https://github.com/snapshot-labs/envelop-ui) to handle all front-end related matters.
 
@@ -14,7 +12,7 @@ This service is API only, and should be used together with [Envelop-UI](https://
 
 This service depends on a couple of services:
 
-- Node.js (>= 18)
+- Node.js "^16.0.0"
 - MySQL5+
 - A [sendgrid](https://sendgrid.com/) account (email provider)
 - An [Envelop-UI](https://github.com/snapshot-labs/envelop-ui) instance
@@ -107,19 +105,6 @@ All endpoints will respond with a [JSON-RPC 2.0](https://www.jsonrpc.org/specifi
 
 Take advantage of the `MESSAGE` code to show meaningful error message to your end user.
 
-## Production
-
-```bash
-// Build the project
-yarn build
-// Start the app
-yarn start
-```
-
-## Contributing
-
-See [the contribution guideline](.github/CONTRIBUTING.md)
-
 ## Sending test emails
 
 As triggering emails involve a few tedious steps on the UI, a few CLI scripts are provided to
@@ -147,6 +132,54 @@ yarn ts-node scripts/send-summary.ts [EMAIL] [SEND_DATE]
 - `EMAIL`: your email address (needs to already exist and verified in the database, in order to fetch the related wallet addresses)
 - `SEND_DATE`: a `yyyy-mm-dd` formatted date, to emulate the date the email is sent (affects the summary report time window)
 
-## Licence
+### To send a `newProposal` test email
+
+```bash
+yarn ts-node scripts/send-new-proposal.ts [EMAIL] [PROPOSAL-ID]
+// E.g.
+// yarn ts-node scripts/send-new-proposal.ts test@snapshot.org 0xeF8305E140ac520225DAf050e2f71d5fBcC543e7
+```
+
+- `EMAIL`: your email address (not required to already exist in the database)
+- `PROPOSAL-id`: a proposal ID
+
+### To send a `closedProposal` test email
+
+```bash
+yarn ts-node scripts/send-closed-proposal.ts [EMAIL] [PROPOSAL-ID]
+// E.g.
+// yarn ts-node scripts/send-closed-proposal.ts test@snapshot.org 0xeF8305E140ac520225DAf050e2f71d5fBcC543e7
+```
+
+- `EMAIL`: your email address (not required to already exist in the database)
+- `PROPOSAL-id`: a proposal ID
+
+### To trigger a `webhook` event
+
+Emulate an incoming webhook event (require that the envelop instance to be started, else the emails will just be queued without being sent)
+
+```bash
+yarn ts-node scripts/trigger-webhook-proposal.ts [EVENT] [ID]
+// E.g.
+// yarn ts-node scripts/trigger-webhook.ts proposal/created proposal/0x88583c43b196ec86cee45345611b582108f1d6933ab688a7cae992a6baa552a6
+```
+
+- `EVENT`: webhook event name
+- `ID`: webhook ID
+
+## Production
+
+```bash
+// Build the project
+yarn build
+// Start the service
+yarn start
+```
+
+## Contributing
+
+See [the contribution guideline](.github/CONTRIBUTING.md)
+
+## License
 
 Envelop is open-sourced software licensed under the © [MIT license](LICENSE).
