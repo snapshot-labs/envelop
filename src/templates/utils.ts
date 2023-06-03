@@ -1,5 +1,6 @@
 import fs from 'fs';
 import Handlebars from 'handlebars';
+import { marked } from 'marked';
 import { signUnsubscribe, signUpdate } from '../sign';
 
 export async function unsubscribeLink(email: string) {
@@ -38,4 +39,22 @@ export function loadPartials() {
         fs.readFileSync(`${partialDir}/${item.name}`, 'utf-8')
       );
     });
+}
+
+export function formatProposalHtmlBody(body: string, isTruncated: boolean) {
+  return (
+    marked
+      .parse(`${body}${isTruncated ? `...` : ''}`)
+      .replace(/<img[^>]*>/g, '')
+      .replace(/(\n)(\s*[^<])/g, '<br/>$2') +
+    (isTruncated ? '<a href="${proposal.link}">(read more)</a>' : '')
+  );
+}
+
+export function formatPreheader(text: string, maxLength = 150) {
+  if (text.length > 0 && text.length < maxLength) {
+    return `${text}${'&nbsp;&zwnj;'.repeat(maxLength - text.length)}`;
+  }
+
+  return text;
 }
