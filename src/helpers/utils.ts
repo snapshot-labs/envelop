@@ -131,13 +131,15 @@ export async function unsubscribe(email: string, address: string) {
   );
 }
 
-export async function getVerifiedSubscriptions(batchSize = 1000) {
+export async function getVerifiedSubscriptions(subscription: string, batchSize = 1000) {
   let page = 0;
   let results: SqlRow[] = [];
+  const sub = sanitizeSubscriptions(subscription)[0];
 
   while (true) {
     const result = await db.queryAsync(
-      'SELECT email, address FROM subscribers WHERE verified > 0 ORDER BY created LIMIT ? OFFSET ?',
+      'SELECT email, address, subscriptions FROM subscribers WHERE verified > 0 ' +
+        `AND JSON_CONTAINS(subscriptions, '"${sub}"') ORDER BY created LIMIT ? OFFSET ?`,
       [batchSize, page * batchSize]
     );
 
