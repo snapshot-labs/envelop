@@ -4,6 +4,7 @@ import { formatShortDate } from '../../helpers/date';
 import buildMessage from '../builder';
 import constants from '../../helpers/constants.json';
 import type { TemplatePrepareParams } from '../../../types';
+import { getModerationList } from '../../helpers/utils';
 
 type ProposalStatus = 'pending' | 'active' | 'closed';
 type GroupedSpaces = { space: Space; proposals: Proposal[] };
@@ -12,12 +13,18 @@ type GroupedProposals = Record<ProposalStatus, GroupedSpaces[]>;
 const MAX_SHORT_BODY_LENGTH = 150;
 
 export async function getGroupedProposals(addresses: string[], startDate: Date, endDate: Date) {
+  const { flaggedSpaces, flaggedProposals } = await getModerationList();
+
   const follows = await getFollows(addresses);
-  const proposals = await getProposals(
-    follows.map(follow => follow.space.id),
-    startDate,
-    endDate
-  );
+  const proposals = (
+    await getProposals(
+      follows
+        .map(follow => follow.space.id)
+        .filter((spaceId: string) => !flaggedSpaces.includes(spaceId)),
+      startDate,
+      endDate
+    )
+  ).filter(proposal => !flaggedProposals.includes(proposal.id));
   const votes = await getVotes(
     proposals.map(proposal => proposal.id),
     addresses

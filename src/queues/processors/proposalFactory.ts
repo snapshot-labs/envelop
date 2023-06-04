@@ -1,7 +1,7 @@
 import chunk from 'lodash.chunk';
 import { mailerQueue } from '../index';
 import { getFollows, getProposal } from '../../helpers/snapshot';
-import { getVerifiedSubscriptions } from '../../helpers/utils';
+import { getModerationList, getVerifiedSubscriptions } from '../../helpers/utils';
 import type { Job } from 'bull';
 
 const NEW_PROPOSAL_DELAY = 600000; // 10 minutes
@@ -42,6 +42,11 @@ async function getSubscribersEmailFollowingSpace(spaceId: string) {
 export default async (job: Job): Promise<number> => {
   const { event, id } = job.data;
   const templateId = eventToTemplate(event);
+  const { flaggedProposals } = await getModerationList();
+  if (flaggedProposals.includes(id)) {
+    return 0;
+  }
+
   const proposal = await getProposal(id);
 
   if (!proposal) {
