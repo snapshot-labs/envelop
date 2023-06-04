@@ -136,7 +136,7 @@ describe('POST update', () => {
             email,
             address: '',
             subscriptions: ['newProposal'],
-            signature: await signUpdate(email, '', [])
+            signature: await signUpdate(email, '', ['newProposal'])
           }
         });
       const unverified = await db.queryAsync(

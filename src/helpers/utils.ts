@@ -1,17 +1,11 @@
-import db, { SqlRow } from './mysql';
+import db from './mysql';
 import { SUBSCRIPTION_TYPE } from '../templates';
 import type { Response } from 'express';
-import type { OkPacket } from 'mysql';
-import type { TemplateId } from '../../types';
-
-type Subscriber = {
-  email: string;
-  address: string;
-  created: number;
-};
+import { OkPacket } from 'mysql';
+import { TemplateId } from '../../types';
 
 function currentTimestamp() {
-  return Math.round(Date.now() / 1e3);
+  return (Date.now() / 1e3).toFixed();
 }
 
 export function rpcSuccess(res: Response, result: string, id: string | number) {
@@ -51,23 +45,15 @@ export function sanitizeSubscriptions(list?: string | string[]) {
 }
 
 export async function subscribe(email: string, address: string) {
-  const subscriber: Subscriber = { email, address, created: currentTimestamp() };
-  const insertResponse = (await db.queryAsync('INSERT IGNORE INTO subscribers SET ?', [
-    subscriber
-  ])) as unknown as OkPacket;
-
-  if (insertResponse.affectedRows > 0) {
-    return subscriber;
-  }
-
-  return null;
+  const subscriber = { email, address, created: currentTimestamp() };
+  return await db.queryAsync('INSERT IGNORE INTO subscribers SET ?', [subscriber]);
 }
 
-export async function verify(email: string, address: string, salt: string) {
+export async function verify(email: string, address: string) {
   const existingVerifiedEmail = (
     await db.queryAsync(
-      `SELECT email FROM subscribers WHERE address = ? AND created = ? AND verified > 0 LIMIT 1`,
-      [address, salt]
+      `SELECT email FROM subscribers WHERE address = ? AND verified > 0 LIMIT 1`,
+      [address]
     )
   )[0]?.email;
 
@@ -78,8 +64,8 @@ export async function verify(email: string, address: string, salt: string) {
   }
 
   const updateResult = (await db.queryAsync(
-    'UPDATE subscribers SET verified = ? WHERE email = ? AND address = ? AND created = ? AND verified = ? LIMIT 1',
-    [currentTimestamp(), email, address, salt, 0]
+    'UPDATE subscribers SET verified = ? WHERE email = ? AND address = ? AND verified = ? LIMIT 1',
+    [currentTimestamp(), email, address, 0]
   )) as unknown as OkPacket;
 
   if (updateResult.changedRows === 0) {
@@ -131,25 +117,18 @@ export async function unsubscribe(email: string, address: string) {
   );
 }
 
-export async function getVerifiedSubscriptions(batchSize = 1000) {
-  let page = 0;
-  let results: SqlRow[] = [];
+export async function getEmailAddresses(email: string) {
+  return await db.queryAsync('SELECT address FROM subscribers WHERE email = ? AND verified > 0', [
+    email
+  ]);
+}
 
-  while (true) {
-    const result = await db.queryAsync(
-      'SELECT email, address FROM subscribers WHERE verified > 0 ORDER BY created LIMIT ? OFFSET ?',
-      [batchSize, page * batchSize]
-    );
-
-    if (result.length === 0) {
-      break;
-    }
-
-    page += 1;
-    results = results.concat(result);
-  }
-
-  return results;
+export async function getUniqueEmails(subscriptionType: string) {
+  const subscription = sanitizeSubscriptions(subscriptionType)[0];
+  return await db.queryAsync(
+    `SELECT DISTINCT email FROM subscribers WHERE verified > 0 AND ` +
+      `(JSON_CONTAINS(subscriptions, '"${subscription}"') OR subscriptions IS NULL)`
+  );
 }
 
 export async function getAddressSubscriptions(address: string): Promise<TemplateId[]> {
