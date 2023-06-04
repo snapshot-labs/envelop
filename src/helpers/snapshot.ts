@@ -1,6 +1,5 @@
 import { gql, ApolloClient, InMemoryCache, HttpLink } from '@apollo/client/core';
 import fetch from 'cross-fetch';
-import removeMd from 'remove-markdown';
 
 const HUB_URL = `${process.env.HUB_URL || 'https://hub.snapshot.org'}/graphql`;
 
@@ -82,8 +81,8 @@ const VOTES_QUERY = gql`
   }
 `;
 
-type Space = { id: string; name?: string };
-type Follow = { space: Space; follower: string };
+export type Space = { id: string; name?: string };
+export type Follow = { space: Space; follower: string };
 export type Proposal = {
   id: string;
   body: string;
@@ -104,87 +103,6 @@ export type Vote = {
   id: string;
   proposal: Pick<Proposal, 'id'>;
 };
-export type ProposalStatus = 'pending' | 'active' | 'closed';
-export type GroupedSpaces = { space: Space; proposals: Proposal[] };
-export type GroupedProposals = Record<ProposalStatus, GroupedSpaces[]>;
-
-export const fetchProposals = async (addresses: string[], startDate: Date, endDate: Date) => {
-  const {
-    data: { follows }
-  }: { data: { follows: Follow[] } } = await client.query({
-    query: FOLLOWS_QUERY,
-    variables: {
-      follower_in: addresses
-    }
-  });
-
-  const {
-    data: { proposals }
-  }: { data: { proposals: Proposal[] } } = await client.query({
-    query: PROPOSALS_QUERY,
-    variables: {
-      space_in: follows.map(follow => follow.space.id),
-      start_gt: Math.floor(+startDate / 1e3),
-      start_lt: Math.floor(+endDate / 1e3)
-    }
-  });
-
-  const {
-    data: { votes }
-  }: { data: { votes: Vote[] } } = await client.query({
-    query: VOTES_QUERY,
-    variables: {
-      proposal_in: proposals.map(proposal => proposal.id),
-      voter_in: addresses
-    }
-  });
-
-  return { proposals, votes };
-};
-
-export async function getProposals(
-  addresses: string[],
-  startDate: Date,
-  endDate: Date,
-  maxShortBodyLength = 150
-) {
-  const { proposals, votes } = await fetchProposals(addresses, startDate, endDate);
-
-  const groupedProposals: GroupedProposals = {
-    pending: [],
-    active: [],
-    closed: []
-  };
-
-  const votedProposals = votes.map(vote => vote.proposal.id);
-  proposals.forEach(proposal => {
-    const sanitizedBody = removeMd(proposal.body);
-
-    proposal.shortBody = (
-      sanitizedBody.length > maxShortBodyLength
-        ? `${sanitizedBody.slice(0, maxShortBodyLength)}…`
-        : sanitizedBody
-    ).replace(/\r?\n|\r/g, ' ');
-
-    proposal.voted = votedProposals.includes(proposal.id);
-  });
-
-  Object.keys(groupedProposals).forEach(status => {
-    const groupedSpaces: Record<string, GroupedSpaces> = {};
-    proposals
-      .filter(proposal => proposal.state === status)
-      .forEach(proposal => {
-        const { space } = proposal;
-
-        groupedSpaces[space.id] ||= { space, proposals: [] };
-        groupedSpaces[space.id].proposals.push(proposal);
-      });
-
-    groupedProposals[status as keyof GroupedProposals] = Array.from(Object.values(groupedSpaces));
-  });
-
-  return groupedProposals;
-}
 
 export async function getProposal(id: string) {
   const {
@@ -199,6 +117,21 @@ export async function getProposal(id: string) {
   return proposal;
 }
 
+export async function getProposals(spaces: string[], startDate: Date, endDate: Date) {
+  const {
+    data: { proposals }
+  }: { data: { proposals: Proposal[] } } = await client.query({
+    query: PROPOSALS_QUERY,
+    variables: {
+      space_in: spaces,
+      start_gt: Math.floor(+startDate / 1e3),
+      start_lt: Math.floor(+endDate / 1e3)
+    }
+  });
+
+  return proposals;
+}
+
 export async function getFollows(followers: string[], space?: string) {
   const {
     data: { follows }
@@ -211,4 +144,18 @@ export async function getFollows(followers: string[], space?: string) {
   });
 
   return follows;
+}
+
+export async function getVotes(proposals: string[], addresses: string[]) {
+  const {
+    data: { votes }
+  }: { data: { votes: Vote[] } } = await client.query({
+    query: VOTES_QUERY,
+    variables: {
+      proposal_in: proposals,
+      voter_in: addresses
+    }
+  });
+
+  return votes;
 }
