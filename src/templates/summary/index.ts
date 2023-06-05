@@ -16,15 +16,13 @@ export async function getGroupedProposals(addresses: string[], startDate: Date, 
   const { flaggedSpaces, flaggedProposals } = await getModerationList();
 
   const follows = await getFollows(addresses);
-  const proposals = (
-    await getProposals(
-      follows
-        .map(follow => follow.space.id)
-        .filter((spaceId: string) => !flaggedSpaces.includes(spaceId)),
-      startDate,
-      endDate
-    )
-  ).filter(proposal => !flaggedProposals.includes(proposal.id));
+  const trustedSpaces = follows
+    .map(follow => follow.space.id)
+    .filter((spaceId: string) => !flaggedSpaces.includes(spaceId))
+  
+  const allProposals = await getProposals(trustedSpaces, startDate, endDate);
+  const proposals = allProposals
+    .filter(proposal => !flaggedProposals.includes(proposal.id));
   const votes = await getVotes(
     proposals.map(proposal => proposal.id),
     addresses
