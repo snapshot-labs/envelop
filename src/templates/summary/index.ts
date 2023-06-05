@@ -62,6 +62,60 @@ export async function getGroupedProposals(addresses: string[], startDate: Date, 
   return groupedProposals;
 }
 
+type ProposalStatus = 'pending' | 'active' | 'closed';
+type GroupedSpaces = { space: Space; proposals: Proposal[] };
+type GroupedProposals = Record<ProposalStatus, GroupedSpaces[]>;
+
+const MAX_SHORT_BODY_LENGTH = 150;
+
+export async function getGroupedProposals(addresses: string[], startDate: Date, endDate: Date) {
+  const follows = await getFollows(addresses);
+  const proposals = await getProposals(
+    follows.map(follow => follow.space.id),
+    startDate,
+    endDate
+  );
+  const votes = await getVotes(
+    proposals.map(proposal => proposal.id),
+    addresses
+  );
+
+  const groupedProposals: GroupedProposals = {
+    pending: [],
+    active: [],
+    closed: []
+  };
+
+  const votedProposals = votes.map(vote => vote.proposal.id);
+  proposals.forEach(proposal => {
+    const sanitizedBody = removeMd(proposal.body);
+
+    proposal.shortBody = (
+      sanitizedBody.length > MAX_SHORT_BODY_LENGTH
+        ? `${sanitizedBody.slice(0, MAX_SHORT_BODY_LENGTH)}…`
+        : sanitizedBody
+    ).replace(/\r?\n|\r/g, ' ');
+
+    proposal.voted = votedProposals.includes(proposal.id);
+  });
+
+  Object.keys(groupedProposals).forEach(status => {
+    const groupedSpaces: Record<string, GroupedSpaces> = {};
+    proposals
+      .filter(proposal => proposal.state === status)
+      .forEach(proposal => {
+        const { space } = proposal;
+
+        groupedSpaces[space.id] ||= { space, proposals: [] };
+        groupedSpaces[space.id].proposals.push(proposal);
+      });
+
+    groupedProposals[status as keyof GroupedProposals] = Array.from(Object.values(groupedSpaces));
+  });
+
+  return groupedProposals;
+}
+
 export default async function prepare(params: TemplatePrepareParams) {
   const proposals = await getGroupedProposals(params.addresses, params.startDate, params.endDate);
 
