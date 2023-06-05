@@ -7,7 +7,8 @@ import {
   rpcError,
   rpcSuccess,
   isValidEmail,
-  getAddressSubscriptions
+  getSubscriber,
+  obfuscateEmail
 } from './helpers/utils';
 import { verifySubscribe, verifyUnsubscribe, verifyVerify, verifyUpdate } from './sign';
 import { queueSubscribe, queueProposalActivity } from './queues';
@@ -113,8 +114,15 @@ router.post('/subscriber', async (req, res) => {
   const { address } = req.body;
 
   try {
-    return res.json(await getAddressSubscriptions(address));
+    const result = await getSubscriber(address);
+    result.email = obfuscateEmail(result.email);
+
+    return res.json(result);
   } catch (e: any) {
+    if (e.message === 'RECORD_NOT_FOUND') {
+      return res.json({ status: 'NOT_SUBSCRIBED' });
+    }
+
     console.log(e);
     return rpcError(res, e, address);
   }
