@@ -1,7 +1,7 @@
 import { compile } from 'handlebars';
 import juice from 'juice';
 import sass from 'sass';
-import { unsubscribeLink, updateSubscriptionsLink, loadPartials } from './utils';
+import { unsubscribeLink, updateSubscriptionsLink, loadPartials, formatPreheader } from './utils';
 import templates from './';
 import type { Message, TemplatePrepareParams, TemplateId } from '../../types';
 
@@ -20,7 +20,7 @@ export default async function buildMessage(id: TemplateId, params: TemplatePrepa
   } = {
     host: process.env.HOST as string,
     subject: template.subject,
-    preheader: template.preheader
+    preheader: compile(template.preheader)(params)
   };
 
   if (id !== 'subscribe') {
@@ -29,10 +29,13 @@ export default async function buildMessage(id: TemplateId, params: TemplatePrepa
     headers['List-Unsubscribe'] = `<${extraParams.unsubscribeLink}>`;
   }
 
+  extraParams.preheader = formatPreheader(extraParams.preheader);
+
   return {
     to: params.to,
     from: compile(template.from)(params),
     subject: compile(template.subject)(params),
+    preheader: extraParams.preheader,
     text: compile(template.text)({
       ...params,
       ...extraParams
