@@ -110,6 +110,10 @@ router.post('/subscriber', async (req, res) => {
 
     return res.json(result);
   } catch (e: any) {
+    if (e.message === 'RECORD_NOT_FOUND') {
+      return res.json({ status: 'NOT_SUBSCRIBED' });
+    }
+
     console.log(e);
     return rpcError(res, e, address);
   }

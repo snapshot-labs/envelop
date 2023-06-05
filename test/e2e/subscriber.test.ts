@@ -77,12 +77,13 @@ describe('POST subscriber', () => {
   });
 
   describe('when the address does not exist', () => {
-    it('returns a 404 error', async () => {
+    it('returns a NOT_SUBSCRIBED state', async () => {
       const response = await request(process.env.HOST)
         .post('/subscriber')
         .send({ address: 'test' });
 
-      expect(response.statusCode).toBe(404);
+      expect(response.statusCode).toBe(200);
+      expect(response.body.status).toEqual('NOT_SUBSCRIBED');
     });
   });
 });
