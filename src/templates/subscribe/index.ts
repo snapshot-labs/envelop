@@ -6,7 +6,8 @@ export default async function prepare(params: TemplatePrepareParams) {
   const verifyLink = `${process.env.FRONT_HOST}/#/verify?${new URLSearchParams({
     signature: await signVerify(params.to, params.address, params.salt),
     email: params.to,
-    address: params.address
+    address: params.address,
+    salt: params.salt
   }).toString()}`;
 
   return buildMessage('subscribe', { ...params, verifyLink });
