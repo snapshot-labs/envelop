@@ -26,7 +26,7 @@
   },
   "prettier": "@snapshot-labs/prettier-config",
   "dependencies": {
-    "@apollo/client": "^3.7.14",
+    "@apollo/client": "^3.7.15",
     "@ethersproject/address": "^5.7.0",
     "@ethersproject/wallet": "^5.7.0",
     "@sendgrid/mail": "^7.7.0",
