@@ -7,7 +7,8 @@ import {
   rpcError,
   rpcSuccess,
   isValidEmail,
-  getAddressSubscriptions
+  getSubscriber,
+  obfuscateEmail
 } from './helpers/utils';
 import { verifySubscribe, verifyUnsubscribe, verifyVerify, verifyUpdate } from './sign';
 import { queueSubscribe, queueProposalActivity } from './queues';
@@ -62,7 +63,16 @@ router.post('/', async (req, res) => {
         return rpcError(res, 'INVALID_PARAMS', id);
       }
 
-      if (verifyUpdate(params.email, params.address, params.subscriptions, params.signature)) {
+      // Do not check `subscriptions` for requests coming from
+      // envelop-ui, signed by backend
+      const isValidSignature = verifyUpdate(
+        params.email,
+        params.address,
+        params.address && params.address.length > 0 ? params.subscriptions : [],
+        params.signature
+      );
+
+      if (isValidSignature) {
         await update(params.email, params.address, params.subscriptions);
         return rpcSuccess(res, 'OK', id);
       }
@@ -104,8 +114,15 @@ router.post('/subscriber', async (req, res) => {
   const { address } = req.body;
 
   try {
-    return res.json(await getAddressSubscriptions(address));
+    const result = await getSubscriber(address);
+    result.email = obfuscateEmail(result.email);
+
+    return res.json(result);
   } catch (e: any) {
+    if (e.message === 'RECORD_NOT_FOUND') {
+      return res.json({ status: 'NOT_SUBSCRIBED' });
+    }
+
     console.log(e);
     return rpcError(res, e, address);
   }

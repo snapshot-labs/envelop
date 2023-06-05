@@ -3,7 +3,6 @@ import db, { SqlRow } from './mysql';
 import { SUBSCRIPTION_TYPE } from '../templates';
 import type { Response } from 'express';
 import type { OkPacket } from 'mysql';
-import type { TemplateId } from '../../types';
 
 type Subscriber = {
   email: string;
@@ -153,21 +152,25 @@ export async function getVerifiedSubscriptions(batchSize = 1000) {
   return results;
 }
 
-export async function getAddressSubscriptions(address: string): Promise<TemplateId[]> {
-  const subscriptions = await db.queryAsync(
-    'SELECT email, subscriptions from subscribers WHERE address = ? AND verified > 0 LIMIT 1',
-    [address]
-  );
+export async function getSubscriber(address: string) {
+  const subscriber = (
+    await db.queryAsync(
+      'SELECT email, verified, subscriptions from subscribers WHERE address = ? ORDER BY created DESC, verified DESC LIMIT 1',
+      [address]
+    )
+  )[0];
 
-  if (!subscriptions[0]) {
+  if (!subscriber) {
     throw new Error('RECORD_NOT_FOUND');
   }
 
-  if (!subscriptions[0].subscriptions) {
-    return SUBSCRIPTION_TYPE;
-  }
-
-  return JSON.parse(subscriptions[0].subscriptions as string);
+  return {
+    status: (subscriber.verified as number) > 0 ? 'VERIFIED' : 'UNVERIFIED',
+    email: subscriber.email as string,
+    subscriptions: !subscriber.subscriptions
+      ? SUBSCRIPTION_TYPE
+      : JSON.parse(subscriber.subscriptions as string)
+  };
 }
 
 // RFC5322 standard, does support most format, but not all
@@ -183,4 +186,10 @@ export async function getModerationList() {
   const response = await fetch(`${process.env.SIDEKICK_URL || 'https://sh5.co'}/api/moderation`);
 
   return response.json();
+}
+
+export function obfuscateEmail(email: string) {
+  return email.replace(/(\w{2})([\w.-]+)@([\w.]+\w)/, (_, a, b, c) => {
+    return `${a}${'*'.repeat(b.length)}@${c}`;
+  });
 }
