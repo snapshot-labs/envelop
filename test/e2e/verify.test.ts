@@ -17,7 +17,7 @@ describe('POST verify', () => {
       params: {
         email,
         address,
-        salt: timestamp,
+        salt: `${timestamp}`,
         signature: signature || (await signVerify(email, address, timestamp))
       }
     };

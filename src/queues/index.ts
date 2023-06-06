@@ -52,7 +52,7 @@ export function queueScheduler(options: Queue.JobOptions = {}) {
   return scheduleQueue.add({}, options);
 }
 
-export function queueSubscribe(email: string, address: string, salt: number) {
+export function queueSubscribe(email: string, address: string, salt: string) {
   return mailerQueue.add('subscribe', { email, address, salt });
 }
 
