@@ -130,8 +130,13 @@ describe('utils', () => {
   describe('obfuscateEmail()', () => {
     it('returns an obfuscated version of the email', () => {
       expect(obfuscateEmail('a@test.com')).toEqual('a@test.com');
-      expect(obfuscateEmail('ab@test.com')).toEqual('ab@test.com');
+      expect(obfuscateEmail('a1@test.com')).toEqual('a1@test.com');
+      expect(obfuscateEmail('a+@test.com')).toEqual('a+@test.com');
+      expect(obfuscateEmail('a.a.a@test.com')).toEqual('a.***@test.com');
       expect(obfuscateEmail('abcd@test.com')).toEqual('ab**@test.com');
+      expect(obfuscateEmail('abcd+t3st@test.com')).toEqual('ab*******@test.com');
+      expect(obfuscateEmail('abcd-test@test.com')).toEqual('ab*******@test.com');
+      expect(obfuscateEmail('abcd.test@test.com')).toEqual('ab*******@test.com');
     });
   });
 });
