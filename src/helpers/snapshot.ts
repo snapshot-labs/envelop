@@ -96,6 +96,7 @@ export type Proposal = {
   scores?: number[];
   scores_total?: number;
   shortBody?: string;
+  htmlShortBody?: string;
   voted?: boolean;
   votes?: number;
 };
