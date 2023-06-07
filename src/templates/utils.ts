@@ -2,6 +2,7 @@ import fs from 'fs';
 import Handlebars from 'handlebars';
 import { marked } from 'marked';
 import { signUnsubscribe, signUpdate } from '../sign';
+import { Proposal } from '../helpers/snapshot';
 
 export async function unsubscribeLink(email: string) {
   return `${process.env.FRONT_HOST}/#/unsubscribe?${new URLSearchParams({
@@ -41,7 +42,7 @@ export function loadPartials() {
     });
 }
 
-export function formatProposalHtmlBody(body: string, isTruncated: boolean) {
+export function formatProposalHtmlBody(proposal: Proposal, body: string, isTruncated: boolean) {
   marked.use({ breaks: true });
 
   return (
@@ -49,7 +50,7 @@ export function formatProposalHtmlBody(body: string, isTruncated: boolean) {
       .parse(`${body}${isTruncated ? `...` : ''}`)
       .replace(/<img[^>]*>/g, '')
       .replace(/<a[^>]*>(.*?)<\/a>/g, '$1')
-      .replace(/https+:\/\//g, '')
+      .replace(/https?:\/\//g, '')
       .replace(/(\/|\.)/g, '<span>$1</span>') +
     (isTruncated ? '<a href="${proposal.link}">(read more)</a>' : '')
   );

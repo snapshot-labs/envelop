@@ -189,7 +189,7 @@ export async function getModerationList() {
 }
 
 export function obfuscateEmail(email: string) {
-  return email.replace(/(\w{2})([\w.-]+)@([\w.]+\w)/, (_, a, b, c) => {
+  return email.replace(/([\w\._\-+]{2})(.+)@([\w.]+\w)/, (_, a, b, c) => {
     return `${a}${'*'.repeat(b.length)}@${c}`;
   });
 }

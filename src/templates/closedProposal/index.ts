@@ -40,6 +40,6 @@ export default async function prepare(params: TemplatePrepareParams) {
     winningChoiceName: results[winningChoiceIndex].name,
     winningChoicePercentage: results[winningChoiceIndex].progress,
     proposalTextBody: `${truncatedBody}${isTruncated ? ` [...]` : ''}`,
-    proposalHtmlBody: formatProposalHtmlBody(truncatedBody, isTruncated)
+    proposalHtmlBody: formatProposalHtmlBody(proposal, truncatedBody, isTruncated)
   });
 }

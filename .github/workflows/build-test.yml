@@ -3,8 +3,18 @@ on: [push]
 jobs:
   build-test:
     runs-on: ubuntu-20.04
+    services:
+      redis:
+        image: redis
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     env:
       DATABASE_URL: 'mysql://root:root@127.0.0.1:3306/envelop_test'
+      REDIS_HOST: 127.0.0.1
+      REDIS_PORT: 6379
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
