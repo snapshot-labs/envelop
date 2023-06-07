@@ -20,6 +20,6 @@ export default async function prepare(params: TemplatePrepareParams) {
     formattedStartDate: new Date(proposal.start * 1000).toUTCString(),
     formattedEndDate: new Date(proposal.end * 1000).toUTCString(),
     proposalTextBody: `${truncatedBody}${isTruncated ? ` [...]` : ''}`,
-    proposalHtmlBody: formatProposalHtmlBody(truncatedBody, isTruncated)
+    proposalHtmlBody: formatProposalHtmlBody(proposal, truncatedBody, isTruncated)
   });
 }
