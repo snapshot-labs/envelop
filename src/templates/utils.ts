@@ -43,12 +43,16 @@ export function loadPartials() {
 }
 
 export function formatProposalHtmlBody(proposal: Proposal, body: string, isTruncated: boolean) {
+  marked.use({ breaks: true });
+
   return (
     marked
       .parse(`${body}${isTruncated ? `...` : ''}`)
       .replace(/<img[^>]*>/g, '')
-      .replace(/(\n)(\s*[^<])/g, '<br/>$2') +
-    (isTruncated ? `<a href="${proposal.link}">(read more)</a>` : '')
+      .replace(/<a[^>]*>(.*?)<\/a>/g, '$1')
+      .replace(/https?:\/\//g, '')
+      .replace(/(\/|\.)/g, '<span>$1</span>') +
+    (isTruncated ? '<a href="${proposal.link}">(read more)</a>' : '')
   );
 }
 
