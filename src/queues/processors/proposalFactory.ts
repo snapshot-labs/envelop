@@ -20,8 +20,8 @@ function eventToTemplate(event: string) {
 /**
  * Return a list of email, for all subscribers following the given spaceId
  */
-async function getSubscribersEmailFollowingSpace(spaceId: string) {
-  const subscriberEntries = await getVerifiedSubscriptions();
+async function getSubscribersEmailFollowingSpace(templateId: string, spaceId: string) {
+  const subscriberEntries = await getVerifiedSubscriptions(templateId);
   const subscriberKeyValuePairs: Iterable<[string, string]> = subscriberEntries.map(row => [
     row.address as string,
     row.email as string
@@ -53,7 +53,7 @@ export default async (job: Job): Promise<number> => {
     return 0;
   }
 
-  const emails = await getSubscribersEmailFollowingSpace(proposal.space.id);
+  const emails = await getSubscribersEmailFollowingSpace(templateId, proposal.space.id);
   await mailerQueue.addBulk(
     emails.map(email => ({
       name: templateId,

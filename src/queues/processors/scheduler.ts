@@ -9,7 +9,7 @@ import type { Dayjs } from 'dayjs';
  * grouped by email
  */
 async function getGroupedSubscribers() {
-  const subscriberEntries = await getVerifiedSubscriptions();
+  const subscriberEntries = await getVerifiedSubscriptions('summary');
   const subscribers: Record<string, string[]> = {};
 
   subscriberEntries.map(subscriber => {
