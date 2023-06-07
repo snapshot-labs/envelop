@@ -41,7 +41,7 @@ export async function getGroupedProposals(addresses: string[], startDate: Date, 
         : sanitizedBody
     ).replace(/\r?\n|\r/g, ' ');
     proposal.htmlShortBody = proposal.shortBody
-      .replace(/https+:\/\//g, '')
+      .replace(/https?:\/\//g, '')
       .replace(/(\/|\.)/g, '<span>$1</span>');
 
     proposal.voted = votedProposals.includes(proposal.id);
