@@ -42,7 +42,7 @@ export async function getGroupedProposals(addresses: string[], startDate: Date, 
     ).replace(/\r?\n|\r/g, ' ');
     proposal.htmlShortBody = proposal.shortBody
       .replace(/https?:\/\//g, '')
-      .replace(/(\/|\.)/g, '<span>$1</span>');
+      .replace(/([^<](\/|\.))/g, '<span>$1</span>');
 
     proposal.voted = votedProposals.includes(proposal.id);
   });
