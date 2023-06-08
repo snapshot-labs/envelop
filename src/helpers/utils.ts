@@ -172,7 +172,6 @@ export async function getSubscriber(address: string) {
 
   return {
     status: (subscriber.verified as number) > 0 ? 'VERIFIED' : 'UNVERIFIED',
-    email: subscriber.email as string,
     subscriptions: !subscriber.subscriptions
       ? SUBSCRIPTION_TYPE
       : JSON.parse(subscriber.subscriptions as string)
@@ -192,10 +191,4 @@ export async function getModerationList() {
   const response = await fetch(`${process.env.SIDEKICK_URL || 'https://sh5.co'}/api/moderation`);
 
   return response.json();
-}
-
-export function obfuscateEmail(email: string) {
-  return email.replace(/([\w\._\-+]{2})(.+)@([\w.]+\w)/, (_, a, b, c) => {
-    return `${a}${'*'.repeat(b.length)}@${c}`;
-  });
 }
