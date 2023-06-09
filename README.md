@@ -182,7 +182,6 @@ Return a subscriber, given a wallet address
 # Response signature
 {
   status: 'VERIFIED' | 'UNVERIFIED' | 'NOT_SUBSCRIBED';
-  email: string; # Obfuscated email
   subscriptions: templateId[]
 }
 ```
@@ -198,7 +197,6 @@ curl -X POST localhost:3006/subscriber -H "Content-Type: application/json" -d '{
 ```json
 {
   "status": "VERIFIED",
-  "email": "ab****@email.com",
   "subscriptions": ["summary", "newProposal", "closedProposal"]
 }
 ```
