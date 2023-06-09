@@ -30,5 +30,4 @@ jobs:
           mysql -uroot -proot -e "FLUSH PRIVILEGES;"
       - run: yarn install
       - run: yarn build
-      - run: yarn test
-      - run: yarn test:e2e
+      - run: yarn test:all
