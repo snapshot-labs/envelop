@@ -7,8 +7,7 @@ import {
   rpcError,
   rpcSuccess,
   isValidEmail,
-  getSubscriber,
-  obfuscateEmail
+  getSubscriber
 } from './helpers/utils';
 import { verifySubscribe, verifyUnsubscribe, verifyVerify, verifyUpdate } from './sign';
 import { queueSubscribe, queueProposalActivity } from './queues';
@@ -115,7 +114,6 @@ router.post('/subscriber', async (req, res) => {
 
   try {
     const result = await getSubscriber(address);
-    result.email = obfuscateEmail(result.email);
 
     return res.json(result);
   } catch (e: any) {
