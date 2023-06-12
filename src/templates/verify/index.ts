@@ -10,5 +10,5 @@ export default async function prepare(params: TemplatePrepareParams) {
     salt: params.salt
   }).toString()}`;
 
-  return buildMessage('subscribe', { ...params, verifyLink });
+  return buildMessage('verify', { ...params, verifyLink });
 }

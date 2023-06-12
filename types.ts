@@ -22,5 +22,5 @@ export type Template = {
 
 export type TemplatePrepareParams = Record<string, any>;
 
-export type TemplateId = 'summary' | 'subscribe' | 'newProposal' | 'closedProposal';
+export type TemplateId = 'summary' | 'verify' | 'newProposal' | 'closedProposal';
 export type Templates = Record<TemplateId, Template>;
