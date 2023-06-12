@@ -161,7 +161,7 @@ export async function getVerifiedSubscriptions(subscription: string, batchSize =
 export async function getSubscriber(address: string) {
   const subscriber = (
     await db.queryAsync(
-      'SELECT email, verified, subscriptions from subscribers WHERE address = ? ORDER BY created DESC, verified DESC LIMIT 1',
+      'SELECT email, verified, subscriptions from subscribers WHERE address = ? ORDER BY verified DESC, created DESC LIMIT 1',
       [address]
     )
   )[0];
