@@ -3,7 +3,7 @@ import Redis from 'ioredis';
 import summaryProcessor from './processors/summary';
 import schedulerProcessor from './processors/scheduler';
 import constants from '../helpers/constants.json';
-import verifyProcessor from './processors/verify';
+import verificationProcessor from './processors/verification';
 import proposalFactoryProcessor from './processors/proposalFactory';
 import newProposalProcessor from './processors/newProposal';
 import closedProposalProcessor from './processors/closedProposal';
@@ -35,7 +35,7 @@ export function start() {
   console.log('[queue-mailer] Starting queue mailer');
 
   mailerQueue.process('summary', summaryProcessor);
-  mailerQueue.process('verify', verifyProcessor);
+  mailerQueue.process('verification', verificationProcessor);
   scheduleQueue.process(schedulerProcessor);
   proposalActivityQueue.process('proposalFactory', proposalFactoryProcessor);
   mailerQueue.process('newProposal', newProposalProcessor);
@@ -53,7 +53,7 @@ export function queueScheduler(options: Queue.JobOptions = {}) {
 }
 
 export function queueVerify(email: string, address: string, salt: string) {
-  return mailerQueue.add('verify', { email, address, salt });
+  return mailerQueue.add('verification', { email, address, salt });
 }
 
 export function queueProposalActivity(event: string, id: string) {

@@ -5,7 +5,7 @@ import type { Message } from '../../../types';
 
 export default async (job: Job) => {
   const { email, address, salt } = job.data;
-  const msg = await templates.verify.prepare({
+  const msg = await templates.verification.prepare({
     to: email,
     address,
     salt

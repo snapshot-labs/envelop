@@ -23,7 +23,7 @@ export default async function buildMessage(id: TemplateId, params: TemplatePrepa
     preheader: compile(template.preheader)(params)
   };
 
-  if (id !== 'verify') {
+  if (id !== 'verification') {
     extraParams.unsubscribeLink = await unsubscribeLink(params.to);
     extraParams.updateSubscriptionsLink = await updateSubscriptionsLink(params.to);
     headers['List-Unsubscribe'] = `<${extraParams.unsubscribeLink}>`;

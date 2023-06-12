@@ -1,15 +1,15 @@
 import 'dotenv/config';
 import { Job } from 'bull';
-import verify from '../src/queues/processors/verify';
+import verification from '../src/queues/processors/verification';
 
 async function main() {
   if (process.argv.length < 3) {
-    console.error(`Usage: yarn ts-node scripts/send-verify.ts [EMAIL] [ADDRESS] [SALT]`);
+    console.error(`Usage: yarn ts-node scripts/send-verification.ts [EMAIL] [ADDRESS] [SALT]`);
     return process.exit(1);
   }
   const [, , email, address, salt] = process.argv;
 
-  return await verify({
+  return await verification({
     name: '',
     data: { email, address, salt }
   } as Job);
