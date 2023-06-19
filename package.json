@@ -51,7 +51,7 @@
   "devDependencies": {
     "@commitlint/cli": "^17.6.5",
     "@commitlint/config-conventional": "^17.6.5",
-    "@snapshot-labs/eslint-config": "^0.1.0-beta.7",
+    "@snapshot-labs/eslint-config": "^0.1.0-beta.9",
     "@snapshot-labs/prettier-config": "^0.1.0-beta.7",
     "@types/bluebird": "^3.5.38",
     "@types/bull": "^4.10.0",
