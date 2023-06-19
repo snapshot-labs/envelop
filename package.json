@@ -70,7 +70,7 @@
     "husky": "^8.0.3",
     "jest": "^29.5.0",
     "jest-environment-node-single-context": "^29.0.0",
-    "nodemon": "^2.0.19",
+    "nodemon": "^2.0.22",
     "prettier": "^2.8.8",
     "sass": "^1.59.2",
     "start-server-and-test": "^2.0.0",
