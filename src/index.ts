@@ -18,7 +18,7 @@ app.use(express.urlencoded({ limit: '4mb', extended: false }));
 app.use(express.static('./public'));
 app.use(
   morgan(
-    '[http] :remote-addr - :remote-user [:date[clf]] ' +
+    '[http] [:date[clf]] ' +
       '":method :url HTTP/:http-version" :status :res[content-length] ' +
       '":referrer" ":user-agent" - :response-time ms'
   )
