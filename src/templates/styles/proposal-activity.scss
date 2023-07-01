@@ -4,6 +4,20 @@
   }
 }
 
+.content-body-preheading {
+  td {
+    padding-top: 1em;
+  }
+}
+
+.introduction {
+  font-size: 125%;
+  padding-bottom: 1em;
+  margin-bottom: 1em;
+  border-bottom: 1px solid transparent;
+  border-color: $border-color;
+}
+
 .proposal-fullbody {
   font-size: 1.1em;
   line-height: 1.4em;
@@ -148,5 +162,9 @@
     hr {
       border-color: $border-color;
     }
+  }
+
+  .introduction {
+    border-color: $border-color;
   }
 }
