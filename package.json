@@ -10,7 +10,7 @@
     "start": "node dist/src/index.js",
     "start:test": "dotenv -e test/.env.test yarn dev",
     "test": "dotenv -e test/.env.test jest test/unit/ test/integrations/",
-    "test:e2e": "PORT=3030 start-server-and-test 'yarn start:test' 3030 'jest --runInBand test/e2e/'",
+    "test:e2e": "PORT=3030 start-server-and-test 'yarn start:test' 3030 'jest --runInBand --collectCoverage=false test/e2e/'",
     "typecheck": "tsc --noEmit"
   },
   "eslintConfig": {
