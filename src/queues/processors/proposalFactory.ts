@@ -4,7 +4,7 @@ import { Proposal, getFollows, getProposal } from '../../helpers/snapshot';
 import { getModerationList, getVerifiedSubscriptions } from '../../helpers/utils';
 import type { Job } from 'bull';
 
-const MAX_NEW_PROPOSAL_DELAY = 2 * 60 * 60 * 1000; // 2 hours
+export const MAX_NEW_PROPOSAL_DELAY = 2 * 60 * 60 * 1000; // 2 hours
 
 function eventToTemplate(event: string) {
   switch (event) {
@@ -39,12 +39,12 @@ async function getSubscribersEmailFollowingSpace(templateId: string, spaceId: st
   return results;
 }
 
-function proposalDelay(proposal: Proposal) {
+export function proposalDelay(proposal: Proposal) {
   let newProposalDelay = MAX_NEW_PROPOSAL_DELAY;
   const sendTimestamp = +new Date() + newProposalDelay;
 
   // Prevent sending new proposal email after it closes
-  if (proposal.end >= sendTimestamp) {
+  if (proposal.end <= sendTimestamp) {
     newProposalDelay = (proposal.end - +new Date()) * 0.75;
   }
 
