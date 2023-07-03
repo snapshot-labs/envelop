@@ -1,10 +1,9 @@
 import chunk from 'lodash.chunk';
 import { mailerQueue } from '../index';
-import { Proposal, getFollows, getProposal } from '../../helpers/snapshot';
+import { getFollows, getProposal } from '../../helpers/snapshot';
 import { getModerationList, getVerifiedSubscriptions } from '../../helpers/utils';
+import { newProposalDelay } from '../utils';
 import type { Job } from 'bull';
-
-export const MAX_NEW_PROPOSAL_DELAY = 2 * 60 * 60 * 1000; // 2 hours
 
 function eventToTemplate(event: string) {
   switch (event) {
@@ -39,18 +38,6 @@ async function getSubscribersEmailFollowingSpace(templateId: string, spaceId: st
   return results;
 }
 
-export function proposalDelay(proposal: Proposal) {
-  let newProposalDelay = MAX_NEW_PROPOSAL_DELAY;
-  const sendTimestamp = +new Date() + newProposalDelay;
-
-  // Prevent sending new proposal email after it closes
-  if (proposal.end <= sendTimestamp) {
-    newProposalDelay = (proposal.end - +new Date()) * 0.75;
-  }
-
-  return newProposalDelay;
-}
-
 export default async (job: Job): Promise<number> => {
   const { event, id } = job.data;
   const templateId = eventToTemplate(event);
@@ -75,7 +62,7 @@ export default async (job: Job): Promise<number> => {
       },
       opts: {
         jobId: `${templateId}-${email}-${id}`,
-        delay: templateId === 'newProposal' ? proposalDelay(proposal) : 0
+        delay: templateId === 'newProposal' ? newProposalDelay(proposal) : 0
       }
     }))
   );

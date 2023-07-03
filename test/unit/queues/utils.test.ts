@@ -1,7 +1,4 @@
-import {
-  MAX_NEW_PROPOSAL_DELAY,
-  proposalDelay
-} from '../../../../src/queues/processors/proposalFactory';
+import { MAX_NEW_PROPOSAL_DELAY, newProposalDelay } from '../../../src/queues/utils';
 
 describe('proposalFactory', () => {
   describe('proposalDelay()', () => {
@@ -9,7 +6,7 @@ describe('proposalFactory', () => {
       const proposal = {
         end: +new Date() + MAX_NEW_PROPOSAL_DELAY * 10
       };
-      const result = proposalDelay(proposal as any);
+      const result = newProposalDelay(proposal as any);
       expect(result).toBe(MAX_NEW_PROPOSAL_DELAY);
     });
 
@@ -17,7 +14,7 @@ describe('proposalFactory', () => {
       const proposal = {
         end: +new Date() + 1000
       };
-      const result = proposalDelay(proposal as any);
+      const result = newProposalDelay(proposal as any);
       expect(result).toBe(750);
     });
   });
