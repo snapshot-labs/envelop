@@ -2,7 +2,7 @@ import chunk from 'lodash.chunk';
 import { mailerQueue } from '../index';
 import { getFollows, getProposal } from '../../helpers/snapshot';
 import { getModerationList, getVerifiedSubscriptions } from '../../helpers/utils';
-import { newProposalDelay } from '../utils';
+import { proposalDelay } from '../utils';
 import type { Job } from 'bull';
 
 function eventToTemplate(event: string) {
@@ -62,7 +62,7 @@ export default async (job: Job): Promise<number> => {
       },
       opts: {
         jobId: `${templateId}-${email}-${id}`,
-        delay: templateId === 'newProposal' ? newProposalDelay(proposal) : 0
+        delay: templateId === 'newProposal' ? proposalDelay(proposal) : 0
       }
     }))
   );
