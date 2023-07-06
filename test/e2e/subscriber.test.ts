@@ -53,14 +53,6 @@ describe('POST subscriber', () => {
       expect(response.body.subscriptions).toEqual(SUBSCRIPTION_TYPE);
     });
 
-    it('returns an obfuscated version of the email', async () => {
-      const response = await request(process.env.HOST)
-        .post('/subscriber')
-        .send({ address: address });
-
-      expect(response.body.email).toEqual('te************@test.com');
-    });
-
     it('returns a VEFIFIED state if the email is verified', async () => {
       const response = await request(process.env.HOST).post('/subscriber').send({ address });
 

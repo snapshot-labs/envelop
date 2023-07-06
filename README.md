@@ -1,4 +1,4 @@
-# Envelop
+# Envelop [![codecov](https://codecov.io/gh/snapshot-labs/envelop/branch/main/graph/badge.svg?token=XUVZPR34ER)](https://codecov.io/gh/snapshot-labs/envelop)
 
 Envelop is the service behind Snapshot mailing list .
 
