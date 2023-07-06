@@ -64,6 +64,8 @@ The tests does not rely on any mocking, and test the whole stack.
 yarn test:e2e
 ```
 
+> You can run all tests at once with `yarn test:all`
+
 E2E tests rely on a different .env file: `test/.env.test`, edit its variables to suit your setup.
 
 #### Lint
