@@ -1,15 +1,13 @@
 import request from 'supertest';
 import db from '../../src/helpers/mysql';
-import { cleanupDb } from '../utils';
 import { subscriptionPayload } from '../fixtures/subscriptionPayload';
+import { cleanupSubscribersDb } from '../utils';
 
 describe('POST subscribe', () => {
-  let subscriberData: Record<string, any>;
   const { email, address, signature } = subscriptionPayload;
 
-  beforeEach(async () => {
-    await cleanupDb();
-    subscriberData = {
+  function payload() {
+    return {
       method: 'snapshot.subscribe',
       params: {
         email,
@@ -17,15 +15,19 @@ describe('POST subscribe', () => {
         signature
       }
     };
+  }
+
+  beforeEach(() => {
+    return cleanupSubscribersDb(email, 'email');
   });
 
   afterAll(async () => {
-    await cleanupDb();
-    await db.endAsync();
+    await cleanupSubscribersDb(email, 'email');
+    return db.endAsync();
   });
 
   it('adds the email and address in the database as not verified', async () => {
-    const response = await request(process.env.HOST).post('/').send(subscriberData);
+    const response = await request(process.env.HOST).post('/').send(payload());
     const result = await db.queryAsync(
       'SELECT * FROM subscribers WHERE email = ? and address = ? and verified = 0 LIMIT 1',
       [email, address]
@@ -40,7 +42,7 @@ describe('POST subscribe', () => {
       'INSERT INTO subscribers (created, email, address, verified) VALUES (?, ?, ?, 0)',
       [+new Date() / 1e3, email, address]
     );
-    const response = await request(process.env.HOST).post('/').send(subscriberData);
+    const response = await request(process.env.HOST).post('/').send(payload());
     const result = await db.queryAsync(
       'SELECT * FROM subscribers WHERE email = ? and address = ? and verified = 0 LIMIT 1',
       [email, address]

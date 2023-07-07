@@ -1,23 +1,25 @@
 import request from 'supertest';
 import db from '../../src/helpers/mysql';
 import { SUBSCRIPTION_TYPE } from '../../src/templates';
-import { cleanupDb } from '../utils';
+import { cleanupSubscribersDb, randomTimestamp } from '../utils';
 
 describe('POST subscriber', () => {
-  const email = 'test-subscribe@test.com';
+  const email = 'test-subscriber@test.com';
   const address = '0xDBDd4c5473692Fa0490bfF6AAbf1181f29Ca851e';
   const addressB = '0x54C8b17E5c46B97d25498205182e0382234B2532';
   const notVerifiedAddress = '0xc766c83C362E6D1Da8151F6aB588de7C79d03B8d';
+  const timestamp = randomTimestamp().toString();
 
   beforeAll(async () => {
-    await Promise.all(
+    await cleanupSubscribersDb(timestamp);
+    return Promise.all(
       [
-        [+new Date() / 1e3, `a${email}`, address, JSON.stringify(['summary']), 0],
-        [+new Date() / 1e3, email, address, JSON.stringify(['summary']), +new Date() / 1e3],
-        [+new Date() / 1e3, `b${email}`, addressB, null, +new Date() / 1e3],
-        [+new Date() / 1e3, `c${email}`, notVerifiedAddress, null, 0]
-      ].map(async data => {
-        await db.queryAsync(
+        [timestamp, `a${email}`, address, JSON.stringify(['summary']), 0],
+        [timestamp, email, address, JSON.stringify(['summary']), timestamp],
+        [timestamp, `b${email}`, addressB, null, timestamp],
+        [timestamp, `c${email}`, notVerifiedAddress, null, 0]
+      ].map(data => {
+        return db.queryAsync(
           'INSERT INTO subscribers (created, email, address, subscriptions, verified) VALUES (?, ?, ?, ?, ?)',
           data
         );
@@ -26,8 +28,8 @@ describe('POST subscriber', () => {
   });
 
   afterAll(async () => {
-    await cleanupDb();
-    await db.endAsync();
+    await cleanupSubscribersDb(timestamp);
+    return db.endAsync();
   });
 
   describe('when the address exists', () => {
