@@ -2,27 +2,17 @@ import 'dotenv/config';
 import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
-import * as Sentry from '@sentry/node';
 import rpc from './rpc';
 import preview from './preview';
 import send from './preview/send';
 import { start as startQueue, shutdown as shutdownQueue } from './queues';
 import { rpcError } from './helpers/utils';
+import { initLogger, fallbackLogger } from './helpers/sentry';
 
 const app = express();
 const PORT = process.env.PORT || 3006;
 
-Sentry.init({
-  dsn: process.env.SENTRY_DSN,
-  integrations: [
-    new Sentry.Integrations.Http({ tracing: true }),
-    new Sentry.Integrations.Express({ app }),
-    ...Sentry.autoDiscoverNodePerformanceMonitoringIntegrations()
-  ],
-  tracesSampleRate: 0.5
-});
-app.use(Sentry.Handlers.requestHandler());
-app.use(Sentry.Handlers.tracingHandler());
+initLogger(app);
 
 startQueue();
 
@@ -41,12 +31,7 @@ app.use('/', rpc);
 app.use('/', preview);
 app.use('/', send);
 
-app.use(Sentry.Handlers.errorHandler());
-
-app.use(function onError(err: any, req: any, res: any) {
-  res.statusCode = 500;
-  res.end(`${res.sentry}\n`);
-});
+fallbackLogger(app);
 
 app.use((_, res) => {
   rpcError(res, 'RECORD_NOT_FOUND', '');
