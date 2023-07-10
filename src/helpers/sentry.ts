@@ -3,6 +3,10 @@ import type { Express } from 'express';
 import { rpcError } from './utils';
 
 export function initLogger(app: Express) {
+  if (process.env.NODE_ENV !== 'production') {
+    return;
+  }
+
   Sentry.init({
     dsn: process.env.SENTRY_DSN,
     integrations: [
