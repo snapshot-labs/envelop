@@ -7,7 +7,8 @@ import {
   rpcError,
   rpcSuccess,
   isValidEmail,
-  getSubscriber
+  getSubscriber,
+  NOT_SUBSCRIBED
 } from './helpers/utils';
 import { capture } from './helpers/sentry';
 import { verifySubscribe, verifyUnsubscribe, verifyVerify, verifyUpdate } from './sign';
@@ -119,7 +120,7 @@ router.post('/subscriber', async (req, res) => {
     return res.json(result);
   } catch (e: any) {
     if (e.message === 'RECORD_NOT_FOUND') {
-      return res.json({ status: 'NOT_SUBSCRIBED' });
+      return res.json({ status: NOT_SUBSCRIBED });
     }
 
     capture(e);

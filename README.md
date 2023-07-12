@@ -52,29 +52,30 @@ yarn dev
 
 ### Running tests and linters
 
+All tests are run using their own .env (`test/.env.test`).
+
+#### Setup
+
+```
+mysql -e 'CREATE DATABASE envelop_test;' -uroot -proot
+mysql -uroot -proot envelop_test < src/helpers/schema.sql
+mysql -uroot -proot -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root';"
+mysql -uroot -proot -e "FLUSH PRIVILEGES;"
+```
+
 #### Unit tests
 
-Unit tests does not depend on the database, and can safely be run locally with:
-
 ```bash
-yarn test
+yarn test:unit
 ```
 
 #### End-to-end tests
-
-End-to-end tests depend on the database, and should not be run on production, and only on a properly configured test environment, to prevent unintentional database wiping.
-The tests does not rely on any mocking, and test the whole stack.
-
-- Create a database named `envelop_test`, following the same schema as the live database
-- run tests with:
 
 ```bash
 yarn test:e2e
 ```
 
-> You can run all tests at once with `yarn test:all`
-
-E2E tests rely on a different .env file: `test/.env.test`, edit its variables to suit your setup.
+> You can run and generate the coverage for all tests at once with `yarn test`
 
 #### Lint
 
@@ -356,3 +357,7 @@ See [the contribution guideline](.github/CONTRIBUTING.md)
 ## License
 
 Envelop is open-sourced software licensed under the © [MIT license](LICENSE).
+
+```
+
+```

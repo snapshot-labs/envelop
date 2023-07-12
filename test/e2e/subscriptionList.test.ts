@@ -1,5 +1,13 @@
 import request from 'supertest';
 import templates from '../../src/templates';
+import type { TemplateId } from '../../types';
+
+function subscriptionListFormat(key: TemplateId) {
+  return {
+    name: templates[key].name,
+    description: templates[key].description
+  };
+}
 
 describe('GET subscriptionList', () => {
   it('returns a list of subscriptions type', async () => {
@@ -7,15 +15,9 @@ describe('GET subscriptionList', () => {
 
     expect(response.statusCode).toBe(200);
     expect(response.body).toEqual({
-      summary: { name: templates.summary.name, description: templates.summary.description },
-      newProposal: {
-        name: templates.newProposal.name,
-        description: templates.newProposal.description
-      },
-      closedProposal: {
-        name: templates.closedProposal.name,
-        description: templates.closedProposal.description
-      }
+      summary: subscriptionListFormat('summary'),
+      newProposal: subscriptionListFormat('newProposal'),
+      closedProposal: subscriptionListFormat('closedProposal')
     });
   });
 });
