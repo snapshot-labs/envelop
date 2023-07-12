@@ -1,51 +1,45 @@
 import request from 'supertest';
-import { Wallet } from '@ethersproject/wallet';
 import db from '../../src/helpers/mysql';
 import { domain, signUnsubscribe } from '../../src/sign';
-import { cleanupDb } from '../utils';
 import { UnsubscribeTypes } from '../../src/sign/types';
+import { cleanupSubscribersDb, insertSubscribers } from '../utils';
 import type { TypedDataField } from '@ethersproject/abstract-signer';
+import { unsubscribePayload } from '../fixtures/unsubscribePayload';
 
 describe('POST unsubscribe', () => {
-  const email = 'test-unsubscribe@test.com';
-  const privateKey = '0a5b35deb46ca896e63fcbfbce3b7fd40991b37bb313e8f9e713e9a04317053a';
-  const wallet = new Wallet(privateKey);
-  const address = wallet.address;
-  let subscriberData: Record<string, any>;
+  const { email, address, wallet, timestamp } = unsubscribePayload;
 
-  beforeEach(async () => {
-    await cleanupDb();
-    await db.queryAsync(
-      'INSERT INTO subscribers (created, email, address, subscriptions, verified) VALUES (?, ?, ?, ?, ?)',
-      [+new Date() / 1e3, email, address, JSON.stringify(['summary']), +new Date() / 1e3]
-    );
-    await db.queryAsync(
-      'INSERT INTO subscribers (created, email, address, subscriptions, verified) VALUES (?, ?, ?, ?, ?)',
-      [+new Date() / 1e3, `a${email}`, address, JSON.stringify(['summary']), +new Date() / 1e3]
-    );
-    await db.queryAsync(
-      'INSERT INTO subscribers (created, email, address, subscriptions, verified) VALUES (?, ?, ?, ?, ?)',
-
-      [+new Date() / 1e3, email, '0x0', JSON.stringify(['summary']), +new Date() / 1e3]
-    );
-    subscriberData = {
+  async function payload(args?: Record<string, string>) {
+    return {
       method: 'snapshot.unsubscribe',
       params: {
         email,
-        signature: await signUnsubscribe(email)
+        signature: await signUnsubscribe(email),
+        ...args
       }
     };
+  }
+
+  beforeEach(async () => {
+    await cleanupSubscribersDb(timestamp);
+    return insertSubscribers([
+      [timestamp, email, address, JSON.stringify(['summary']), timestamp],
+      [timestamp, `a${email}`, address, JSON.stringify(['summary']), timestamp],
+      [timestamp, email, '0x0', JSON.stringify(['summary']), timestamp]
+    ]);
   });
 
   afterAll(async () => {
-    await cleanupDb();
-    await db.endAsync();
+    await cleanupSubscribersDb(timestamp);
+    return db.endAsync();
   });
 
   describe('when the signature is valid', () => {
     describe('when only passing the email', () => {
       it('removes all rows with the given emails from the database', async () => {
-        const response = await request(process.env.HOST).post('/').send(subscriberData);
+        const response = await request(process.env.HOST)
+          .post('/')
+          .send(await payload());
         const result = await db.queryAsync('SELECT * FROM subscribers WHERE email = ?', [email]);
 
         expect(response.statusCode).toBe(200);
@@ -61,27 +55,36 @@ describe('POST unsubscribe', () => {
         return await wallet._signTypedData(domain, type, message);
       }
 
-      it('removes the address and all its associated emails from the database', async () => {
-        const response = await request(process.env.HOST)
+      let response: any;
+      beforeEach(async () => {
+        response = await request(process.env.HOST)
           .post('/')
-          .send({
-            method: 'snapshot.unsubscribe',
-            params: {
+          .send(
+            await payload({
               email: '',
               address,
               signature: await signUnsubscribeFromUserWallet(
                 { email: '', address },
                 UnsubscribeTypes
               )
-            }
-          });
+            })
+          );
+      });
+
+      it('returns a 200 status code', () => {
+        expect(response.statusCode).toBe(200);
+      });
+
+      it('removes the address and all its associated emails from the database', async () => {
         const toBeDeleted = await db.queryAsync('SELECT * FROM subscribers WHERE address', [
           address
         ]);
-        const toBeKept = await db.queryAsync('SELECT * FROM subscribers WHERE email = ?', [email]);
 
-        expect(response.statusCode).toBe(200);
         expect(toBeDeleted.length).toBe(0);
+      });
+
+      it('keeps all other emails not associated with the given address', async () => {
+        const toBeKept = await db.queryAsync('SELECT * FROM subscribers WHERE email = ?', [email]);
         expect(toBeKept.length).toBe(1);
       });
     });
@@ -89,6 +92,7 @@ describe('POST unsubscribe', () => {
 
   describe('when the signature is not valid', () => {
     it('returns an error code', async () => {
+      const beforeRun = await db.queryAsync('SELECT * FROM subscribers WHERE email = ?', [email]);
       const response = await request(process.env.HOST)
         .post('/')
         .send({
@@ -98,10 +102,10 @@ describe('POST unsubscribe', () => {
             signature: 'not-valid'
           }
         });
-      const result = await db.queryAsync('SELECT * FROM subscribers WHERE email = ?', [email]);
+      const afterRun = await db.queryAsync('SELECT * FROM subscribers WHERE email = ?', [email]);
 
       expect(response.statusCode).toBe(401);
-      expect(result.length).toBe(2);
+      expect(beforeRun).toEqual(afterRun);
     });
   });
 });
