@@ -33,6 +33,8 @@ Make a copy of `.env.example` and rename it as `.env`. Then update the credentia
 - `DATABASE_URL`: URL of the MySQL database (eg: `mysql://root:root@localhost:3306/envelop`)
 - `REDIS_URL`: URL of the Redis database (eg: `redis://localhost:6379`)
 - `SENDGRID_API_KEY`: API key of the sendgrid account
+- `SENTRY_DSN`: URL to your sentry account
+- `SENTRY_TRACE_SAMPLE_RATE`: number between 0 and 1, for sentry sample rate
 
 ### Development
 
