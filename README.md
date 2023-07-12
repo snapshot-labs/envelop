@@ -1,4 +1,4 @@
-# Envelop
+# Envelop [![codecov](https://codecov.io/gh/snapshot-labs/envelop/branch/main/graph/badge.svg?token=XUVZPR34ER)](https://codecov.io/gh/snapshot-labs/envelop)
 
 Envelop is the service behind Snapshot mailing list .
 
@@ -28,17 +28,19 @@ yarn
 
 Make a copy of `.env.example` and rename it as `.env`. Then update the credentials in the file to the correct values for your local setup.
 
-| Key                   | Description                                                                                          | Example                                    |
-| --------------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------------ |
-| `HOST`                | Hostname of the current envelop instance                                                             | `http://localhost:3006`                    |
-| `FRONT_HOST`          | Hostname of the envelop-ui instance                                                                  | `http://localhost:8080`                    |
-| `HUB_URL`             | Hostname of snapshot's hub service                                                                   | `https://hub.snapshot.org`                 |
-| `SIDEKICK_URL`        | Hostname of the sidekick service                                                                     | `https://sh5.co`                           |
-| `WALLET_PRIVATE_KEY`  | Private key of the wallet used to sign the emails                                                    | `0x...`                                    |
-| `DATABASE_URL`        | URL of the MySQL database                                                                            | `mysql://root:root@localhost:3306/envelop` |
-| `REDIS_URL`           | URL of the Redis database                                                                            | `redis://localhost:6379`                   |
-| `SENDGRID_API_KEY`    | API key of the sendgrid account                                                                      | `SG.1234567890`                            |
-| `WEBHOOK_AUTH_SECRET` | Authentication header sent by snapshot's [webhook service](https://docs.snapshot.org/tools/webhooks) | `abc123`                                   |
+| Key                        | Description                                                                                          | Example                                    |
+| -------------------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------------ |
+| `HOST`                     | Hostname of the current envelop instance                                                             | `http://localhost:3006`                    |
+| `FRONT_HOST`               | Hostname of the envelop-ui instance                                                                  | `http://localhost:8080`                    |
+| `HUB_URL`                  | Hostname of snapshot's hub service                                                                   | `https://hub.snapshot.org`                 |
+| `SIDEKICK_URL`             | Hostname of the sidekick service                                                                     | `https://sh5.co`                           |
+| `WALLET_PRIVATE_KEY`       | Private key of the wallet used to sign the emails                                                    | `0x...`                                    |
+| `DATABASE_URL`             | URL of the MySQL database                                                                            | `mysql://root:root@localhost:3306/envelop` |
+| `REDIS_URL`                | URL of the Redis database                                                                            | `redis://localhost:6379`                   |
+| `SENDGRID_API_KEY`         | API key of the sendgrid account                                                                      | `SG.1234567890`                            |
+| `WEBHOOK_AUTH_SECRET`      | Authentication header sent by snapshot's [webhook service](https://docs.snapshot.org/tools/webhooks) | `abc123`                                   |
+| `SENTRY_DSN`               | Sentry DSN key                                                                                       | `https://public@sentry.example.com/1`      |
+| `SENTRY_TRACE_SAMPLE_RATE` | Sentry trace sample rate, nunmber between 0 and 1                                                    | `0.1`                                      |
 
 ### Development
 
@@ -69,6 +71,8 @@ The tests does not rely on any mocking, and test the whole stack.
 ```bash
 yarn test:e2e
 ```
+
+> You can run all tests at once with `yarn test:all`
 
 E2E tests rely on a different .env file: `test/.env.test`, edit its variables to suit your setup.
 

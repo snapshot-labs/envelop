@@ -52,7 +52,7 @@ export function formatProposalHtmlBody(proposal: Proposal, body: string, isTrunc
       .replace(/<a[^>]*>(.*?)<\/a>/g, '$1')
       .replace(/https?:\/\//g, '')
       .replace(/([^<](\/|\.))/g, '<span>$1</span>') +
-    (isTruncated ? '<a href="${proposal.link}">(read more)</a>' : '')
+    (isTruncated ? `<a href="${proposal.link}">(read more)</a>` : '')
   );
 }
 

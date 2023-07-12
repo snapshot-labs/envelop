@@ -7,9 +7,12 @@ import preview from './preview';
 import send from './preview/send';
 import { start as startQueue, shutdown as shutdownQueue } from './queues';
 import { rpcError } from './helpers/utils';
+import { initLogger, fallbackLogger } from './helpers/sentry';
 
 const app = express();
 const PORT = process.env.PORT || 3006;
+
+initLogger(app);
 
 startQueue();
 
@@ -18,7 +21,7 @@ app.use(express.urlencoded({ limit: '4mb', extended: false }));
 app.use(express.static('./public'));
 app.use(
   morgan(
-    '[http] :remote-addr - :remote-user [:date[clf]] ' +
+    '[http] [:date[clf]] ' +
       '":method :url HTTP/:http-version" :status :res[content-length] ' +
       '":referrer" ":user-agent" - :response-time ms'
   )
@@ -27,6 +30,8 @@ app.use(cors({ maxAge: 86400 }));
 app.use('/', rpc);
 app.use('/', preview);
 app.use('/', send);
+
+fallbackLogger(app);
 
 app.use((_, res) => {
   rpcError(res, 'RECORD_NOT_FOUND', '');

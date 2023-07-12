@@ -1,4 +1,4 @@
-import { isValidEmail, obfuscateEmail, sanitizeSubscriptions } from '../../../src/helpers/utils';
+import { isValidEmail, sanitizeSubscriptions } from '../../../src/helpers/utils';
 
 describe('utils', () => {
   describe('isvalidEmail', () => {
@@ -124,19 +124,6 @@ describe('utils', () => {
     it('always returns an array', () => {
       expect(sanitizeSubscriptions([])).toEqual([]);
       expect(sanitizeSubscriptions(['invalid'])).toEqual([]);
-    });
-  });
-
-  describe('obfuscateEmail()', () => {
-    it('returns an obfuscated version of the email', () => {
-      expect(obfuscateEmail('a@test.com')).toEqual('a@test.com');
-      expect(obfuscateEmail('a1@test.com')).toEqual('a1@test.com');
-      expect(obfuscateEmail('a+@test.com')).toEqual('a+@test.com');
-      expect(obfuscateEmail('a.a.a@test.com')).toEqual('a.***@test.com');
-      expect(obfuscateEmail('abcd@test.com')).toEqual('ab**@test.com');
-      expect(obfuscateEmail('abcd+t3st@test.com')).toEqual('ab*******@test.com');
-      expect(obfuscateEmail('abcd-test@test.com')).toEqual('ab*******@test.com');
-      expect(obfuscateEmail('abcd.test@test.com')).toEqual('ab*******@test.com');
     });
   });
 });
