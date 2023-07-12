@@ -1,18 +1,17 @@
 import request from 'supertest';
 import db from '../../src/helpers/mysql';
 import { signVerify } from '../../src/sign';
-import { cleanupSubscribersDb, randomTimestamp } from '../utils';
+import { cleanupSubscribersDb, insertSubscribers } from '../utils';
+import { verifyPayload, bootstrapData } from '../fixtures/verifyPayload';
 
 describe('POST verify', () => {
-  const email = 'test-verify@test.com';
-  const emailB = 'test-verify-b@test.com';
-  const emailC = 'test-verify-c@test.com';
-  const address = '0xDBDd4c5473692Fa0490bfF6AAbf1181f29Ca851e';
-  const addressB = '0x54C8b17E5c46B97d25498205182e0382234B2532';
-  const addressForNotExistEmail = '0xeF91cf65Ed49804B4b54f4cB9af6aC793f1CC32c';
-  const unverifiedEmailForInvalidSignature = 'test-verify-d@test.com';
-  const unverifiedAddressForInvalidSignature = '0xcd880A59D8FF543FFDa28EcD624dd9cEf9EFc0FE';
-  const timestamp = randomTimestamp().toString();
+  const {
+    unverifiedUser,
+    verifiedUser,
+    unverifiedUserForVerifiedAddress,
+    addressForNotExistEmail,
+    timestamp
+  } = verifyPayload;
 
   async function payload(email: string, address: string, signature?: string) {
     return {
@@ -26,21 +25,9 @@ describe('POST verify', () => {
     };
   }
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     await cleanupSubscribersDb(timestamp);
-    return Promise.all(
-      [
-        [timestamp, email, address, 0],
-        [timestamp, emailB, addressB, 0],
-        [timestamp, emailC, addressB, 1],
-        [timestamp, unverifiedEmailForInvalidSignature, unverifiedAddressForInvalidSignature, 0]
-      ].map(data => {
-        return db.queryAsync(
-          'INSERT INTO subscribers (created, email, address, verified) VALUES (?, ?, ?, ?)',
-          data
-        );
-      })
-    );
+    return insertSubscribers(bootstrapData);
   });
 
   afterAll(async () => {
@@ -50,6 +37,8 @@ describe('POST verify', () => {
 
   describe('when the email is not verified yet', () => {
     it('verifies the email', async () => {
+      const { email, address } = unverifiedUser;
+
       const response = await request(process.env.HOST)
         .post('/')
         .send(await payload(email, address));
@@ -65,12 +54,14 @@ describe('POST verify', () => {
 
   describe('when the email is already verified', () => {
     it('returns a success status', async () => {
+      const { email, address } = verifiedUser;
+
       const response = await request(process.env.HOST)
         .post('/')
-        .send(await payload(emailC, addressB));
+        .send(await payload(email, address));
       const result = await db.queryAsync(
         'SELECT verified FROM subscribers WHERE email = ? AND address = ? LIMIT 1',
-        [emailC, addressB]
+        [email, address]
       );
 
       expect(response.statusCode).toBe(200);
@@ -79,13 +70,15 @@ describe('POST verify', () => {
   });
 
   describe('when the address is already verified with another email', () => {
+    const { address, email } = unverifiedUserForVerifiedAddress;
+
     it('returns an error', async () => {
       const response = await request(process.env.HOST)
         .post('/')
-        .send(await payload(emailB, addressB));
+        .send(await payload(email, address));
       const result = await db.queryAsync(
         'SELECT verified FROM subscribers WHERE email = ? AND address = ? LIMIT 1',
-        [emailB, addressB]
+        [email, address]
       );
 
       expect(response.statusCode).toBe(400);
@@ -107,18 +100,14 @@ describe('POST verify', () => {
 
   describe('when the signature is not valid', () => {
     it('returns an error', async () => {
+      const { email, address } = unverifiedUser;
+
       const response = await request(process.env.HOST)
         .post('/')
-        .send(
-          await payload(
-            unverifiedEmailForInvalidSignature,
-            unverifiedAddressForInvalidSignature,
-            'not-valid'
-          )
-        );
+        .send(await payload(email, address, 'not-valid'));
       const result = await db.queryAsync(
         'SELECT verified FROM subscribers WHERE email = ? AND address = ? LIMIT 1',
-        [unverifiedEmailForInvalidSignature, unverifiedAddressForInvalidSignature]
+        [email, address]
       );
 
       expect(response.statusCode).toBe(401);

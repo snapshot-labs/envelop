@@ -1,12 +1,11 @@
 import request from 'supertest';
 import db from '../../src/helpers/mysql';
 import { signUpdate } from '../../src/sign';
-import { cleanupSubscribersDb, randomTimestamp } from '../utils';
+import { cleanupSubscribersDb, insertSubscribers } from '../utils';
+import { updatePayload, bootstrapData } from '../fixtures/updatePayload';
 
 describe('POST update', () => {
-  const email = 'test-update@test.com';
-  const address = '0x123D816BF0b002bEA83a804e5cf1d2797Fcfc77d';
-  const timestamp = randomTimestamp().toString();
+  const { email, address, timestamp } = updatePayload;
 
   async function payload(subscriptions: any) {
     return {
@@ -22,31 +21,7 @@ describe('POST update', () => {
 
   beforeAll(async () => {
     await cleanupSubscribersDb(timestamp);
-    return Promise.all(
-      [
-        [timestamp, email, address, JSON.stringify(['summary']), timestamp],
-        [timestamp, 'unverified@test.com', address, JSON.stringify(['summary']), 0],
-        [
-          timestamp,
-          email,
-          '0xA57Dc1C30536B26A24d6804EBA33A586439652F2',
-          JSON.stringify(['summary']),
-          timestamp
-        ],
-        [
-          timestamp,
-          email,
-          '0xc2E7Ba8b2D297CE5c227B79D82AD1c11B5596307',
-          JSON.stringify(['summary']),
-          0
-        ]
-      ].map(data => {
-        return db.queryAsync(
-          'INSERT INTO subscribers (created, email, address, subscriptions, verified) VALUES (?, ?, ?, ?, ?)',
-          data
-        );
-      })
-    );
+    return insertSubscribers(bootstrapData);
   });
 
   afterAll(async () => {
@@ -103,7 +78,7 @@ describe('POST update', () => {
   });
 
   describe('when passing only the address', () => {
-    it('only updates the subscriptions related to the given address', async () => {
+    it('only updates the subscriptions related to the given verified address', async () => {
       const response = await request(process.env.HOST)
         .post('/')
         .send({

@@ -7,7 +7,8 @@ import {
   rpcError,
   rpcSuccess,
   isValidEmail,
-  getSubscriber
+  getSubscriber,
+  NOT_SUBSCRIBED
 } from './helpers/utils';
 import { verifySubscribe, verifyUnsubscribe, verifyVerify, verifyUpdate } from './sign';
 import { queueSubscribe, queueProposalActivity } from './queues';
@@ -118,7 +119,7 @@ router.post('/subscriber', async (req, res) => {
     return res.json(result);
   } catch (e: any) {
     if (e.message === 'RECORD_NOT_FOUND') {
-      return res.json({ status: 'NOT_SUBSCRIBED' });
+      return res.json({ status: NOT_SUBSCRIBED });
     }
 
     console.log(e);

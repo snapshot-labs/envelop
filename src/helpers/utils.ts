@@ -14,6 +14,10 @@ function currentTimestamp() {
   return Math.round(Date.now() / 1e3);
 }
 
+export const VERIFIED = 'VERIFIED';
+export const UNVERIFIED = 'UNVERIFIED';
+export const NOT_SUBSCRIBED = 'NOT_SUBSCRIBED';
+
 export function rpcSuccess(res: Response, result: string, id: string | number) {
   res.json({
     jsonrpc: '2.0',
@@ -171,7 +175,7 @@ export async function getSubscriber(address: string) {
   }
 
   return {
-    status: (subscriber.verified as number) > 0 ? 'VERIFIED' : 'UNVERIFIED',
+    status: (subscriber.verified as number) > 0 ? VERIFIED : UNVERIFIED,
     subscriptions: !subscriber.subscriptions
       ? SUBSCRIPTION_TYPE
       : JSON.parse(subscriber.subscriptions as string)
