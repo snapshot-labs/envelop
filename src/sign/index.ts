@@ -30,17 +30,6 @@ function verify(
   }
 }
 
-export function subscribe(email: string, address: string, salt: string) {
-  return sign(
-    {
-      email,
-      address: getAddress(address),
-      salt
-    },
-    SubscribeTypes
-  );
-}
-
 export function verifySubscribe(email: string, address: string, signature: string) {
   return verify(
     {

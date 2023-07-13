@@ -12,7 +12,7 @@ import {
 } from './helpers/utils';
 import { capture } from './helpers/sentry';
 import { verifySubscribe, verifyUnsubscribe, verifyVerify, verifyUpdate } from './sign';
-import { queueSubscribe, queueProposalActivity } from './queues';
+import { queueVerify, queueProposalActivity } from './queues';
 import { version, name } from '../package.json';
 import { SUBSCRIPTION_TYPE, default as templates } from './templates';
 
@@ -39,7 +39,7 @@ router.post('/', async (req, res) => {
       if (verifySubscribe(params.email, params.address, params.signature)) {
         const subscriber = await subscribe(params.email, params.address);
         if (subscriber) {
-          queueSubscribe(subscriber.email, subscriber.address, subscriber.created.toString());
+          queueVerify(subscriber.email, subscriber.address, subscriber.created.toString());
         }
         return rpcSuccess(res, 'OK', id);
       }

@@ -281,12 +281,12 @@ Take advantage of the `MESSAGE` code to show meaningful error message to your en
 
 As triggering emails involve a few tedious steps on the UI, a few CLI scripts are provided to trigger the email sending directly to a given email address.
 
-### To send a `subscribe` (verification) test email
+### To send a `verify` (verification) test email
 
 ```bash
-yarn ts-node scripts/send-subscribe.ts [EMAIL] [ADDRESS]
-# E.g.
-# yarn ts-node scripts/send-subscribe.ts test@snapshot.org 0xeF8305E140ac520225DAf050e2f71d5fBcC543e7
+yarn ts-node scripts/send-verify.ts [EMAIL] [ADDRESS]
+// E.g.
+// yarn ts-node scripts/send-verify.ts test@snapshot.org 0xeF8305E140ac520225DAf050e2f71d5fBcC543e7
 ```
 
 - `EMAIL`: your email address (not required to already exist in the database)

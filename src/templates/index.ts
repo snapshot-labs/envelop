@@ -1,5 +1,5 @@
 import fs from 'fs';
-import prepareSubscribe from './subscribe';
+import prepareVerification from './verification';
 import prepareSummary from './summary';
 import prepareNewProposal from './newProposal';
 import prepareClosedProposal from './closedProposal';
@@ -9,15 +9,15 @@ import type { Templates, TemplateId } from '../../types';
 export const SUBSCRIPTION_TYPE: TemplateId[] = ['summary', 'newProposal', 'closedProposal'];
 
 const templates: Templates = {
-  subscribe: {
+  verification: {
     name: 'Verification',
     description: 'Verification email',
     from: 'Snapshot <notify@snapshot.org>',
     subject: 'Verify your email address',
-    text: fs.readFileSync('./src/templates/subscribe/text.hbs', 'utf-8'),
+    text: fs.readFileSync('./src/templates/verification/text.hbs', 'utf-8'),
     preheader: 'Verify your email to confirm your subscription to Snapshot mailing list',
-    html: fs.readFileSync('./src/templates/subscribe/html.hbs', 'utf-8'),
-    prepare: params => prepareSubscribe(params)
+    html: fs.readFileSync('./src/templates/verification/html.hbs', 'utf-8'),
+    prepare: params => prepareVerification(params)
   },
   summary: {
     name: 'Weekly digest',
