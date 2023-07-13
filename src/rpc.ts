@@ -7,8 +7,10 @@ import {
   rpcError,
   rpcSuccess,
   isValidEmail,
-  getSubscriber
+  getSubscriber,
+  NOT_SUBSCRIBED
 } from './helpers/utils';
+import { capture } from './helpers/sentry';
 import { verifySubscribe, verifyUnsubscribe, verifyVerify, verifyUpdate } from './sign';
 import { queueVerify, queueProposalActivity } from './queues';
 import { version, name } from '../package.json';
@@ -79,7 +81,7 @@ router.post('/', async (req, res) => {
       return rpcError(res, 'UNAUTHORIZED', id);
     }
   } catch (e: any) {
-    console.error(e);
+    capture(e);
     return rpcError(res, e, id);
   }
 });
@@ -118,10 +120,10 @@ router.post('/subscriber', async (req, res) => {
     return res.json(result);
   } catch (e: any) {
     if (e.message === 'RECORD_NOT_FOUND') {
-      return res.json({ status: 'NOT_SUBSCRIBED' });
+      return res.json({ status: NOT_SUBSCRIBED });
     }
 
-    console.log(e);
+    capture(e);
     return rpcError(res, e, address);
   }
 });

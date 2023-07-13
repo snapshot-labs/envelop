@@ -6,6 +6,7 @@
 export default {
   clearMocks: true,
   collectCoverage: true,
+  collectCoverageFrom: ['./src/**'],
   coverageDirectory: 'coverage',
   coverageProvider: 'v8',
 
@@ -14,7 +15,8 @@ export default {
 
   preset: 'ts-jest',
   testEnvironment: 'jest-environment-node-single-context',
-  globalSetup: '<rootDir>/test/setup.ts',
-  //setupFilesAfterEnv: ['<rootDir>src/setupTests.ts'],
-  moduleFileExtensions: ['js', 'ts']
+  setupFiles: ['dotenv/config'],
+  moduleFileExtensions: ['js', 'ts'],
+  testPathIgnorePatterns: ['dist/'],
+  verbose: true
 };

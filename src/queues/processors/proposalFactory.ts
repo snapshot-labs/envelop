@@ -2,9 +2,8 @@ import chunk from 'lodash.chunk';
 import { mailerQueue } from '../index';
 import { getFollows, getProposal } from '../../helpers/snapshot';
 import { getModerationList, getVerifiedSubscriptions } from '../../helpers/utils';
+import { proposalDelay } from '../utils';
 import type { Job } from 'bull';
-
-const NEW_PROPOSAL_DELAY = 600000; // 10 minutes
 
 function eventToTemplate(event: string) {
   switch (event) {
@@ -63,7 +62,7 @@ export default async (job: Job): Promise<number> => {
       },
       opts: {
         jobId: `${templateId}-${email}-${id}`,
-        delay: templateId === 'newProposal' ? NEW_PROPOSAL_DELAY : 0
+        delay: templateId === 'newProposal' ? proposalDelay(proposal) : 0
       }
     }))
   );

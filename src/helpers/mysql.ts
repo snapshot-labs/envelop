@@ -15,7 +15,7 @@ interface PromisedPool {
   endAsync: () => Promise<any>;
 }
 
-const config = new ConnectionString(process.env.DATABASE_URL || '');
+export const config = new ConnectionString(process.env.DATABASE_URL || '');
 bluebird.promisifyAll([Pool, Connection]);
 
 const db: PromisedPool = mysql.createPool({

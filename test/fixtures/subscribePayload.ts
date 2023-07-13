@@ -1,4 +1,4 @@
-export const subscriptionPayload = {
+export const subscribePayload = {
   email: 'test@snapshot.org',
   address: '0x91FD2c8d24767db4Ece7069AA27832ffaf8590f3',
   signature:

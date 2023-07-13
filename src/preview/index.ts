@@ -3,6 +3,7 @@ import fs from 'fs';
 import { compile } from 'handlebars';
 import { TemplateId } from '../../types';
 import { buildMessage } from './utils';
+import { rpcError } from '../helpers/utils';
 
 const router = express.Router();
 
@@ -15,8 +16,7 @@ router.get('/preview/:template', async (req, res) => {
       id: req.query.id
     });
   } catch (e) {
-    console.log(e);
-    return res.sendStatus(404);
+    return rpcError(res, 'RECORD_NOT_FOUND', '');
   }
 
   if (Object.keys(msg).length === 0) {
