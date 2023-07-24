@@ -33,7 +33,7 @@ const templates: Templates = {
     name: 'Proposal creation',
     description: 'Get informed when a new proposal is submitted in your followed spaces.',
     from: 'Snapshot <notify@snapshot.org>',
-    subject: '[{{proposal.space.name}}] New proposal: {{proposal.title}}',
+    subject: '[{{{proposal.space.name}}}] New proposal: {{proposal.title}}',
     text: fs.readFileSync('./src/templates/newProposal/text.hbs', 'utf-8'),
     preheader:
       'Voting period from {{formattedStartDate}} to {{formattedEndDate}} - ' +
@@ -45,7 +45,7 @@ const templates: Templates = {
     name: 'Proposal closure',
     description: 'Get informed when a proposal is closed in your followed spaces.',
     from: 'Snapshot <notify@snapshot.org>',
-    subject: '[{{proposal.space.name}}] Closed proposal: {{proposal.title}}',
+    subject: '[{{{proposal.space.name}}}] Closed proposal: {{proposal.title}}',
     text: fs.readFileSync('./src/templates/closedProposal/text.hbs', 'utf-8'),
     preheader:
       '{{winningChoiceName}} {{winningChoicePercentage}}% - ' +
