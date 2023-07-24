@@ -41,3 +41,4 @@ jobs:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: snapshot-labs
           SENTRY_PROJECT: envelop
+          SENTRY_LOG_LEVEL: debug
