@@ -35,3 +35,9 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Sentry Release
+        uses: getsentry/action-release@v1.4.1
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: snapshot-labs
+          SENTRY_PROJECT: envelop
