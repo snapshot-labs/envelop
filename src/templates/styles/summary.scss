@@ -33,6 +33,7 @@
   &-block {
     border: 1px solid $border-color;
     margin: 1em 0;
+    word-break: keep-all;
 
     width: 100%;
 
