@@ -1,6 +1,8 @@
 import 'dotenv/config';
+import path from 'path';
 import express from 'express';
 import morgan from 'morgan';
+import favicon from 'serve-favicon';
 import cors from 'cors';
 import rpc from './rpc';
 import preview from './preview';
@@ -27,6 +29,7 @@ app.use(
   )
 );
 app.use(cors({ maxAge: 86400 }));
+app.use(favicon(path.join(__dirname, '../public', 'favicon.ico')));
 app.use('/', rpc);
 app.use('/', preview);
 app.use('/', send);
