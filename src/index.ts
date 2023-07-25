@@ -4,6 +4,7 @@ import express from 'express';
 import morgan from 'morgan';
 import favicon from 'serve-favicon';
 import cors from 'cors';
+import promBundle from 'express-prom-bundle';
 import rpc from './rpc';
 import preview from './preview';
 import send from './preview/send';
@@ -18,6 +19,15 @@ initLogger(app);
 
 startQueue();
 
+app.use(
+  promBundle({
+    includeMethod: true,
+    includePath: true,
+    promClient: {
+      collectDefaultMetrics: {}
+    }
+  })
+);
 app.use(express.json({ limit: '4mb' }));
 app.use(express.urlencoded({ limit: '4mb', extended: false }));
 app.use(express.static('./public'));
