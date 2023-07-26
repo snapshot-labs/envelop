@@ -16,6 +16,9 @@ const app = express();
 const PORT = process.env.PORT || 3006;
 
 initLogger(app);
+
+// Exclude favicon request from metrics by defining it before
+app.use(favicon(path.join(__dirname, '../public', 'favicon.ico')));
 initMetrics(app);
 
 startQueue();
@@ -31,7 +34,6 @@ app.use(
   )
 );
 app.use(cors({ maxAge: 86400 }));
-app.use(favicon(path.join(__dirname, '../public', 'favicon.ico')));
 app.use('/', rpc);
 app.use('/', preview);
 app.use('/', send);
