@@ -1,8 +1,6 @@
 import 'dotenv/config';
-import path from 'path';
 import express from 'express';
 import morgan from 'morgan';
-import favicon from 'serve-favicon';
 import cors from 'cors';
 import rpc from './rpc';
 import preview from './preview';
@@ -18,7 +16,7 @@ const PORT = process.env.PORT || 3006;
 initLogger(app);
 
 // Exclude favicon request from metrics by defining it before
-app.use(favicon(path.join(__dirname, '../public', 'favicon.ico')));
+app.get('/favicon.*', (req, res) => res.status(204));
 initMetrics(app);
 
 startQueue();
