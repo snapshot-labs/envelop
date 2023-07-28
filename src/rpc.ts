@@ -10,9 +10,9 @@ import {
   getSubscriber,
   NOT_SUBSCRIBED
 } from './helpers/utils';
-import { capture } from './helpers/sentry';
+import { capture } from '@snapshot-labs/snapshot-sentry';
 import { verifySubscribe, verifyUnsubscribe, verifyVerify, verifyUpdate } from './sign';
-import { queueSubscribe, queueProposalActivity } from './queues';
+import { queueVerify, queueProposalActivity } from './queues';
 import { version, name } from '../package.json';
 import { SUBSCRIPTION_TYPE, default as templates } from './templates';
 
@@ -39,7 +39,7 @@ router.post('/', async (req, res) => {
       if (verifySubscribe(params.email, params.address, params.signature)) {
         const subscriber = await subscribe(params.email, params.address);
         if (subscriber) {
-          queueSubscribe(subscriber.email, subscriber.address, subscriber.created.toString());
+          queueVerify(subscriber.email, subscriber.address, subscriber.created.toString());
         }
         return rpcSuccess(res, 'OK', id);
       }
@@ -81,7 +81,7 @@ router.post('/', async (req, res) => {
       return rpcError(res, 'UNAUTHORIZED', id);
     }
   } catch (e: any) {
-    capture(e);
+    capture(e, { context: { body: req.body } });
     return rpcError(res, e, id);
   }
 });
@@ -123,7 +123,7 @@ router.post('/subscriber', async (req, res) => {
       return res.json({ status: NOT_SUBSCRIBED });
     }
 
-    capture(e);
+    capture(e, { context: { address } });
     return rpcError(res, e, address);
   }
 });

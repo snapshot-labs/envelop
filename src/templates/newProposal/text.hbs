@@ -1,15 +1,18 @@
+A new proposal has been submitted on {{{proposal.space.name}}}
+
+==================================
 {{#> layout.text}}
 {{proposal.title}}
 ==================================
 {{proposal.link}}
 
-Submitted by {{proposal.author}} on {{proposal.space.name}}
+Submitted by {{proposal.author}}
 Voting period from {{formattedStartDate}} to {{formattedEndDate}}
 
 {{proposalTextBody}}
 
 --------------
-Cast you votes
+Cast your votes
 --------------
 {{#each proposal.choices}}
 [ ] {{this}}
