@@ -81,7 +81,7 @@ router.post('/', async (req, res) => {
       return rpcError(res, 'UNAUTHORIZED', id);
     }
   } catch (e: any) {
-    capture(e);
+    capture(e, { context: { body: req.body } });
     return rpcError(res, e, id);
   }
 });
@@ -123,7 +123,7 @@ router.post('/subscriber', async (req, res) => {
       return res.json({ status: NOT_SUBSCRIBED });
     }
 
-    capture(e);
+    capture(e, { context: { address } });
     return rpcError(res, e, address);
   }
 });

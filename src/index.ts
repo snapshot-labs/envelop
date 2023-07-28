@@ -7,12 +7,17 @@ import preview from './preview';
 import send from './preview/send';
 import { start as startQueue, shutdown as shutdownQueue } from './queues';
 import { rpcError } from './helpers/utils';
+import initMetrics from './helpers/metrics';
 import { initLogger, fallbackLogger } from '@snapshot-labs/snapshot-sentry';
 
 const app = express();
 const PORT = process.env.PORT || 3006;
 
 initLogger(app);
+
+// Exclude favicon request from metrics by defining it before
+app.get('/favicon.*', (req, res) => res.status(204));
+initMetrics(app);
 
 startQueue();
 
