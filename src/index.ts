@@ -10,7 +10,6 @@ import { rpcError } from './helpers/utils';
 import initMetrics from './helpers/metrics';
 import { initLogger, fallbackLogger } from '@snapshot-labs/snapshot-sentry';
 
-
 const app = express();
 const PORT = process.env.PORT || 3006;
 
