@@ -1273,9 +1273,9 @@
   integrity sha512-k/FUf4VWhwLFUmKuWs2mNvmPe691hqhvCJuujD4TfbIivWysmL1TqthwfdQUrQEAQUqVQ2ZKEiGkbufp5J27eQ==
 
 "@snapshot-labs/snapshot-sentry@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@snapshot-labs/snapshot-sentry/-/snapshot-sentry-1.0.0.tgz#4446128b80cf7634c58d19fde05a4b08b56bab8e"
-  integrity sha512-NEI1yemZvWdOxdlMCAA3wWtk2mQgCffNkCUnRzXEewtvXIzxrBeXPh4tp1dv5Xlsdg5p3QoIcvyfaZ5EpiWRlQ==
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@snapshot-labs/snapshot-sentry/-/snapshot-sentry-1.1.0.tgz#b357d4789ffd287f90fb70e7f0b207b47627cf24"
+  integrity sha512-Z31Y/5RJkTudrUwPasRxfABEQG2eQ2Ka5+vpi5zEwspt5gwTEfVM8M1NlYMFikWYqXHvVk51EU3UmJTqgL6pIg==
   dependencies:
     "@sentry/node" "^7.60.1"
 
@@ -5518,10 +5518,15 @@ tslib@^1.8.1:
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.14.1.tgz#cf2d38bdc34a134bcaf1091c41f6619e2f672d00"
   integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
 
-tslib@^2.1.0, tslib@^2.3.0, "tslib@^2.4.1 || ^1.9.3":
+tslib@^2.1.0, tslib@^2.3.0:
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.6.0.tgz#b295854684dbda164e181d259a22cd779dcd7bc3"
   integrity sha512-7At1WUettjcSRHXCyYtTselblcHl9PJFFVKiCAy/bY97+BPZXSQ2wbq0P9s8tK2G7dFQfNnlJnPAiArVBVBsfA==
+
+"tslib@^2.4.1 || ^1.9.3":
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.6.1.tgz#fd8c9a0ff42590b25703c0acb3de3d3f4ede0410"
+  integrity sha512-t0hLfiEKfMUoqhG+U1oid7Pva4bbDPHYfJNiB7BiIjRkj1pyC++4N3huJfqY6aRH6VTB0rvtzQwjM4K6qpfOig==
 
 tsutils@^3.21.0:
   version "3.21.0"
