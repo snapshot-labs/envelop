@@ -10,7 +10,7 @@ import {
   getSubscriber,
   NOT_SUBSCRIBED
 } from './helpers/utils';
-import { capture } from './helpers/sentry';
+import { capture } from '@snapshot-labs/snapshot-sentry';
 import { verifySubscribe, verifyUnsubscribe, verifyVerify, verifyUpdate } from './sign';
 import { queueVerify, queueProposalActivity } from './queues';
 import { version, name } from '../package.json';

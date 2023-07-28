@@ -1,5 +1,5 @@
 import sgMail from '@sendgrid/mail';
-import { capture } from '../helpers/sentry';
+import { capture } from '@snapshot-labs/snapshot-sentry';
 import { Message } from '../../types';
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
