@@ -2,4 +2,4 @@ name: Lint
 on: [push]
 jobs:
   lint:
-    uses: snapshot-labs/actions/.github/workflows/lint.yml@add-basic-workflows
+    uses: snapshot-labs/actions/.github/workflows/lint.yml@main
