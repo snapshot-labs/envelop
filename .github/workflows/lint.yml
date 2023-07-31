@@ -2,5 +2,4 @@ name: Lint
 on: [push]
 jobs:
   lint:
-    uses: wa0x6e/test-actions/.github/workflows/lint.yml@master
-
+    uses: snapshot-labs/actions/.github/workflows/lint.yml@main
