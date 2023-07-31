@@ -6,7 +6,7 @@
     "lint:fix": "yarn lint --fix",
     "lint": "eslint src/ test/ --ext .ts",
     "typecheck": "tsc --noEmit",
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc",
     "dev": "nodemon src/index.ts -e js,ts,hbs,json",
     "start": "node dist/src/index.js",
     "start:test": "dotenv -e test/.env.test yarn dev",
