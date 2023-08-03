@@ -14,7 +14,11 @@ export default function initMetrics(app: Express) {
       includePath: true,
       promClient: {
         collectDefaultMetrics: {}
-      }
+      },
+      normalizePath: [
+        ['^/preview/.*', '/preview/#template'],
+        ['^/send/.*', '/send/#template']
+      ]
     })
   );
 }
