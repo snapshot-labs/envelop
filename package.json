@@ -3,16 +3,16 @@
   "version": "0.1.0",
   "license": "MIT",
   "scripts": {
-    "lint:nofix": "eslint src/ test/ --ext .ts",
-    "lint": "yarn lint:nofix --fix",
-    "build": "tsc -p tsconfig.json",
+    "lint": "eslint src/ test/ scripts/ --ext .ts,.json",
+    "lint:fix": "yarn lint --fix",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc",
     "dev": "nodemon src/index.ts -e js,ts,hbs,json",
     "start": "node dist/src/index.js",
     "start:test": "dotenv -e test/.env.test yarn dev",
     "test": "PORT=3030 start-server-and-test 'yarn start:test' 3030 'dotenv -e test/.env.test jest --runInBand'",
     "test:unit": "dotenv -e test/.env.test jest test/unit/",
-    "test:e2e": "PORT=3030 start-server-and-test 'yarn start:test' 3030 'dotenv -e test/.env.test jest --runInBand --collectCoverage=false test/e2e/'",
-    "typecheck": "tsc --noEmit"
+    "test:e2e": "PORT=3030 start-server-and-test 'yarn start:test' 3030 'dotenv -e test/.env.test jest --runInBand --collectCoverage=false test/e2e/'"
   },
   "eslintConfig": {
     "extends": "@snapshot-labs"
@@ -31,7 +31,7 @@
     "@ethersproject/address": "^5.7.0",
     "@ethersproject/wallet": "^5.7.0",
     "@sendgrid/mail": "^7.7.0",
-    "@snapshot-labs/snapshot-sentry": "^1.0.0",
+    "@snapshot-labs/snapshot-sentry": "^1.1.0",
     "bluebird": "^3.7.2",
     "bull": "^4.10.4",
     "connection-string": "^4.4.0",
