@@ -1,7 +1,7 @@
 import client from 'prom-client';
 import promBundle from 'express-prom-bundle';
 import db from './mysql';
-import type { Express } from 'express';
+import type { Express, Request } from 'express';
 import { SUBSCRIPTION_TYPE } from '../templates';
 import { mailerQueue } from '../queues';
 
@@ -18,7 +18,19 @@ export default function initMetrics(app: Express) {
       normalizePath: [
         ['^/preview/.*', '/preview/#template'],
         ['^/send/.*', '/send/#template']
-      ]
+      ],
+      bypass: {
+        onRequest: (req: Request) => {
+          const whitelist = [
+            /^\/(preview|send)\/.*$/,
+            /^\/$/,
+            /^\/(webhook|subscriber|subscriptionsList)$/,
+            /^\/images\/.*\.png$/
+          ];
+
+          return !whitelist.some(regex => req.path.match(regex));
+        }
+      }
     })
   );
 }
