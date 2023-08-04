@@ -57,7 +57,7 @@ new client.Gauge({
 });
 
 new client.Gauge({
-  name: 'mailing_queued_jobs',
+  name: 'mailing_queued_jobs_count',
   help: 'Number of emails in the queue, pending sending',
   async collect() {
     this.set(await mailerQueue.count());
