@@ -9,7 +9,7 @@ export const proposals: Proposal[] = [
     end: 1678243620,
     state: 'active',
     link: 'https://snapshot.org/#/spaceone.eth/proposal/0xda05f86b3d7305e5a31b9f23a02c3625edcae5e73ac717a99fa2bf36bcdd0144',
-    space: { id: 'spaceone.eth', name: 'TestDAO' }
+    space: { id: 'spaceone.eth', name: 'TestDAO', verified: true }
   },
   {
     id: '0x2',
@@ -19,7 +19,7 @@ export const proposals: Proposal[] = [
     end: 1678243620,
     state: 'active',
     link: 'https://snapshot.org/#/spaceone.eth/proposal/0xda05f86b3d7305e5a31b9f23a02c3625edcae5e73ac717a99fa2bf36bcdd0144',
-    space: { id: 'spaceone.eth', name: 'TestDAO' }
+    space: { id: 'spaceone.eth', name: 'TestDAO', verified: true }
   },
   {
     id: '0x3',
@@ -29,7 +29,7 @@ export const proposals: Proposal[] = [
     end: 1678243620,
     state: 'active',
     link: 'https://snapshot.org/#/spacetwo.eth/proposal/0xda05f86b3d7305e5a31b9f23a02c3625edcae5e73ac717a99fa2bf36bcdd0144',
-    space: { id: 'spacetwo.eth', name: 'TestDAO' }
+    space: { id: 'spacetwo.eth', name: 'TestDAO', verified: true }
   },
   {
     id: '0x4',
@@ -39,7 +39,7 @@ export const proposals: Proposal[] = [
     end: 1678243620,
     state: 'pending',
     link: 'https://snapshot.org/#/testsnap.eth/proposal/0xda05f86b3d7305e5a31b9f23a02c3625edcae5e73ac717a99fa2bf36bcdd0144',
-    space: { id: 'testsnap.eth', name: 'TestDAO' }
+    space: { id: 'testsnap.eth', name: 'TestDAO', verified: true }
   },
   {
     id: '0x5',
@@ -49,7 +49,7 @@ export const proposals: Proposal[] = [
     end: 1678243620,
     state: 'closed',
     link: 'https://snapshot.org/#/testsnap.eth/proposal/0xda05f86b3d7305e5a31b9f23a02c3625edcae5e73ac717a99fa2bf36bcdd0144',
-    space: { id: 'testsnap.eth', name: 'TestDAO' }
+    space: { id: 'testsnap.eth', name: 'TestDAO', verified: true }
   }
 ];
 
