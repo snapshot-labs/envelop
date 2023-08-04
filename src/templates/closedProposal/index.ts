@@ -6,7 +6,7 @@ import type { TemplatePrepareParams } from '../../../types';
 export default async function prepare(params: TemplatePrepareParams) {
   const proposal = await getProposal(params.id);
 
-  if (!proposal) {
+  if (!proposal || !proposal.space.verified) {
     throw new Error('Proposal not found');
   }
 
