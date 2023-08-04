@@ -1,41 +1,26 @@
-import client from 'prom-client';
-import promBundle from 'express-prom-bundle';
+import init from '@snapshot-labs/snapshot-metrics';
 import db from './mysql';
-import type { Express, Request } from 'express';
 import { SUBSCRIPTION_TYPE } from '../templates';
 import { mailerQueue } from '../queues';
+import type { Express } from 'express';
 
 export default function initMetrics(app: Express) {
-  initCustomMetrics();
-
-  app.use(
-    promBundle({
-      includeMethod: true,
-      includePath: true,
-      promClient: {
-        collectDefaultMetrics: {}
-      },
-      normalizePath: [
-        ['^/preview/.*', '/preview/#template'],
-        ['^/send/.*', '/send/#template']
-      ],
-      bypass: {
-        onRequest: (req: Request) => {
-          const whitelist = [
-            /^\/(preview|send)\/.*$/,
-            /^\/$/,
-            /^\/(webhook|subscriber|subscriptionsList)$/,
-            /^\/images\/.*\.png$/
-          ];
-
-          return !whitelist.some(regex => req.path.match(regex));
-        }
-      }
-    })
-  );
+  init(app, {
+    customMetrics,
+    normalizedPath: [
+      ['^/preview/.*', '/preview/#template'],
+      ['^/send/.*', '/send/#template']
+    ],
+    whitelistedPath: [
+      /^\/$/,
+      /^\/images\/.*\.png$/,
+      /^\/(preview|send)\/.*$/,
+      /^\/(webhook|subscriber|subscriptionsList)$/
+    ]
+  });
 }
 
-async function initCustomMetrics() {
+async function customMetrics(client: any) {
   new client.Gauge({
     name: 'subscribers_per_status_count',
     help: 'Number of subscribers per status',
@@ -74,8 +59,8 @@ async function initCustomMetrics() {
   });
 
   new client.Gauge({
-    name: 'queued_mailing_jobs',
-    help: 'Number of emails in queue, pending sending',
+    name: 'mailing_queued_jobs',
+    help: 'Number of emails in the queue, pending sending',
     async collect() {
       this.set(await mailerQueue.count());
     }
