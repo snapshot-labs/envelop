@@ -46,7 +46,7 @@
     "handlebars": "^4.7.7",
     "juice": "^9.0.0",
     "lodash.chunk": "^4.2.0",
-    "marked": "< 5",
+    "marked": "< 8",
     "morgan": "^1.10.0",
     "mysql": "^2.18.1",
     "prom-client": "^14.2.0",
