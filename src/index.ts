@@ -14,9 +14,6 @@ const app = express();
 const PORT = process.env.PORT || 3006;
 
 initLogger(app);
-
-// Exclude favicon request from metrics by defining it before
-app.get('/favicon.*', (req, res) => res.status(204));
 initMetrics(app);
 
 startQueue();
