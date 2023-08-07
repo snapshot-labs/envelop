@@ -21,6 +21,7 @@ const FOLLOWS_QUERY = gql`
       follower
       space {
         id
+        verified
       }
     }
   }
@@ -42,6 +43,7 @@ const PROPOSALS_QUERY = gql`
       space {
         id
         name
+        verified
       }
     }
   }
@@ -65,6 +67,7 @@ const PROPOSAL_QUERY = gql`
       space {
         id
         name
+        verified
       }
     }
   }
@@ -81,7 +84,7 @@ const VOTES_QUERY = gql`
   }
 `;
 
-export type Space = { id: string; name?: string };
+export type Space = { id: string; name?: string; verified: boolean };
 export type Follow = { space: Space; follower: string };
 export type Proposal = {
   id: string;

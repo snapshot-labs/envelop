@@ -254,11 +254,8 @@ table {
     }
   }
 
-  .logo-dark {
-    display: block !important;
-  }
-
-  .logo-light {
-    display: none !important;
+  .logo {
+    width: 36px;
+    margin-bottom: 1.5em;
   }
 }

@@ -48,7 +48,7 @@ export default async (job: Job): Promise<number> => {
 
   const proposal = await getProposal(id);
 
-  if (!proposal) {
+  if (!proposal || !proposal.space.verified) {
     return 0;
   }
 
