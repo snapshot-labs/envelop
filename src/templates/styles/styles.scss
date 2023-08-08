@@ -84,20 +84,6 @@ table {
   border-spacing: 0;
 }
 
-.logo-light,
-.logo-dark {
-  height: 2em;
-  margin-bottom: 1.5em;
-}
-
-.logo-dark {
-  display: none;
-}
-
-.logo-light {
-  display: block;
-}
-
 .container {
   padding: 2em 1em;
 }
@@ -177,6 +163,11 @@ table {
   background-color: rgb(33, 182, 111);
 }
 
+.logo {
+  width: 36px;
+  margin-bottom: 1.5em;
+}
+
 @import './summary.scss';
 @import './proposal-activity.scss';
 
@@ -252,10 +243,5 @@ table {
     small {
       font-size: 1em;
     }
-  }
-
-  .logo {
-    width: 36px;
-    margin-bottom: 1.5em;
   }
 }
