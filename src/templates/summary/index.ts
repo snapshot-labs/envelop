@@ -19,6 +19,11 @@ export async function getGroupedProposals(addresses: string[], startDate: Date, 
   const trustedSpaces = follows
     .filter(follow => follow.space.verified && !flaggedSpaces.includes(follow.space.id))
     .map(follow => follow.space.id);
+
+  if (trustedSpaces.length === 0) {
+    return [];
+  }
+
   const allProposals = await getProposals(trustedSpaces, startDate, endDate);
   const proposals = allProposals.filter(proposal => !flaggedProposals.includes(proposal.id));
   const votes = await getVotes(
