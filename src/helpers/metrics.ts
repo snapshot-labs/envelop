@@ -26,7 +26,7 @@ new client.Gauge({
   async collect() {
     [
       ['VERIFIED', 'verified > 0'],
-      ['UNVERIFIED', 'verified IS NULL']
+      ['UNVERIFIED', 'verified = 0']
     ].forEach(async function callback(this: any, data: any) {
       this.set(
         { status: data[0] },
