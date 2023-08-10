@@ -7,6 +7,7 @@ import verificationProcessor from './processors/verification';
 import proposalFactoryProcessor from './processors/proposalFactory';
 import newProposalProcessor from './processors/newProposal';
 import closedProposalProcessor from './processors/closedProposal';
+import { countSentEmails } from '../helpers/metrics';
 
 const REDIS_URL = (process.env.REDIS_URL as string) || 'redis://127.0.0.1:6379';
 const REDIS_OPTS = { maxRetriesPerRequest: null, enableReadyCheck: false };
@@ -30,6 +31,10 @@ const opts = {
 export const mailerQueue = new Queue('mailer', opts);
 export const scheduleQueue = new Queue('scheduler', opts);
 export const proposalActivityQueue = new Queue('proposal-activities', opts);
+
+mailerQueue.on('completed', job => {
+  countSentEmails.inc({ type: job.name });
+});
 
 export function start() {
   console.log('[queue-mailer] Starting queue mailer');
