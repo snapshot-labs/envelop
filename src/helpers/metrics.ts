@@ -63,3 +63,9 @@ new client.Gauge({
     this.set(await mailerQueue.count());
   }
 });
+
+export const countSentEmails = new client.Counter({
+  name: 'mailing_sent_count',
+  help: 'Number of sent emails, per type',
+  labelNames: ['type']
+});
