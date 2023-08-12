@@ -84,6 +84,15 @@ table {
   border-spacing: 0;
 }
 
+blockquote {
+  margin: 0;
+  padding: 0 1em;
+  color: $content-muted-text-color;
+  border-left-width: 0.25em;
+  border-left-style: solid;
+  border-left-color: $border-color;
+}
+
 .container {
   padding: 2em 1em;
 }
@@ -216,6 +225,11 @@ table {
 
   h2 {
     color: $mild-contrast-text-color;
+  }
+
+  blockquote {
+    color: $content-muted-text-color;
+    border-left-color: $border-color;
   }
 
   .content {
