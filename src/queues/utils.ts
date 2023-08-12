@@ -8,7 +8,7 @@ export function proposalDelay(proposal: Proposal) {
 
   // Prevent sending new proposal email after it closes
   if (proposal.end <= sendTimestamp) {
-    proposalDelay = (proposal.end - +new Date()) * 0.75;
+    proposalDelay = Math.ceil((proposal.end - +new Date()) * 0.75);
   }
 
   return proposalDelay;
