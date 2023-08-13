@@ -1,9 +1,9 @@
-import express from 'express';
 import fs from 'fs';
+import express from 'express';
 import { compile } from 'handlebars';
 import { TemplateId } from '../../types';
-import { buildMessage } from './utils';
 import { rpcError } from '../helpers/utils';
+import { buildMessage } from './utils';
 
 const router = express.Router();
 

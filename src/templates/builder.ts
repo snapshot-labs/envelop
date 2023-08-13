@@ -1,9 +1,9 @@
 import { compile } from 'handlebars';
 import juice from 'juice';
 import sass from 'sass';
-import { unsubscribeLink, updateSubscriptionsLink, loadPartials, formatPreheader } from './utils';
-import templates from './';
 import type { Message, TemplatePrepareParams, TemplateId } from '../../types';
+import { unsubscribeLink, updateSubscriptionsLink, loadPartials, formatPreheader } from './utils';
+import templates from '.';
 
 loadPartials();
 

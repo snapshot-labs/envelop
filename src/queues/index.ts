@@ -1,13 +1,13 @@
 import Queue from 'bull';
 import Redis from 'ioredis';
+import constants from '../helpers/constants.json';
+import { countSentEmails } from '../helpers/metrics';
 import summaryProcessor from './processors/summary';
 import schedulerProcessor from './processors/scheduler';
-import constants from '../helpers/constants.json';
 import verificationProcessor from './processors/verification';
 import proposalFactoryProcessor from './processors/proposalFactory';
 import newProposalProcessor from './processors/newProposal';
 import closedProposalProcessor from './processors/closedProposal';
-import { countSentEmails } from '../helpers/metrics';
 
 const REDIS_URL = (process.env.REDIS_URL as string) || 'redis://127.0.0.1:6379';
 const REDIS_OPTS = { maxRetriesPerRequest: null, enableReadyCheck: false };

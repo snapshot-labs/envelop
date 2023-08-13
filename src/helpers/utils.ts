@@ -1,8 +1,8 @@
 import fetch from 'cross-fetch';
-import db, { SqlRow } from './mysql';
-import { SUBSCRIPTION_TYPE } from '../templates';
 import type { Response } from 'express';
 import type { OkPacket } from 'mysql';
+import { SUBSCRIPTION_TYPE } from '../templates';
+import db, { SqlRow } from './mysql';
 
 type Subscriber = {
   email: string;

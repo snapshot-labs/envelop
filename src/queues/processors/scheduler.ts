@@ -1,8 +1,8 @@
+import type { Dayjs } from 'dayjs';
 import { getVerifiedSubscriptions } from '../../helpers/utils';
 import { previousWeek } from '../../helpers/date';
 import { mailerQueue } from '../index';
 import constants from '../../helpers/constants.json';
-import type { Dayjs } from 'dayjs';
 
 /**
  * Return all subscribers email and wallet addresses,

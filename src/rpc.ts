@@ -1,4 +1,6 @@
 import express from 'express';
+import { capture } from '@snapshot-labs/snapshot-sentry';
+import { version, name } from '../package.json';
 import {
   subscribe,
   verify,
@@ -10,10 +12,8 @@ import {
   getSubscriber,
   NOT_SUBSCRIBED
 } from './helpers/utils';
-import { capture } from '@snapshot-labs/snapshot-sentry';
 import { verifySubscribe, verifyUnsubscribe, verifyVerify, verifyUpdate } from './sign';
 import { queueVerify, queueProposalActivity } from './queues';
-import { version, name } from '../package.json';
 import { SUBSCRIPTION_TYPE, default as templates } from './templates';
 
 const router = express.Router();
