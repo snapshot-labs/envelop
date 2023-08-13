@@ -1,9 +1,9 @@
 import request from 'supertest';
+import type { TypedDataField } from '@ethersproject/abstract-signer';
 import db from '../../src/helpers/mysql';
 import { domain, signUnsubscribe } from '../../src/sign';
 import { UnsubscribeTypes } from '../../src/sign/types';
 import { cleanupSubscribersDb, insertSubscribers } from '../utils';
-import type { TypedDataField } from '@ethersproject/abstract-signer';
 import { unsubscribePayload } from '../fixtures/unsubscribePayload';
 
 describe('POST unsubscribe', () => {

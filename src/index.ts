@@ -2,13 +2,13 @@ import 'dotenv/config';
 import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
+import { initLogger, fallbackLogger } from '@snapshot-labs/snapshot-sentry';
 import rpc from './rpc';
 import preview from './preview';
 import send from './preview/send';
 import { start as startQueue, shutdown as shutdownQueue } from './queues';
 import { rpcError } from './helpers/utils';
 import initMetrics from './helpers/metrics';
-import { initLogger, fallbackLogger } from '@snapshot-labs/snapshot-sentry';
 
 const app = express();
 const PORT = process.env.PORT || 3006;

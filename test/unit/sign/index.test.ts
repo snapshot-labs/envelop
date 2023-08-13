@@ -1,4 +1,5 @@
 import { Wallet } from '@ethersproject/wallet';
+import type { TypedDataField } from '@ethersproject/abstract-signer';
 import {
   domain,
   verifySubscribe,
@@ -8,7 +9,6 @@ import {
   verifyUnsubscribe
 } from '../../../src/sign';
 import { SubscribeTypes, SubscriptionsTypes, UnsubscribeTypes } from '../../../src/sign/types';
-import type { TypedDataField } from '@ethersproject/abstract-signer';
 
 describe('sign', () => {
   const email = 'test@test.com';

@@ -1,9 +1,9 @@
 import fs from 'fs';
+import type { Templates, TemplateId } from '../../types';
 import prepareVerification from './verification';
 import prepareSummary from './summary';
 import prepareNewProposal from './newProposal';
 import prepareClosedProposal from './closedProposal';
-import type { Templates, TemplateId } from '../../types';
 
 // List of subscriptions type, excluding system emails
 export const SUBSCRIPTION_TYPE: TemplateId[] = ['summary', 'newProposal', 'closedProposal'];

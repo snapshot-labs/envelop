@@ -1,7 +1,7 @@
 import { getAddress } from '@ethersproject/address';
 import { Wallet, verifyTypedData } from '@ethersproject/wallet';
-import { SubscribeTypes, UnsubscribeTypes, VerifyTypes, SubscriptionsTypes } from './types';
 import type { TypedDataField } from '@ethersproject/abstract-signer';
+import { SubscribeTypes, UnsubscribeTypes, VerifyTypes, SubscriptionsTypes } from './types';
 
 const NAME = 'snapshot';
 const VERSION = '0.1.4';
