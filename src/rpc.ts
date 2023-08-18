@@ -1,4 +1,6 @@
 import express from 'express';
+import { capture } from '@snapshot-labs/snapshot-sentry';
+import { version, name } from '../package.json';
 import {
   subscribe,
   verify,
@@ -10,10 +12,8 @@ import {
   getSubscriber,
   NOT_SUBSCRIBED
 } from './helpers/utils';
-import { capture } from '@snapshot-labs/snapshot-sentry';
 import { verifySubscribe, verifyUnsubscribe, verifyVerify, verifyUpdate } from './sign';
 import { queueVerify, queueProposalActivity } from './queues';
-import { version, name } from '../package.json';
 import { SUBSCRIPTION_TYPE, default as templates } from './templates';
 
 const router = express.Router();
@@ -81,7 +81,7 @@ router.post('/', async (req, res) => {
       return rpcError(res, 'UNAUTHORIZED', id);
     }
   } catch (e: any) {
-    capture(e, { context: { body: req.body } });
+    capture(e, { contexts: { body: req.body } });
     return rpcError(res, e, id);
   }
 });
@@ -123,7 +123,7 @@ router.post('/subscriber', async (req, res) => {
       return res.json({ status: NOT_SUBSCRIBED });
     }
 
-    capture(e, { context: { address } });
+    capture(e, { contexts: { body: req.body } });
     return rpcError(res, e, address);
   }
 });
