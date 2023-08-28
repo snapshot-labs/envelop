@@ -12,7 +12,7 @@ This service is API only, and should be used together with [Envelop-UI](https://
 
 This service depends on a couple of services:
 
-- Node.js 16.x
+- Node.js 18.x
 - MySQL 5+
 - Redis
 - A [sendgrid](https://sendgrid.com/) account (email provider)
