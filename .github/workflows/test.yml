@@ -4,8 +4,12 @@ on: [push]
 
 jobs:
   test:
+    strategy:
+      matrix:
+        target: ['18']
     uses: snapshot-labs/actions/.github/workflows/test.yml@main
     secrets: inherit
     with:
       mysql_database_name: envelop_test
       redis: true
+      target: ${{ matrix.target }}
