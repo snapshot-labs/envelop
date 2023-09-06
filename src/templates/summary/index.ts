@@ -5,6 +5,7 @@ import buildMessage from '../builder';
 import constants from '../../helpers/constants.json';
 import type { TemplatePrepareParams } from '../../../types';
 import { getModerationList } from '../../helpers/utils';
+import { linkWithTracker } from '../utils';
 
 type ProposalStatus = 'pending' | 'active' | 'closed';
 type GroupedSpaces = { space: Space; proposals: Proposal[] };
@@ -50,6 +51,7 @@ export async function getGroupedProposals(addresses: string[], startDate: Date, 
       .replace(/([^<](\/|\.))/g, '<span>$1</span>');
 
     proposal.voted = votedProposals.includes(proposal.id);
+    proposal.link = linkWithTracker(proposal.link);
   });
 
   Object.keys(groupedProposals).forEach(status => {
