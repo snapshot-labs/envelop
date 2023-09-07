@@ -1,6 +1,6 @@
 import buildMessage from '../builder';
 import { getProposal } from '../../helpers/snapshot';
-import { formatProposalHtmlBody } from '../utils';
+import { formatProposalHtmlBody, linkWithTracker } from '../utils';
 import type { TemplatePrepareParams } from '../../../types';
 
 export default async function prepare(params: TemplatePrepareParams) {
@@ -29,6 +29,7 @@ export default async function prepare(params: TemplatePrepareParams) {
     return b.progress - a.progress;
   });
   const winningChoiceIndex = results.findIndex(p => p.winning);
+  proposal.link = linkWithTracker(proposal.link);
 
   return buildMessage('closedProposal', {
     ...params,
