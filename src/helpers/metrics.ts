@@ -1,8 +1,9 @@
+import type { Express } from 'express';
 import init, { client } from '@snapshot-labs/snapshot-metrics';
+import { capture } from '@snapshot-labs/snapshot-sentry';
 import db from './mysql';
 import { SUBSCRIPTION_TYPE } from '../templates';
 import { mailerQueue } from '../queues';
-import type { Express } from 'express';
 
 export default function initMetrics(app: Express) {
   init(app, {
@@ -15,7 +16,8 @@ export default function initMetrics(app: Express) {
       /^\/images\/.*\.png$/,
       /^\/(preview|send)\/.*$/,
       /^\/(webhook|subscriber|subscriptionsList)$/
-    ]
+    ],
+    errorHandler: (e: any) => capture(e)
   });
 }
 
