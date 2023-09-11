@@ -38,7 +38,6 @@
     "compression": "^1.7.4",
     "connection-string": "^4.4.0",
     "cors": "^2.8.5",
-    "cross-fetch": "^4.0.0",
     "dayjs": "^1.11.9",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
@@ -49,6 +48,7 @@
     "lodash.chunk": "^4.2.0",
     "marked": "< 5",
     "mysql": "^2.18.1",
+    "node-fetch": "2.7.0",
     "prom-client": "^14.2.0",
     "remove-markdown": "^0.5.0",
     "ts-node": "^10.9.1"
@@ -68,6 +68,7 @@
     "@types/marked": "^4.3.0",
     "@types/mysql": "^2.15.21",
     "@types/node": "^20.5.0",
+    "@types/node-fetch": "^2.6.4",
     "@types/remove-markdown": "^0.3.1",
     "@types/supertest": "^2.0.12",
     "dotenv-cli": "^7.2.1",
