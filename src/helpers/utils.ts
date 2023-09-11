@@ -1,4 +1,6 @@
-import fetch from 'cross-fetch';
+import fetch from 'node-fetch';
+import http from 'node:http';
+import https from 'node:https';
 import db, { SqlRow } from './mysql';
 import { SUBSCRIPTION_TYPE } from '../templates';
 import type { Response } from 'express';
@@ -192,7 +194,21 @@ export function isValidEmail(input: string) {
 }
 
 export async function getModerationList() {
-  const response = await fetch(`${process.env.SIDEKICK_URL || 'https://sh5.co'}/api/moderation`);
+  const response = await fetchWithKeepAlive(
+    `${process.env.SIDEKICK_URL || 'https://sh5.co'}/api/moderation`
+  );
 
   return response.json();
 }
+
+const agentOptions = { keepAlive: true };
+const httpAgent = new http.Agent(agentOptions);
+const httpsAgent = new https.Agent(agentOptions);
+
+function agent(url: string) {
+  return new URL(url).protocol === 'http:' ? httpAgent : httpsAgent;
+}
+
+export const fetchWithKeepAlive = (uri: any, options: any = {}) => {
+  return fetch(uri, { agent: agent(uri), ...options });
+};
