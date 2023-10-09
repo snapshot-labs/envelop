@@ -193,14 +193,6 @@ export function isValidEmail(input: string) {
   ).test(input);
 }
 
-export async function getModerationList() {
-  const response = await fetchWithKeepAlive(
-    `${process.env.SIDEKICK_URL || 'https://sh5.co'}/api/moderation`
-  );
-
-  return response.json();
-}
-
 const agentOptions = { keepAlive: true };
 const httpAgent = new http.Agent(agentOptions);
 const httpsAgent = new https.Agent(agentOptions);

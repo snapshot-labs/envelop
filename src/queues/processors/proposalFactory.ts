@@ -1,7 +1,7 @@
 import chunk from 'lodash.chunk';
 import { mailerQueue } from '../index';
 import { getFollows, getProposal } from '../../helpers/snapshot';
-import { getModerationList, getVerifiedSubscriptions } from '../../helpers/utils';
+import { getVerifiedSubscriptions } from '../../helpers/utils';
 import { proposalDelay } from '../utils';
 import type { Job } from 'bull';
 
@@ -41,14 +41,10 @@ async function getSubscribersEmailFollowingSpace(templateId: string, spaceId: st
 export default async (job: Job): Promise<number> => {
   const { event, id } = job.data;
   const templateId = eventToTemplate(event);
-  const { flaggedProposals } = await getModerationList();
-  if (flaggedProposals.includes(id)) {
-    return 0;
-  }
 
   const proposal = await getProposal(id);
 
-  if (!proposal || !proposal.space.verified) {
+  if (!proposal || !proposal.space.verified || proposal.flagged) {
     return 0;
   }
 
