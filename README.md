@@ -33,7 +33,6 @@ Make a copy of `.env.example` and rename it as `.env`. Then update the credentia
 | `HOST`                     | Hostname of the current envelop instance                                                             | `http://localhost:3006`                    |
 | `FRONT_HOST`               | Hostname of the envelop-ui instance                                                                  | `http://localhost:8080`                    |
 | `HUB_URL`                  | Hostname of snapshot's hub service                                                                   | `https://hub.snapshot.org`                 |
-| `SIDEKICK_URL`             | Hostname of the sidekick service                                                                     | `https://sh5.co`                           |
 | `WALLET_PRIVATE_KEY`       | Private key of the wallet used to sign the emails                                                    | `0x...`                                    |
 | `DATABASE_URL`             | URL of the MySQL database                                                                            | `mysql://root:root@localhost:3306/envelop` |
 | `REDIS_URL`                | URL of the Redis database                                                                            | `redis://localhost:6379`                   |

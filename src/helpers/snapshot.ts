@@ -22,6 +22,7 @@ const FOLLOWS_QUERY = gql`
       space {
         id
         verified
+        flagged
       }
     }
   }
@@ -30,7 +31,7 @@ const FOLLOWS_QUERY = gql`
 const PROPOSALS_QUERY = gql`
   query Proposals($space_in: [String], $start_gt: Int, $start_lt: Int) {
     proposals(
-      where: { space_in: $space_in, start_gt: $start_gt, start_lt: $start_lt }
+      where: { space_in: $space_in, start_gt: $start_gt, start_lt: $start_lt, flagged: false }
       first: 100
     ) {
       id
@@ -44,7 +45,9 @@ const PROPOSALS_QUERY = gql`
         id
         name
         verified
+        flagged
       }
+      flagged
     }
   }
 `;
@@ -68,7 +71,9 @@ const PROPOSAL_QUERY = gql`
         id
         name
         verified
+        flagged
       }
+      flagged
     }
   }
 `;
@@ -84,7 +89,7 @@ const VOTES_QUERY = gql`
   }
 `;
 
-export type Space = { id: string; name?: string; verified: boolean };
+export type Space = { id: string; name?: string; verified: boolean; flagged: boolean };
 export type Follow = { space: Space; follower: string };
 export type Proposal = {
   id: string;
@@ -102,6 +107,7 @@ export type Proposal = {
   htmlShortBody?: string;
   voted?: boolean;
   votes?: number;
+  flagged: boolean;
 };
 export type Vote = {
   id: string;
