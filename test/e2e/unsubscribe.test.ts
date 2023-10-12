@@ -31,7 +31,6 @@ describe('POST unsubscribe', () => {
 
   afterAll(async () => {
     await cleanupSubscribersDb(timestamp);
-    return db.endAsync();
   });
 
   describe('when the signature is valid', () => {
