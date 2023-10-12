@@ -26,7 +26,7 @@ describe('POST update', () => {
 
   afterAll(async () => {
     await cleanupSubscribersDb(timestamp);
-    return db.endAsync();
+    await db.endAsync();
   });
 
   describe('without subscriptions option', () => {

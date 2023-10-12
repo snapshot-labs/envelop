@@ -56,11 +56,10 @@ All tests are run using their own .env (`test/.env.test`).
 #### Setup
 
 ```
-mysql -e 'CREATE DATABASE envelop_test;' -uroot -proot
-mysql -uroot -proot envelop_test < src/helpers/schema.sql
-mysql -uroot -proot -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root';"
-mysql -uroot -proot -e "FLUSH PRIVILEGES;"
+yarn test:setup
 ```
+
+This task should also be ran after each schema.sql change, to ensure your test database schema is up-to-date.
 
 #### Unit tests
 
