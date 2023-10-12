@@ -16,6 +16,7 @@ describe('POST subscriber', () => {
 
   afterAll(async () => {
     await cleanupSubscribersDb(timestamp);
+    await db.endAsync();
   });
 
   describe('when the address exists', () => {

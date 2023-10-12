@@ -32,6 +32,7 @@ describe('POST verify', () => {
 
   afterAll(async () => {
     await cleanupSubscribersDb(timestamp);
+    await db.endAsync();
   });
 
   describe('when the email is not verified yet', () => {
