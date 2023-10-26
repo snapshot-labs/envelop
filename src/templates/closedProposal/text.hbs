@@ -4,7 +4,7 @@ A proposal's voting period has ended on {{{proposal.space.name}}}
 {{#> layout.text}}
 {{proposal.title}} (CLOSED)
 ==================================
-{{proposal.link}}
+{{{proposal.link}}}
 
 Voting ended on {{formattedEndDate}}
 
@@ -17,5 +17,5 @@ Results ({{formattedVotesCount}} total votes)
 [{{#if winning}}x{{else}} {{/if}}] ({{progress}}%) {{name}}
 {{/each}}
 
-View full detailed results on: {{proposal.link}}
+View full detailed results on: {{{proposal.link}}}
 {{/layout.text}}
