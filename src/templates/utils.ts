@@ -65,5 +65,11 @@ export function formatPreheader(text: string, maxLength = 150) {
 }
 
 export function linkWithTracker(link: string) {
-  return `${link}?app=envelop`;
+  const tracker = 'app=envelop';
+
+  if (link.includes(tracker)) {
+    return link;
+  }
+
+  return `${link}${link.includes('?') ? '&' : '?'}${tracker}`;
 }
