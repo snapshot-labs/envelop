@@ -25,5 +25,13 @@ describe('utils', () => {
         );
       });
     });
+
+    describe('when the tracker link already exists', () => {
+      it('does not append the tracker link', () => {
+        expect(linkWithTracker('https://snapshot.org/#/proposal/some-id?app=envelop')).toEqual(
+          'https://snapshot.org/#/proposal/some-id?app=envelop'
+        );
+      });
+    });
   });
 });
