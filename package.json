@@ -43,7 +43,7 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "express-prom-bundle": "^6.6.0",
-    "graphql": "^16.7.1",
+    "graphql": "^16.8.0",
     "handlebars": "^4.7.8",
     "juice": "^9.1.0",
     "lodash.chunk": "^4.2.0",
