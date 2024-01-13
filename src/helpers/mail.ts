@@ -8,8 +8,8 @@ export async function send(msg: Message) {
   try {
     const result = await sgMail.send(msg);
     console.log('[mail] Email sent', result);
-  } catch (e) {
-    capture(e);
-    console.error('[mail] Email failed', e);
+  } catch (e: any) {
+    capture(e, { errors: e.response?.body?.errors });
+    console.error('[mail] Email failed', JSON.stringify(e));
   }
 }
