@@ -355,7 +355,3 @@ See [the contribution guideline](.github/CONTRIBUTING.md)
 ## License
 
 Envelop is open-sourced software licensed under the © [MIT license](LICENSE).
-
-```
-
-```
