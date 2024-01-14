@@ -55,7 +55,7 @@ All tests are run using their own .env (`test/.env.test`).
 
 #### Setup
 
-```
+```bash
 yarn test:setup
 ```
 
@@ -337,7 +337,7 @@ yarn ts-node scripts/trigger-webhook-proposal.ts [EVENT] [ID]
 - `EVENT`: webhook event name
 - `ID`: webhook ID
 
-See https://docs.snapshot.org/tools/webhooks for the list of available `event` type.
+See [https://docs.snapshot.org/tools/webhooks](Snapshot webhooks documentation) for the list of available `event` type.
 
 ## Production
 
