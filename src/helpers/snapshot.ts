@@ -53,7 +53,7 @@ const PROPOSALS_QUERY = gql`
 `;
 
 const PROPOSAL_QUERY = gql`
-  query Proposal($id: String) {
+  query Proposal($id: String!) {
     proposal(id: $id) {
       id
       body
