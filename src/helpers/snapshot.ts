@@ -1,10 +1,11 @@
 import { gql, ApolloClient, InMemoryCache, HttpLink } from '@apollo/client/core';
 import { fetchWithKeepAlive } from './utils';
 
-const HUB_URL = `${process.env.HUB_URL || 'https://hub.snapshot.org'}/graphql`;
+const hub_url = new URL(process.env.HUB_URL || 'https://hub.snapshot.org');
+hub_url.pathname = '/graphql';
 
 const client = new ApolloClient({
-  link: new HttpLink({ uri: HUB_URL, fetch: fetchWithKeepAlive as any }),
+  link: new HttpLink({ uri: hub_url.toString(), fetch: fetchWithKeepAlive as any }),
   cache: new InMemoryCache({
     addTypename: false
   }),
