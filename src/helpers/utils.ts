@@ -149,7 +149,7 @@ export async function getVerifiedSubscriptions(subscription: string, batchSize =
   while (true) {
     const result = await db.queryAsync(
       'SELECT email, address, subscriptions FROM subscribers WHERE verified > 0 ' +
-        `AND JSON_CONTAINS(subscriptions, ?) OR subscriptions IS NULL ORDER BY created LIMIT ? OFFSET ?`,
+        `AND (JSON_CONTAINS(subscriptions, ?) OR subscriptions IS NULL) ORDER BY created LIMIT ? OFFSET ?`,
       [JSON.stringify(sub), batchSize, page * batchSize]
     );
 
