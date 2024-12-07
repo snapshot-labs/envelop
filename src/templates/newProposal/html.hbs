@@ -9,7 +9,7 @@
           <table role="presentation" width="100%">
             <tr class="content-body-preheading">
               <td class="proposal-space-logo"><img alt="{{proposal.space.name}}" src="https://cdn.stamp.fyi/space/{{proposal.space.id}}?s=32" class="proposal-space-avatar" /></td>
-              <td><a href="https://snapshot.org/#/{{proposal.space.id}}">{{proposal.space.name}}</a></td>
+              <td><a href="https://snapshot.box/#/s:{{proposal.space.id}}">{{proposal.space.name}}</a></td>
               <td style="text-align: right"><span class="state-badge state-{{proposal.state}}">{{proposal.state}}</span></td>
             </tr>
           </table>
@@ -23,7 +23,7 @@
       <tr>
         <td class="block">
           <table>
-            <tr><td style="padding: 0 1em 0 0;"><b>Author</b></td><td><a href="https://snapshot.org/#profile/{{proposal.author}}">{{proposal.author}}</a></td></tr>
+            <tr><td style="padding: 0 1em 0 0;"><b>Author</b></td><td><a href="https://snapshot.box/#/profile/{{proposal.author}}">{{proposal.author}}</a></td></tr>
             <tr><td><b>Voting start</b></td><td>{{formattedStartDate}}</td></tr>
             <tr><td><b>Voting end</b></td><td>{{formattedEndDate}}</td></tr>
           </table>
