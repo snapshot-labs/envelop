@@ -37,7 +37,7 @@ Make a copy of `.env.example` and rename it as `.env`. Then update the credentia
 | `DATABASE_URL`             | URL of the MySQL database                                                                            | `mysql://root:root@localhost:3306/envelop` |
 | `REDIS_URL`                | URL of the Redis database                                                                            | `redis://localhost:6379`                   |
 | `SENDGRID_API_KEY`         | API key of the sendgrid account                                                                      | `SG.1234567890`                            |
-| `WEBHOOK_AUTH_SECRET`      | Authentication header sent by snapshot's [webhook service](https://docs.snapshot.org/tools/webhooks) | `abc123`                                   |
+| `WEBHOOK_AUTH_SECRET`      | Authentication header sent by snapshot's [webhook service](https://docs.snapshot.box/tools/webhooks) | `abc123`                                   |
 | `SENTRY_DSN`               | Sentry DSN key                                                                                       | `https://public@sentry.example.com/1`      |
 | `SENTRY_TRACE_SAMPLE_RATE` | Sentry trace sample rate, nunmber between 0 and 1                                                    | `0.1`                                      |
 
@@ -246,7 +246,7 @@ Return the list of all available subscription type
 ### `POST /webhook`
 
 Receive and trigger emails from webhook events.  
-Data payload should follow [Snapshot webhook](https://docs.snapshot.org/tools/webhooks) format.
+Data payload should follow [Snapshot webhook](https://docs.snapshot.box/tools/webhooks) format.
 
 > CLI tests scripts are provided (see below) for easier testing, instead of sending CURL command
 
@@ -326,7 +326,7 @@ yarn ts-node scripts/send-closed-proposal.ts [EMAIL] [PROPOSAL-ID]
 
 ### To trigger a `webhook` event
 
-Emulate an incoming webhook event from snapshot's [webhook service](https://docs.snapshot.org/tools/webhooks) (require that the envelop instance to be started e.g. with `yarn dev`, else the emails will just be queued without being sent).
+Emulate an incoming webhook event from snapshot's [webhook service](https://docs.snapshot.box/tools/webhooks) (require that the envelop instance to be started e.g. with `yarn dev`, else the emails will just be queued without being sent).
 
 ```bash
 yarn ts-node scripts/trigger-webhook-proposal.ts [EVENT] [ID]
@@ -337,7 +337,7 @@ yarn ts-node scripts/trigger-webhook-proposal.ts [EVENT] [ID]
 - `EVENT`: webhook event name
 - `ID`: webhook ID
 
-See [Snapshot webhooks documentation](https://docs.snapshot.org/tools/webhooks) for the list of available `event` type.
+See [Snapshot webhooks documentation](https://docs.snapshot.box/tools/webhooks) for the list of available `event` type.
 
 ## Production
 
