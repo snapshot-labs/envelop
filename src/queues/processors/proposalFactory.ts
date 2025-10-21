@@ -29,7 +29,7 @@ async function getSubscribersEmailFollowingSpace(templateId: string, spaceId: st
   const results = [];
 
   // Batch the queries, as getFollows is limited to 1000 address per request
-  const addressesChunks = chunk(Array.from(subscribers.keys()), 1000);
+  const addressesChunks = chunk(Array.from(subscribers.keys()), 100);
   for (const addressChunk of addressesChunks) {
     const follows = await getFollows(addressChunk, spaceId);
     results.push(...follows.map(follow => subscribers.get(follow.follower) as string));
