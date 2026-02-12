@@ -50,7 +50,7 @@ export function start() {
 }
 
 export function shutdown() {
-  return [mailerQueue.close(), scheduleQueue.close()];
+  return [mailerQueue.close(), scheduleQueue.close(), proposalActivityQueue.close()];
 }
 
 export function queueScheduler(options: Queue.JobOptions = {}) {
