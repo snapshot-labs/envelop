@@ -29,8 +29,8 @@ const opts = {
 };
 
 const defaultJobOptions = {
-  removeOnComplete: { age: 7 * 24 * 3600 },
-  removeOnFail: { age: 14 * 24 * 3600 }
+  removeOnComplete: { age: 7 * 24 * 3600, count: 10000 },
+  removeOnFail: { age: 14 * 24 * 3600, count: 5000 }
 };
 
 export const mailerQueue = new Queue('mailer', {
