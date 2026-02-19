@@ -17,9 +17,11 @@ export default async function buildMessage(id: TemplateId, params: TemplatePrepa
     unsubscribeLink?: string;
     updateSubscriptionsLink?: string;
     preheader: string;
+    cacheBuster: string;
   } = {
     host: process.env.HOST as string,
     subject: template.subject,
+    cacheBuster: Date.now().toString(),
     preheader: compile(template.preheader)(params)
   };
 
