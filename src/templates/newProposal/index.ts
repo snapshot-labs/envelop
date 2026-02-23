@@ -1,5 +1,5 @@
 import buildMessage from '../builder';
-import { formatProposalHtmlBody, linkWithTracker } from '../utils';
+import { formatProposalHtmlBody, formatUTCDate, linkWithTracker } from '../utils';
 import { getProposal } from '../../helpers/snapshot';
 import type { TemplatePrepareParams } from '../../../types';
 
@@ -19,8 +19,8 @@ export default async function prepare(params: TemplatePrepareParams) {
   return buildMessage('newProposal', {
     ...params,
     proposal,
-    formattedStartDate: new Date(proposal.start * 1000).toUTCString(),
-    formattedEndDate: new Date(proposal.end * 1000).toUTCString(),
+    formattedStartDate: formatUTCDate(proposal.start),
+    formattedEndDate: formatUTCDate(proposal.end),
     proposalTextBody: `${truncatedBody}${isTruncated ? ` [...]` : ''}`,
     proposalHtmlBody: formatProposalHtmlBody(proposal, truncatedBody, isTruncated)
   });

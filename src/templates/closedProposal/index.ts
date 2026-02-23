@@ -1,6 +1,6 @@
 import buildMessage from '../builder';
 import { getProposal } from '../../helpers/snapshot';
-import { formatProposalHtmlBody, linkWithTracker } from '../utils';
+import { formatProposalHtmlBody, formatUTCDate, linkWithTracker } from '../utils';
 import type { TemplatePrepareParams } from '../../../types';
 
 export default async function prepare(params: TemplatePrepareParams) {
@@ -35,8 +35,8 @@ export default async function prepare(params: TemplatePrepareParams) {
     ...params,
     proposal,
     results,
-    formattedStartDate: new Date(proposal.start * 1000).toUTCString(),
-    formattedEndDate: new Date(proposal.end * 1000).toUTCString(),
+    formattedStartDate: formatUTCDate(proposal.start),
+    formattedEndDate: formatUTCDate(proposal.end),
     formattedVotesCount: proposal.votes?.toLocaleString('en-US'),
     winningChoiceName: results[winningChoiceIndex].name,
     winningChoicePercentage: results[winningChoiceIndex].progress,
