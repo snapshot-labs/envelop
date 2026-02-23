@@ -94,24 +94,3 @@
     }
   }
 }
-
-@media (prefers-color-scheme: dark) {
-  $border-color: #2d2d2d !important;
-  $contrast-text-color: #ffffff !important;
-  $mild-contrast-text-color: #c5cacf !important;
-
-  .space-block,
-  .space-title td,
-  .stats-block,
-  .stats-block td.bordered {
-    border-color: $border-color;
-  }
-
-  .stats-block td strong {
-    color: $mild-contrast-text-color;
-  }
-
-  .proposal-title {
-    color: $contrast-text-color;
-  }
-}
