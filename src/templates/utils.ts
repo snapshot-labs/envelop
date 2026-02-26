@@ -64,6 +64,24 @@ export function formatPreheader(text: string, maxLength = 150) {
   return text;
 }
 
+/**
+ * Format a unix timestamp into a human-readable UTC date string without seconds.
+ * e.g. 1740000000 -> "Wed, 19 Feb 2025, 21:20 UTC"
+ */
+export function formatUTCDate(timestamp: number) {
+  return new Intl.DateTimeFormat('en-GB', {
+    weekday: 'short',
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: 'UTC',
+    timeZoneName: 'short',
+    hourCycle: 'h23'
+  }).format(new Date(timestamp * 1000));
+}
+
 export function linkWithTracker(link: string) {
   const tracker = 'app=envelop';
 

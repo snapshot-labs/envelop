@@ -173,7 +173,7 @@ blockquote {
 }
 
 .logo {
-  width: 36px;
+  width: 32px;
   margin-bottom: 1.5em;
 }
 
@@ -196,66 +196,6 @@ blockquote {
 
     &-footer {
       padding: 1.5em !important;
-    }
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  $border-color: #2d2d2d !important;
-  $content-bg-color: #211f24 !important;
-  $content-text-color: #8b949e !important;
-  $content-muted-text-color: darken(#8b949e, 25%);
-  $content-bg-color: #211f24 !important;
-  $bg-color: #211f24 !important;
-  $contrast-text-color: #ffffff !important;
-  $mild-contrast-text-color: #c5cacf !important;
-
-  body {
-    color: $content-text-color;
-    background: $bg-color;
-  }
-
-  h1 {
-    color: $contrast-text-color;
-
-    a {
-      color: $contrast-text-color;
-    }
-  }
-
-  h2 {
-    color: $mild-contrast-text-color;
-  }
-
-  blockquote {
-    color: $content-muted-text-color;
-    border-left-color: $border-color;
-  }
-
-  .content {
-    &-body {
-      background: $content-bg-color;
-    }
-
-    &-footer {
-      color: $content-muted-text-color !important;
-
-      a,
-      a:visited {
-        color: $content-muted-text-color !important;
-      }
-    }
-  }
-
-  .content-body {
-    border-color: $border-color;
-  }
-
-  .block {
-    background-color: $border-color;
-
-    small {
-      font-size: 1em;
     }
   }
 }
