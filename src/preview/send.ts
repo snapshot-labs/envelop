@@ -1,8 +1,8 @@
 import express from 'express';
+import { buildMessage, sha256 } from './utils';
+import { TemplateId } from '../../types';
 import { send as sendMail } from '../helpers/mail';
-import { rpcSuccess, rpcError } from '../helpers/utils';
-import { sha256, buildMessage } from './utils';
-import type { TemplateId } from '../../types';
+import { rpcError, rpcSuccess } from '../helpers/utils';
 import { queueScheduler } from '../queues';
 
 const router = express.Router();

@@ -1,8 +1,8 @@
 import request from 'supertest';
 import db from '../../src/helpers/mysql';
 import { signVerify } from '../../src/sign';
+import { bootstrapData, verifyPayload } from '../fixtures/verifyPayload';
 import { cleanupSubscribersDb, insertSubscribers } from '../utils';
-import { verifyPayload, bootstrapData } from '../fixtures/verifyPayload';
 
 describe('POST verify', () => {
   const {

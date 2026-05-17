@@ -1,9 +1,9 @@
-import type { Express } from 'express';
 import init, { client } from '@snapshot-labs/snapshot-metrics';
 import { capture } from '@snapshot-labs/snapshot-sentry';
+import { Express } from 'express';
 import db from './mysql';
-import { SUBSCRIPTION_TYPE } from '../templates';
 import { mailerQueue } from '../queues';
+import { SUBSCRIPTION_TYPE } from '../templates';
 
 export default function initMetrics(app: Express) {
   init(app, {

@@ -1,10 +1,10 @@
-import fetch from 'node-fetch';
 import http from 'node:http';
 import https from 'node:https';
+import { Response } from 'express';
+import { OkPacket } from 'mysql';
+import fetch from 'node-fetch';
 import db, { SqlRow } from './mysql';
 import { SUBSCRIPTION_TYPE } from '../templates';
-import type { Response } from 'express';
-import type { OkPacket } from 'mysql';
 
 type Subscriber = {
   email: string;

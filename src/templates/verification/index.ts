@@ -1,6 +1,6 @@
+import { TemplatePrepareParams } from '../../../types';
 import { signVerify } from '../../sign';
 import buildMessage from '../builder';
-import type { TemplatePrepareParams } from '../../../types';
 
 export default async function prepare(params: TemplatePrepareParams) {
   const verifyLink = `${process.env.FRONT_HOST}/#/verify?${new URLSearchParams({

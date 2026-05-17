@@ -1,6 +1,6 @@
 import request from 'supertest';
 import templates from '../../src/templates';
-import type { TemplateId } from '../../types';
+import { TemplateId } from '../../types';
 
 function subscriptionListFormat(key: TemplateId) {
   return {

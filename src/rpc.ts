@@ -1,19 +1,19 @@
-import express from 'express';
 import { capture } from '@snapshot-labs/snapshot-sentry';
-import { version, name } from '../package.json';
+import express from 'express';
+import { name, version } from '../package.json';
 import {
-  subscribe,
-  verify,
-  unsubscribe,
-  update,
+  getSubscriber,
+  isValidEmail,
+  NOT_SUBSCRIBED,
   rpcError,
   rpcSuccess,
-  isValidEmail,
-  getSubscriber,
-  NOT_SUBSCRIBED
+  subscribe,
+  unsubscribe,
+  update,
+  verify
 } from './helpers/utils';
-import { verifySubscribe, verifyUnsubscribe, verifyVerify, verifyUpdate } from './sign';
-import { queueVerify, queueProposalActivity } from './queues';
+import { queueProposalActivity, queueVerify } from './queues';
+import { verifySubscribe, verifyUnsubscribe, verifyUpdate, verifyVerify } from './sign';
 import { SUBSCRIPTION_TYPE, default as templates } from './templates';
 
 const router = express.Router();

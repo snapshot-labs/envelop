@@ -1,9 +1,9 @@
 import removeMd from 'remove-markdown';
-import { getFollows, getProposals, getVotes, Space, Proposal } from '../../helpers/snapshot';
-import { formatShortDate } from '../../helpers/date';
-import buildMessage from '../builder';
+import { TemplatePrepareParams } from '../../../types';
 import constants from '../../helpers/constants.json';
-import type { TemplatePrepareParams } from '../../../types';
+import { formatShortDate } from '../../helpers/date';
+import { getFollows, getProposals, getVotes, Proposal, Space } from '../../helpers/snapshot';
+import buildMessage from '../builder';
 import { linkWithTracker } from '../utils';
 
 type ProposalStatus = 'pending' | 'active' | 'closed';

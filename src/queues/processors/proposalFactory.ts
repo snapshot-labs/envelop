@@ -1,9 +1,9 @@
+import { Job } from 'bull';
 import chunk from 'lodash.chunk';
-import { mailerQueue } from '../index';
 import { getFollows, getProposal } from '../../helpers/snapshot';
 import { getVerifiedSubscriptions } from '../../helpers/utils';
+import { mailerQueue } from '../index';
 import { proposalDelay } from '../utils';
-import type { Job } from 'bull';
 
 function eventToTemplate(event: string) {
   switch (event) {
