@@ -1,7 +1,7 @@
+import { TemplatePrepareParams } from '../../../types';
+import { getProposal } from '../../helpers/snapshot';
 import buildMessage from '../builder';
 import { formatProposalHtmlBody, formatUTCDate, linkWithTracker } from '../utils';
-import { getProposal } from '../../helpers/snapshot';
-import type { TemplatePrepareParams } from '../../../types';
 
 export default async function prepare(params: TemplatePrepareParams) {
   const proposal = await getProposal(params.id);

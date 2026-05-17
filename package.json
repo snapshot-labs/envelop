@@ -16,7 +16,17 @@
     "test:e2e": "PORT=3030 start-server-and-test 'yarn start:test' 3030 'dotenv -e test/.env.test jest --runInBand --collectCoverage=false test/e2e/'"
   },
   "eslintConfig": {
-    "extends": "@snapshot-labs"
+    "extends": "@snapshot-labs",
+    "overrides": [
+      {
+        "files": [
+          "*.json"
+        ],
+        "rules": {
+          "@typescript-eslint/no-unused-expressions": "off"
+        }
+      }
+    ]
   },
   "commitlint": {
     "extends": [
@@ -57,7 +67,7 @@
   "devDependencies": {
     "@commitlint/cli": "^17.7.1",
     "@commitlint/config-conventional": "^17.7.0",
-    "@snapshot-labs/eslint-config": "^0.1.0-beta.9",
+    "@snapshot-labs/eslint-config": "^0.1.0",
     "@snapshot-labs/prettier-config": "^0.1.0-beta.7",
     "@types/bluebird": "^3.5.38",
     "@types/bull": "^4.10.0",

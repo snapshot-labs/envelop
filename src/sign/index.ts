@@ -1,7 +1,8 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { TypedDataField } from '@ethersproject/abstract-signer';
 import { getAddress } from '@ethersproject/address';
-import { Wallet, verifyTypedData } from '@ethersproject/wallet';
-import { SubscribeTypes, UnsubscribeTypes, VerifyTypes, SubscriptionsTypes } from './types';
-import type { TypedDataField } from '@ethersproject/abstract-signer';
+import { verifyTypedData, Wallet } from '@ethersproject/wallet';
+import { SubscribeTypes, SubscriptionsTypes, UnsubscribeTypes, VerifyTypes } from './types';
 
 const NAME = 'snapshot';
 const VERSION = '0.1.4';
@@ -25,7 +26,7 @@ function verify(
 ) {
   try {
     return signer === verifyTypedData(domain, type, message, signature);
-  } catch (e) {
+  } catch {
     return false;
   }
 }

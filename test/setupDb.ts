@@ -1,11 +1,11 @@
-import mysql from 'mysql';
-// @ts-ignore
-import Pool from 'mysql/lib/Pool';
-// @ts-ignore
-import Connection from 'mysql/lib/Connection';
+import fs from 'fs';
 import bluebird from 'bluebird';
 import { ConnectionString } from 'connection-string';
-import fs from 'fs';
+import mysql from 'mysql';
+// @ts-ignore
+import Connection from 'mysql/lib/Connection';
+// @ts-ignore
+import Pool from 'mysql/lib/Pool';
 
 // @ts-ignore
 const config = new ConnectionString(process.env.DATABASE_URL || '');

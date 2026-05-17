@@ -1,14 +1,15 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { TypedDataField } from '@ethersproject/abstract-signer';
 import { Wallet } from '@ethersproject/wallet';
 import {
   domain,
-  verifySubscribe,
-  signUpdate,
-  verifyUpdate,
   signUnsubscribe,
-  verifyUnsubscribe
+  signUpdate,
+  verifySubscribe,
+  verifyUnsubscribe,
+  verifyUpdate
 } from '../../../src/sign';
 import { SubscribeTypes, SubscriptionsTypes, UnsubscribeTypes } from '../../../src/sign/types';
-import type { TypedDataField } from '@ethersproject/abstract-signer';
 
 describe('sign', () => {
   const email = 'test@test.com';

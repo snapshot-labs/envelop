@@ -1,10 +1,11 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { TypedDataField } from '@ethersproject/abstract-signer';
 import request from 'supertest';
 import db from '../../src/helpers/mysql';
 import { domain, signUnsubscribe } from '../../src/sign';
 import { UnsubscribeTypes } from '../../src/sign/types';
-import { cleanupSubscribersDb, insertSubscribers } from '../utils';
-import type { TypedDataField } from '@ethersproject/abstract-signer';
 import { unsubscribePayload } from '../fixtures/unsubscribePayload';
+import { cleanupSubscribersDb, insertSubscribers } from '../utils';
 
 describe('POST unsubscribe', () => {
   const { email, address, wallet, timestamp } = unsubscribePayload;

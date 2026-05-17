@@ -1,8 +1,8 @@
 import { createHash } from 'crypto';
-import templates from '../templates';
+import { TemplateId, TemplatePrepareParams } from '../../types';
 import constants from '../helpers/constants.json';
 import { previousWeek } from '../helpers/date';
-import type { TemplatePrepareParams, TemplateId } from '../../types';
+import templates from '../templates';
 
 export function sha256(token = ''): string {
   return createHash('sha256').update(token).digest('hex');

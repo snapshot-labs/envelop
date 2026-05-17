@@ -1,9 +1,9 @@
 import request from 'supertest';
 import db from '../../src/helpers/mysql';
+import { NOT_SUBSCRIBED, UNVERIFIED, VERIFIED } from '../../src/helpers/utils';
 import { SUBSCRIPTION_TYPE } from '../../src/templates';
+import { bootstrapData, subscriberPayload } from '../fixtures/subscriberPayload';
 import { cleanupSubscribersDb, insertSubscribers } from '../utils';
-import { VERIFIED, UNVERIFIED, NOT_SUBSCRIBED } from '../../src/helpers/utils';
-import { subscriberPayload, bootstrapData } from '../fixtures/subscriberPayload';
 
 describe('POST subscriber', () => {
   const { verifiedUser, verifiedUserWithEmptySubscription, unverifiedUser, timestamp } =

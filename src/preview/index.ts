@@ -1,8 +1,8 @@
-import express from 'express';
 import fs from 'fs';
+import express from 'express';
 import { compile } from 'handlebars';
-import { TemplateId } from '../../types';
 import { buildMessage } from './utils';
+import { TemplateId } from '../../types';
 import { rpcError } from '../helpers/utils';
 
 const router = express.Router();
@@ -15,7 +15,7 @@ router.get('/preview/:template', async (req, res) => {
       sendDate: req.query.sendDate ? new Date(req.query.sendDate as string) : new Date(),
       id: req.query.id
     });
-  } catch (e) {
+  } catch {
     return rpcError(res, 'RECORD_NOT_FOUND', '');
   }
 

@@ -1,8 +1,8 @@
 import fs from 'fs';
 import Handlebars from 'handlebars';
 import { marked } from 'marked';
-import { signUnsubscribe, signUpdate } from '../sign';
 import { Proposal } from '../helpers/snapshot';
+import { signUnsubscribe, signUpdate } from '../sign';
 
 export async function unsubscribeLink(email: string) {
   return `${process.env.FRONT_HOST}/#/unsubscribe?${new URLSearchParams({
