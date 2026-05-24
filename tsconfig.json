@@ -12,5 +12,6 @@
     "sourceMap": true,
     "inlineSources": true,
     "sourceRoot": "/"
-  }
+  },
+  "include": ["src/**/*"]
 }
