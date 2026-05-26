@@ -24,7 +24,7 @@
     ]
   },
   "engines": {
-    "node": "^18.0.0"
+    "node": ">=22.6.0"
   },
   "prettier": "@snapshot-labs/prettier-config",
   "dependencies": {
