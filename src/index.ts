@@ -1,8 +1,9 @@
 import 'dotenv/config';
+import './instrument';
 import express from 'express';
 import compression from 'compression';
 import cors from 'cors';
-import { initLogger, fallbackLogger } from '@snapshot-labs/snapshot-sentry';
+import { fallbackLogger } from '@snapshot-labs/snapshot-sentry';
 import rpc from './rpc';
 import preview from './preview';
 import send from './preview/send';
@@ -13,7 +14,6 @@ import initMetrics from './helpers/metrics';
 const app = express();
 const PORT = process.env.PORT || 3006;
 
-initLogger(app);
 initMetrics(app);
 
 startQueue();
