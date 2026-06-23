@@ -1,6 +1,11 @@
 import buildMessage from '../builder';
 import { getProposal } from '../../helpers/snapshot';
-import { formatProposalHtmlBody, formatUTCDate, linkWithTracker } from '../utils';
+import {
+  formatProposalHtmlBody,
+  formatUTCDate,
+  linkWithTracker,
+  truncateProposalBody
+} from '../utils';
 import type { TemplatePrepareParams } from '../../../types';
 
 export default async function prepare(params: TemplatePrepareParams) {
@@ -11,8 +16,7 @@ export default async function prepare(params: TemplatePrepareParams) {
   }
 
   const BODY_LENGTH = 500;
-  const truncatedBody = proposal.body.slice(0, BODY_LENGTH);
-  const isTruncated = proposal.body.length > BODY_LENGTH;
+  const { body: truncatedBody, isTruncated } = truncateProposalBody(proposal.body, BODY_LENGTH);
 
   const winningChoice = proposal.scores?.indexOf(Math.max(...proposal.scores));
   const results = (

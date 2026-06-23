@@ -4,7 +4,7 @@ import { formatShortDate } from '../../helpers/date';
 import buildMessage from '../builder';
 import constants from '../../helpers/constants.json';
 import type { TemplatePrepareParams } from '../../../types';
-import { linkWithTracker } from '../utils';
+import { linkWithTracker, truncateProposalBody } from '../utils';
 
 type ProposalStatus = 'pending' | 'active' | 'closed';
 type GroupedSpaces = { space: Space; proposals: Proposal[] };
@@ -38,11 +38,11 @@ export async function getGroupedProposals(addresses: string[], startDate: Date, 
   const votedProposals = votes.map(vote => vote.proposal.id);
   proposals.forEach(proposal => {
     const sanitizedBody = removeMd(proposal.body);
-    proposal.shortBody = (
-      sanitizedBody.length > MAX_SHORT_BODY_LENGTH
-        ? `${sanitizedBody.slice(0, MAX_SHORT_BODY_LENGTH)}…`
-        : sanitizedBody
-    ).replace(/\r?\n|\r/g, ' ');
+    const { body: shortBody, isTruncated } = truncateProposalBody(
+      sanitizedBody,
+      MAX_SHORT_BODY_LENGTH
+    );
+    proposal.shortBody = `${shortBody}${isTruncated ? '…' : ''}`.replace(/\r?\n|\r/g, ' ');
     proposal.htmlShortBody = proposal.shortBody
       .replace(/https?:\/\//g, '')
       .replace(/([^<](\/|\.))/g, '<span>$1</span>');
