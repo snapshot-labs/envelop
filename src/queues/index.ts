@@ -30,6 +30,8 @@ const opts = {
 };
 
 const defaultJobOptions = {
+  attempts: 3,
+  backoff: { type: 'exponential', delay: 20000 },
   removeOnComplete: { age: 7 * 24 * 3600, count: 10000 },
   removeOnFail: { age: 14 * 24 * 3600, count: 5000 }
 };
@@ -55,6 +57,8 @@ const queues = [mailerQueue, scheduleQueue, proposalActivityQueue];
 
 for (const queue of queues) {
   queue.on('failed', (job, error) => {
+    if (job && job.attemptsMade < (job.opts.attempts ?? 1)) return;
+
     capture(error, {
       queue: queue.name,
       jobId: job?.id,
