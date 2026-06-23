@@ -8,6 +8,7 @@ import proposalFactoryProcessor from './processors/proposalFactory';
 import newProposalProcessor from './processors/newProposal';
 import closedProposalProcessor from './processors/closedProposal';
 import { countSentEmails } from '../helpers/metrics';
+import { capture } from '@snapshot-labs/snapshot-sentry';
 
 const REDIS_URL = (process.env.REDIS_URL as string) || 'redis://127.0.0.1:6379';
 const REDIS_OPTS = { maxRetriesPerRequest: null, enableReadyCheck: false };
@@ -49,6 +50,19 @@ export const proposalActivityQueue = new Queue('proposal-activities', {
 mailerQueue.on('completed', job => {
   countSentEmails.inc({ type: job.name });
 });
+
+const queues = [mailerQueue, scheduleQueue, proposalActivityQueue];
+
+for (const queue of queues) {
+  queue.on('failed', (job, error) => {
+    capture(error, {
+      queue: queue.name,
+      jobId: job?.id,
+      jobName: job?.name,
+      jobData: job?.data
+    });
+  });
+}
 
 export function start() {
   console.log('[queue-mailer] Starting queue mailer');
