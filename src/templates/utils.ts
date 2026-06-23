@@ -42,6 +42,22 @@ export function loadPartials() {
     });
 }
 
+export function truncateProposalBody(body: string, maxLength: number) {
+  const trimmedBody = body.trimEnd();
+
+  if (trimmedBody.length <= maxLength) {
+    return { body: trimmedBody, isTruncated: false };
+  }
+
+  const truncatedBody = trimmedBody.slice(0, maxLength);
+  const boundary = truncatedBody.lastIndexOf(' ');
+
+  return {
+    body: (boundary > -1 ? truncatedBody.slice(0, boundary) : truncatedBody).trimEnd(),
+    isTruncated: true
+  };
+}
+
 export function formatProposalHtmlBody(proposal: Proposal, body: string, isTruncated: boolean) {
   marked.use({ breaks: true });
 
