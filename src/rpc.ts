@@ -80,9 +80,9 @@ router.post('/', async (req, res) => {
 
       return rpcError(res, 'UNAUTHORIZED', id);
     }
-  } catch (e: any) {
-    capture(e, { body: req.body });
-    return rpcError(res, e, id);
+  } catch (err: any) {
+    capture(err, { body: req.body });
+    return rpcError(res, err, id);
   }
 });
 
@@ -106,8 +106,8 @@ router.post('/webhook', async (req, res) => {
   try {
     queueProposalActivity(event.replace('proposal/', ''), id);
     return rpcSuccess(res, 'OK', id);
-  } catch (e: any) {
-    return rpcError(res, e, id);
+  } catch (err: any) {
+    return rpcError(res, err, id);
   }
 });
 
@@ -118,13 +118,13 @@ router.post('/subscriber', async (req, res) => {
     const result = await getSubscriber(address);
 
     return res.json(result);
-  } catch (e: any) {
-    if (e.message === 'RECORD_NOT_FOUND') {
+  } catch (err: any) {
+    if (err.message === 'RECORD_NOT_FOUND') {
       return res.json({ status: NOT_SUBSCRIBED });
     }
 
-    capture(e, { body: req.body });
-    return rpcError(res, e, address);
+    capture(err, { body: req.body });
+    return rpcError(res, err, address);
   }
 });
 

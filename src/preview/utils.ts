@@ -24,7 +24,8 @@ export async function buildMessage(
   };
 
   if (templateId === 'summary') {
-    params.addresses = [customParams.id] || constants.example.addresses;
+    const addresses = [customParams.id];
+    params.addresses = addresses || constants.example.addresses;
 
     const summaryTimeRange = previousWeek(
       customParams.sendDate || new Date(),
