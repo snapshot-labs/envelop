@@ -1,4 +1,9 @@
-import { gql, ApolloClient, InMemoryCache, HttpLink } from '@apollo/client/core';
+import {
+  ApolloClient,
+  gql,
+  HttpLink,
+  InMemoryCache
+} from '@apollo/client/core';
 
 const hub_url = new URL(process.env.HUB_URL || 'https://hub.snapshot.org');
 hub_url.pathname = '/graphql';
@@ -31,7 +36,12 @@ const FOLLOWS_QUERY = gql`
 const PROPOSALS_QUERY = gql`
   query Proposals($space_in: [String], $start_gt: Int, $start_lt: Int) {
     proposals(
-      where: { space_in: $space_in, start_gt: $start_gt, start_lt: $start_lt, flagged: false }
+      where: {
+        space_in: $space_in
+        start_gt: $start_gt
+        start_lt: $start_lt
+        flagged: false
+      }
       first: 100
     ) {
       id
@@ -80,7 +90,10 @@ const PROPOSAL_QUERY = gql`
 
 const VOTES_QUERY = gql`
   query Votes($proposal_in: [String], $voter_in: [String]) {
-    votes(where: { proposal_in: $proposal_in, voter_in: $voter_in }, first: 100) {
+    votes(
+      where: { proposal_in: $proposal_in, voter_in: $voter_in }
+      first: 100
+    ) {
       id
       proposal {
         id
@@ -89,7 +102,12 @@ const VOTES_QUERY = gql`
   }
 `;
 
-export type Space = { id: string; name?: string; verified: boolean; flagged: boolean };
+export type Space = {
+  id: string;
+  name?: string;
+  verified: boolean;
+  flagged: boolean;
+};
 export type Follow = { space: Space; follower: string };
 export type Proposal = {
   id: string;
@@ -127,7 +145,11 @@ export async function getProposal(id: string) {
   return proposal;
 }
 
-export async function getProposals(spaces: string[], startDate: Date, endDate: Date) {
+export async function getProposals(
+  spaces: string[],
+  startDate: Date,
+  endDate: Date
+) {
   const {
     data: { proposals }
   }: { data: { proposals: Proposal[] } } = await client.query({

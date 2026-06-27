@@ -1,5 +1,5 @@
+import { NewSubscriber } from '../../src/schema';
 import { randomTimestamp } from '../utils';
-import type { NewSubscriber } from '../../src/schema';
 
 const email = 'test-verify@test.com';
 const address = '0xDBDd4c5473692Fa0490bfF6AAbf1181f29Ca851e';
@@ -14,7 +14,10 @@ export const verifyPayload = {
     email: 'test-verify-c@test.com',
     address: verifiedAddress
   },
-  unverifiedUserForVerifiedAddress: { email: 'test-verify-b@test.com', address: verifiedAddress },
+  unverifiedUserForVerifiedAddress: {
+    email: 'test-verify-b@test.com',
+    address: verifiedAddress
+  },
   addressForNotExistEmail,
   timestamp
 };

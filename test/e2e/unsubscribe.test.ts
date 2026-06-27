@@ -1,12 +1,12 @@
-import request from 'supertest';
+import { TypedDataField } from '@ethersproject/abstract-signer';
 import { eq } from 'drizzle-orm';
+import request from 'supertest';
 import { db } from '../../src/db';
 import { subscribers } from '../../src/schema';
 import { domain, signUnsubscribe } from '../../src/sign';
 import { UnsubscribeTypes } from '../../src/sign/types';
-import { cleanupSubscribersDb, insertSubscribers } from '../utils';
-import type { TypedDataField } from '@ethersproject/abstract-signer';
 import { unsubscribePayload } from '../fixtures/unsubscribePayload';
+import { cleanupSubscribersDb, insertSubscribers } from '../utils';
 
 describe('POST unsubscribe', () => {
   const { email, address, wallet, timestamp } = unsubscribePayload;
@@ -25,7 +25,13 @@ describe('POST unsubscribe', () => {
   beforeEach(async () => {
     await cleanupSubscribersDb(timestamp);
     return insertSubscribers([
-      { created: timestamp, email, address, subscriptions: ['summary'], verified: timestamp },
+      {
+        created: timestamp,
+        email,
+        address,
+        subscriptions: ['summary'],
+        verified: timestamp
+      },
       {
         created: timestamp,
         email: `a${email}`,
@@ -54,7 +60,9 @@ describe('POST unsubscribe', () => {
         const response = await request(process.env.HOST)
           .post('/')
           .send(await payload());
-        const result = await db.query.subscribers.findMany({ where: eq(subscribers.email, email) });
+        const result = await db.query.subscribers.findMany({
+          where: eq(subscribers.email, email)
+        });
 
         expect(response.statusCode).toBe(200);
         expect(result.length).toBe(0);
@@ -120,7 +128,9 @@ describe('POST unsubscribe', () => {
             signature: 'not-valid'
           }
         });
-      const afterRun = await db.query.subscribers.findMany({ where: eq(subscribers.email, email) });
+      const afterRun = await db.query.subscribers.findMany({
+        where: eq(subscribers.email, email)
+      });
 
       expect(response.statusCode).toBe(401);
       expect(beforeRun).toEqual(afterRun);

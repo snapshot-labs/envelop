@@ -1,8 +1,8 @@
 import fs from 'fs';
 import Handlebars from 'handlebars';
 import { marked } from 'marked';
-import { signUnsubscribe, signUpdate } from '../sign';
 import { Proposal } from '../helpers/snapshot';
+import { signUnsubscribe, signUpdate } from '../sign';
 
 export async function unsubscribeLink(email: string) {
   return `${process.env.FRONT_HOST}/#/unsubscribe?${new URLSearchParams({
@@ -53,12 +53,19 @@ export function truncateProposalBody(body: string, maxLength: number) {
   const boundary = truncatedBody.lastIndexOf(' ');
 
   return {
-    body: (boundary > -1 ? truncatedBody.slice(0, boundary) : truncatedBody).trimEnd(),
+    body: (boundary > -1
+      ? truncatedBody.slice(0, boundary)
+      : truncatedBody
+    ).trimEnd(),
     isTruncated: true
   };
 }
 
-export function formatProposalHtmlBody(proposal: Proposal, body: string, isTruncated: boolean) {
+export function formatProposalHtmlBody(
+  proposal: Proposal,
+  body: string,
+  isTruncated: boolean
+) {
   marked.use({ breaks: true });
 
   return (

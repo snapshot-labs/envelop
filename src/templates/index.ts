@@ -1,12 +1,16 @@
 import fs from 'fs';
-import prepareVerification from './verification';
-import prepareSummary from './summary';
-import prepareNewProposal from './newProposal';
 import prepareClosedProposal from './closedProposal';
-import type { Templates, TemplateId } from '../../types';
+import prepareNewProposal from './newProposal';
+import prepareSummary from './summary';
+import prepareVerification from './verification';
+import { TemplateId, Templates } from '../../types';
 
 // List of subscriptions type, excluding system emails
-export const SUBSCRIPTION_TYPE: TemplateId[] = ['summary', 'newProposal', 'closedProposal'];
+export const SUBSCRIPTION_TYPE: TemplateId[] = [
+  'summary',
+  'newProposal',
+  'closedProposal'
+];
 
 const templates: Templates = {
   verification: {
@@ -15,15 +19,18 @@ const templates: Templates = {
     from: 'Snapshot <notify@snapshot.org>',
     subject: 'Verify your email address',
     text: fs.readFileSync('./src/templates/verification/text.hbs', 'utf-8'),
-    preheader: 'Verify your email to confirm your subscription to Snapshot mailing list',
+    preheader:
+      'Verify your email to confirm your subscription to Snapshot mailing list',
     html: fs.readFileSync('./src/templates/verification/html.hbs', 'utf-8'),
     prepare: params => prepareVerification(params)
   },
   summary: {
     name: 'Weekly digest',
-    description: 'Get a weekly report detailing the activity in your followed spaces.',
+    description:
+      'Get a weekly report detailing the activity in your followed spaces.',
     from: 'Snapshot <notify@snapshot.org>',
-    subject: 'Your weekly Snapshot summary - {{formattedStartDate}} to {{formattedEndDate}}',
+    subject:
+      'Your weekly Snapshot summary - {{formattedStartDate}} to {{formattedEndDate}}',
     text: fs.readFileSync('./src/templates/summary/text.hbs', 'utf-8'),
     preheader: '',
     html: fs.readFileSync('./src/templates/summary/html.hbs', 'utf-8'),
@@ -31,7 +38,8 @@ const templates: Templates = {
   },
   newProposal: {
     name: 'Proposal creation',
-    description: 'Get informed when a new proposal is submitted in your followed spaces.',
+    description:
+      'Get informed when a new proposal is submitted in your followed spaces.',
     from: 'Snapshot <notify@snapshot.org>',
     subject: '[{{{proposal.space.name}}}] New proposal: {{{proposal.title}}}',
     text: fs.readFileSync('./src/templates/newProposal/text.hbs', 'utf-8'),
@@ -43,9 +51,11 @@ const templates: Templates = {
   },
   closedProposal: {
     name: 'Proposal closure',
-    description: 'Get informed when a proposal is closed in your followed spaces.',
+    description:
+      'Get informed when a proposal is closed in your followed spaces.',
     from: 'Snapshot <notify@snapshot.org>',
-    subject: '[{{{proposal.space.name}}}] Closed proposal: {{{proposal.title}}}',
+    subject:
+      '[{{{proposal.space.name}}}] Closed proposal: {{{proposal.title}}}',
     text: fs.readFileSync('./src/templates/closedProposal/text.hbs', 'utf-8'),
     preheader:
       '{{{winningChoiceName}}} {{winningChoicePercentage}}% - ' +

@@ -1,8 +1,8 @@
-import { and, asc, desc, eq, gt, isNull, or, sql, type SQL } from 'drizzle-orm';
+import { and, asc, desc, eq, gt, isNull, or, sql, SQL } from 'drizzle-orm';
+import { Response } from 'express';
 import { db } from '../db';
-import { subscribers, type NewSubscriber } from '../schema';
+import { NewSubscriber, subscribers } from '../schema';
 import { SUBSCRIPTION_TYPE } from '../templates';
-import type { Response } from 'express';
 
 function currentTimestamp() {
   return Math.round(Date.now() / 1e3);
@@ -20,7 +20,11 @@ export function rpcSuccess(res: Response, result: string, id: string | number) {
   });
 }
 
-export function rpcError(res: Response, e: Error | string, id: string | number) {
+export function rpcError(
+  res: Response,
+  e: Error | string,
+  id: string | number
+) {
   const message = e instanceof Error ? e.message : e;
   const ERROR_CODES: Record<string, number> = {
     INVALID_PARAMS: 400,
@@ -49,7 +53,11 @@ export function sanitizeSubscriptions(list?: string | string[]) {
 }
 
 export async function subscribe(email: string, address: string) {
-  const subscriber: NewSubscriber = { email, address, created: currentTimestamp() };
+  const subscriber: NewSubscriber = {
+    email,
+    address,
+    created: currentTimestamp()
+  };
   const insertedRows = await db
     .insert(subscribers)
     .values(subscriber)
@@ -117,17 +125,25 @@ function subscriberFilters(email: string, address: string) {
   return conditions;
 }
 
-export async function update(email: string, address: string, subscriptions: string[]) {
+export async function update(
+  email: string,
+  address: string,
+  subscriptions: string[]
+) {
   const subs = sanitizeSubscriptions(subscriptions);
 
   return db
     .update(subscribers)
     .set({ subscriptions: subs })
-    .where(and(...subscriberFilters(email, address), gt(subscribers.verified, 0)));
+    .where(
+      and(...subscriberFilters(email, address), gt(subscribers.verified, 0))
+    );
 }
 
 export async function unsubscribe(email: string, address: string) {
-  return db.delete(subscribers).where(and(...subscriberFilters(email, address)));
+  return db
+    .delete(subscribers)
+    .where(and(...subscriberFilters(email, address)));
 }
 
 export function subscribedTo(type: string) {

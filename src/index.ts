@@ -1,16 +1,16 @@
 import 'dotenv/config';
 import './instrument';
-import express from 'express';
+import { capture, fallbackLogger } from '@snapshot-labs/snapshot-sentry';
 import compression from 'compression';
 import cors from 'cors';
-import { capture, fallbackLogger } from '@snapshot-labs/snapshot-sentry';
-import rpc from './rpc';
+import express from 'express';
+import { runMigrations } from './db';
+import initMetrics from './helpers/metrics';
+import { rpcError } from './helpers/utils';
 import preview from './preview';
 import send from './preview/send';
-import { start as startQueue, shutdown as shutdownQueue } from './queues';
-import { runMigrations } from './db';
-import { rpcError } from './helpers/utils';
-import initMetrics from './helpers/metrics';
+import { shutdown as shutdownQueue, start as startQueue } from './queues';
+import rpc from './rpc';
 
 const app = express();
 const PORT = process.env.PORT || 3006;
@@ -37,7 +37,9 @@ let server: ReturnType<typeof app.listen>;
 async function start() {
   await runMigrations();
   startQueue();
-  server = app.listen(PORT, () => console.log(`[http] Listening at http://localhost:${PORT}`));
+  server = app.listen(PORT, () =>
+    console.log(`[http] Listening at http://localhost:${PORT}`)
+  );
 }
 
 start().catch(err => {

@@ -1,13 +1,21 @@
 import { compile } from 'handlebars';
 import juice from 'juice';
 import sass from 'sass';
-import { unsubscribeLink, updateSubscriptionsLink, loadPartials, formatPreheader } from './utils';
 import templates from './';
-import type { Message, TemplatePrepareParams, TemplateId } from '../../types';
+import {
+  formatPreheader,
+  loadPartials,
+  unsubscribeLink,
+  updateSubscriptionsLink
+} from './utils';
+import { Message, TemplateId, TemplatePrepareParams } from '../../types';
 
 loadPartials();
 
-export default async function buildMessage(id: TemplateId, params: TemplatePrepareParams) {
+export default async function buildMessage(
+  id: TemplateId,
+  params: TemplatePrepareParams
+) {
   const template = templates[id];
   const headers: Message['headers'] = {};
 
@@ -25,7 +33,9 @@ export default async function buildMessage(id: TemplateId, params: TemplatePrepa
 
   if (id !== 'verification') {
     extraParams.unsubscribeLink = await unsubscribeLink(params.to);
-    extraParams.updateSubscriptionsLink = await updateSubscriptionsLink(params.to);
+    extraParams.updateSubscriptionsLink = await updateSubscriptionsLink(
+      params.to
+    );
     headers['List-Unsubscribe'] = `<${extraParams.unsubscribeLink}>`;
   }
 

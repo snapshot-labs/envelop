@@ -1,9 +1,15 @@
 import removeMd from 'remove-markdown';
-import { getFollows, getProposals, getVotes, Space, Proposal } from '../../helpers/snapshot';
-import { formatShortDate } from '../../helpers/date';
-import buildMessage from '../builder';
+import { TemplatePrepareParams } from '../../../types';
 import constants from '../../helpers/constants.json';
-import type { TemplatePrepareParams } from '../../../types';
+import { formatShortDate } from '../../helpers/date';
+import {
+  getFollows,
+  getProposals,
+  getVotes,
+  Proposal,
+  Space
+} from '../../helpers/snapshot';
+import buildMessage from '../builder';
 import { linkWithTracker, truncateProposalBody } from '../utils';
 
 type ProposalStatus = 'pending' | 'active' | 'closed';
@@ -12,7 +18,11 @@ type GroupedProposals = Record<ProposalStatus, GroupedSpaces[]>;
 
 const MAX_SHORT_BODY_LENGTH = 150;
 
-export async function getGroupedProposals(addresses: string[], startDate: Date, endDate: Date) {
+export async function getGroupedProposals(
+  addresses: string[],
+  startDate: Date,
+  endDate: Date
+) {
   const follows = await getFollows(addresses);
   const trustedSpaces = follows
     .filter(follow => follow.space.verified && !follow.space.flagged)
@@ -42,7 +52,10 @@ export async function getGroupedProposals(addresses: string[], startDate: Date, 
       sanitizedBody,
       MAX_SHORT_BODY_LENGTH
     );
-    proposal.shortBody = `${shortBody}${isTruncated ? '…' : ''}`.replace(/\r?\n|\r/g, ' ');
+    proposal.shortBody = `${shortBody}${isTruncated ? '…' : ''}`.replace(
+      /\r?\n|\r/g,
+      ' '
+    );
     proposal.htmlShortBody = proposal.shortBody
       .replace(/https?:\/\//g, '')
       .replace(/([^<](\/|\.))/g, '<span>$1</span>');
@@ -62,14 +75,20 @@ export async function getGroupedProposals(addresses: string[], startDate: Date, 
         groupedSpaces[space.id].proposals.push(proposal);
       });
 
-    groupedProposals[status as keyof GroupedProposals] = Array.from(Object.values(groupedSpaces));
+    groupedProposals[status as keyof GroupedProposals] = Array.from(
+      Object.values(groupedSpaces)
+    );
   });
 
   return groupedProposals;
 }
 
 export default async function prepare(params: TemplatePrepareParams) {
-  const proposals = await getGroupedProposals(params.addresses, params.startDate, params.endDate);
+  const proposals = await getGroupedProposals(
+    params.addresses,
+    params.startDate,
+    params.endDate
+  );
 
   if (Object.values(proposals).every(p => p.length === 0)) {
     return {};

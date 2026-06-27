@@ -1,14 +1,14 @@
+import { capture } from '@snapshot-labs/snapshot-sentry';
 import Queue from 'bull';
 import Redis from 'ioredis';
-import summaryProcessor from './processors/summary';
-import schedulerProcessor from './processors/scheduler';
-import constants from '../helpers/constants.json';
-import verificationProcessor from './processors/verification';
-import proposalFactoryProcessor from './processors/proposalFactory';
-import newProposalProcessor from './processors/newProposal';
 import closedProposalProcessor from './processors/closedProposal';
+import schedulerProcessor from './processors/scheduler';
+import summaryProcessor from './processors/summary';
+import constants from '../helpers/constants.json';
+import newProposalProcessor from './processors/newProposal';
+import proposalFactoryProcessor from './processors/proposalFactory';
+import verificationProcessor from './processors/verification';
 import { countSentEmails } from '../helpers/metrics';
-import { capture } from '@snapshot-labs/snapshot-sentry';
 
 const REDIS_URL = (process.env.REDIS_URL as string) || 'redis://127.0.0.1:6379';
 const REDIS_OPTS = { maxRetriesPerRequest: null, enableReadyCheck: false };
@@ -78,11 +78,17 @@ export function start() {
   mailerQueue.process('newProposal', newProposalProcessor);
   mailerQueue.process('closedProposal', closedProposalProcessor);
 
-  queueScheduler({ repeat: { cron: '0 1 * * MON', tz: constants.summary.timezone } });
+  queueScheduler({
+    repeat: { cron: '0 1 * * MON', tz: constants.summary.timezone }
+  });
 }
 
 export function shutdown() {
-  return [mailerQueue.close(), scheduleQueue.close(), proposalActivityQueue.close()];
+  return [
+    mailerQueue.close(),
+    scheduleQueue.close(),
+    proposalActivityQueue.close()
+  ];
 }
 
 export function queueScheduler(options: Queue.JobOptions = {}) {

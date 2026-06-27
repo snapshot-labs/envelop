@@ -1,12 +1,12 @@
-import buildMessage from '../builder';
+import { TemplatePrepareParams } from '../../../types';
 import { getProposal } from '../../helpers/snapshot';
+import buildMessage from '../builder';
 import {
   formatProposalHtmlBody,
   formatUTCDate,
   linkWithTracker,
   truncateProposalBody
 } from '../utils';
-import type { TemplatePrepareParams } from '../../../types';
 
 export default async function prepare(params: TemplatePrepareParams) {
   const proposal = await getProposal(params.id);
@@ -16,7 +16,10 @@ export default async function prepare(params: TemplatePrepareParams) {
   }
 
   const BODY_LENGTH = 500;
-  const { body: truncatedBody, isTruncated } = truncateProposalBody(proposal.body, BODY_LENGTH);
+  const { body: truncatedBody, isTruncated } = truncateProposalBody(
+    proposal.body,
+    BODY_LENGTH
+  );
 
   const winningChoice = proposal.scores?.indexOf(Math.max(...proposal.scores));
   const results = (
@@ -24,7 +27,8 @@ export default async function prepare(params: TemplatePrepareParams) {
       return {
         name: choice,
         progress: Math.round(
-          (100 / (proposal.scores_total || 1)) * (proposal.scores ? proposal.scores[i] : 1)
+          (100 / (proposal.scores_total || 1)) *
+            (proposal.scores ? proposal.scores[i] : 1)
         ),
         winning: i === winningChoice
       };
@@ -45,6 +49,10 @@ export default async function prepare(params: TemplatePrepareParams) {
     winningChoiceName: results[winningChoiceIndex].name,
     winningChoicePercentage: results[winningChoiceIndex].progress,
     proposalTextBody: `${truncatedBody}${isTruncated ? ` [...]` : ''}`,
-    proposalHtmlBody: formatProposalHtmlBody(proposal, truncatedBody, isTruncated)
+    proposalHtmlBody: formatProposalHtmlBody(
+      proposal,
+      truncatedBody,
+      isTruncated
+    )
   });
 }

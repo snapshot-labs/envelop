@@ -1,5 +1,5 @@
+import { NewSubscriber } from '../../src/schema';
 import { randomTimestamp } from '../utils';
-import type { NewSubscriber } from '../../src/schema';
 
 const timestamp = randomTimestamp();
 const email = 'test-update@test.com';
@@ -12,7 +12,13 @@ export const updatePayload = {
 };
 
 export const bootstrapData: NewSubscriber[] = [
-  { created: timestamp, email, address, subscriptions: ['summary'], verified: timestamp },
+  {
+    created: timestamp,
+    email,
+    address,
+    subscriptions: ['summary'],
+    verified: timestamp
+  },
   {
     created: timestamp,
     email: 'unverified@test.com',

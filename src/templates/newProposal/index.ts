@@ -1,3 +1,5 @@
+import { TemplatePrepareParams } from '../../../types';
+import { getProposal } from '../../helpers/snapshot';
 import buildMessage from '../builder';
 import {
   formatProposalHtmlBody,
@@ -5,8 +7,6 @@ import {
   linkWithTracker,
   truncateProposalBody
 } from '../utils';
-import { getProposal } from '../../helpers/snapshot';
-import type { TemplatePrepareParams } from '../../../types';
 
 export default async function prepare(params: TemplatePrepareParams) {
   const proposal = await getProposal(params.id);
@@ -16,7 +16,10 @@ export default async function prepare(params: TemplatePrepareParams) {
   }
 
   const BODY_LENGTH = 1000;
-  const { body: truncatedBody, isTruncated } = truncateProposalBody(proposal.body, BODY_LENGTH);
+  const { body: truncatedBody, isTruncated } = truncateProposalBody(
+    proposal.body,
+    BODY_LENGTH
+  );
 
   proposal.link = linkWithTracker(proposal.link);
 
@@ -26,6 +29,10 @@ export default async function prepare(params: TemplatePrepareParams) {
     formattedStartDate: formatUTCDate(proposal.start),
     formattedEndDate: formatUTCDate(proposal.end),
     proposalTextBody: `${truncatedBody}${isTruncated ? ` [...]` : ''}`,
-    proposalHtmlBody: formatProposalHtmlBody(proposal, truncatedBody, isTruncated)
+    proposalHtmlBody: formatProposalHtmlBody(
+      proposal,
+      truncatedBody,
+      isTruncated
+    )
   });
 }
