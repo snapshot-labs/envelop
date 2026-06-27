@@ -1,16 +1,21 @@
 import 'dotenv/config';
 import { Job } from 'bull';
-import summary from '../src/queues/processors/summary';
-import { previousWeek } from '../src/helpers/date';
 import constants from '../src/helpers/constants.json';
+import { previousWeek } from '../src/helpers/date';
+import summary from '../src/queues/processors/summary';
 
 async function main() {
   if (process.argv.length < 3) {
-    console.error(`Usage: yarn ts-node scripts/send-summary.ts [EMAIL] [ADDRESSES] [SEND_DATE]`);
+    console.error(
+      `Usage: yarn ts-node scripts/send-summary.ts [EMAIL] [ADDRESSES] [SEND_DATE]`
+    );
     return process.exit(1);
   }
   const [, , email, addresses, sendDate] = process.argv;
-  const summaryTimeRange = previousWeek(new Date(Date.parse(sendDate)), constants.summary.timezone);
+  const summaryTimeRange = previousWeek(
+    new Date(Date.parse(sendDate)),
+    constants.summary.timezone
+  );
 
   return await summary({
     name: '',
@@ -27,8 +32,8 @@ async function main() {
   try {
     await main();
     process.exit(0);
-  } catch (e) {
-    console.error(e);
+  } catch (err) {
+    console.error(err);
     process.exit(1);
   }
 })();

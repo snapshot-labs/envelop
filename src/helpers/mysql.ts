@@ -1,17 +1,20 @@
-import mysql from 'mysql';
-// @ts-ignore
-import Pool from 'mysql/lib/Pool';
-// @ts-ignore
-import Connection from 'mysql/lib/Connection';
 import bluebird from 'bluebird';
 import { ConnectionString } from 'connection-string';
+import mysql from 'mysql';
+// @ts-ignore
+import Connection from 'mysql/lib/Connection';
+import Pool from 'mysql/lib/Pool';
+// @ts-ignore
 
 type values = string | number | boolean | null;
 export type SqlRow = Record<string, values>;
 type SqlQueryArgs = values | Record<string, values>;
 
 interface PromisedPool {
-  queryAsync: (query: string, args?: SqlQueryArgs | SqlQueryArgs[]) => Promise<SqlRow[]>;
+  queryAsync: (
+    query: string,
+    args?: SqlQueryArgs | SqlQueryArgs[]
+  ) => Promise<SqlRow[]>;
   endAsync: () => Promise<any>;
 }
 

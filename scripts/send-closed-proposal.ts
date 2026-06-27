@@ -4,7 +4,9 @@ import closedProposal from '../src/queues/processors/closedProposal';
 
 async function main() {
   if (process.argv.length < 3) {
-    console.error(`Usage: yarn ts-node scripts/send-closed-proposal.ts [EMAIL] [PROPOSAL-ID]`);
+    console.error(
+      `Usage: yarn ts-node scripts/send-closed-proposal.ts [EMAIL] [PROPOSAL-ID]`
+    );
     return process.exit(1);
   }
   const [, , email, id] = process.argv;
@@ -19,8 +21,8 @@ async function main() {
   try {
     await main();
     process.exit(0);
-  } catch (e) {
-    console.error(e);
+  } catch (err) {
+    console.error(err);
     process.exit(1);
   }
 })();

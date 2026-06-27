@@ -1,7 +1,12 @@
+import { TypedDataField } from '@ethersproject/abstract-signer';
 import { getAddress } from '@ethersproject/address';
-import { Wallet, verifyTypedData } from '@ethersproject/wallet';
-import { SubscribeTypes, UnsubscribeTypes, VerifyTypes, SubscriptionsTypes } from './types';
-import type { TypedDataField } from '@ethersproject/abstract-signer';
+import { verifyTypedData, Wallet } from '@ethersproject/wallet';
+import {
+  SubscribeTypes,
+  SubscriptionsTypes,
+  UnsubscribeTypes,
+  VerifyTypes
+} from './types';
 
 const NAME = 'snapshot';
 const VERSION = '0.1.4';
@@ -13,7 +18,10 @@ export const domain = {
 
 const wallet = new Wallet(process.env.WALLET_PRIVATE_KEY as string);
 
-const sign = async (message: Record<string, any>, type: Record<string, Array<TypedDataField>>) => {
+const sign = async (
+  message: Record<string, any>,
+  type: Record<string, Array<TypedDataField>>
+) => {
   return await wallet._signTypedData(domain, type, message);
 };
 
@@ -25,12 +33,16 @@ function verify(
 ) {
   try {
     return signer === verifyTypedData(domain, type, message, signature);
-  } catch (e) {
+  } catch {
     return false;
   }
 }
 
-export function verifySubscribe(email: string, address: string, signature: string) {
+export function verifySubscribe(
+  email: string,
+  address: string,
+  signature: string
+) {
   return verify(
     {
       email,
@@ -53,7 +65,12 @@ export function signVerify(email: string, address: string, salt: string) {
   );
 }
 
-export function verifyVerify(email: string, address: string, salt: string, signature: string) {
+export function verifyVerify(
+  email: string,
+  address: string,
+  salt: string,
+  signature: string
+) {
   return verify(
     {
       email,
@@ -67,12 +84,18 @@ export function verifyVerify(email: string, address: string, salt: string, signa
 }
 
 export function signUnsubscribe(email: string, address?: string) {
-  const normalizedAddress = address && address.length > 0 ? getAddress(address) : wallet.address;
+  const normalizedAddress =
+    address && address.length > 0 ? getAddress(address) : wallet.address;
   return sign({ email, address: normalizedAddress }, UnsubscribeTypes);
 }
 
-export function verifyUnsubscribe(email: string, address: string, signature: string) {
-  const normalizedAddress = address && address.length > 0 ? getAddress(address) : wallet.address;
+export function verifyUnsubscribe(
+  email: string,
+  address: string,
+  signature: string
+) {
+  const normalizedAddress =
+    address && address.length > 0 ? getAddress(address) : wallet.address;
   return verify(
     { email, address: normalizedAddress },
     normalizedAddress,
@@ -81,10 +104,18 @@ export function verifyUnsubscribe(email: string, address: string, signature: str
   );
 }
 
-export function signUpdate(email: string, address: string, subscriptions: string[]) {
-  const normalizedAddress = address && address.length > 0 ? getAddress(address) : wallet.address;
+export function signUpdate(
+  email: string,
+  address: string,
+  subscriptions: string[]
+) {
+  const normalizedAddress =
+    address && address.length > 0 ? getAddress(address) : wallet.address;
 
-  return sign({ email, address: normalizedAddress, subscriptions }, SubscriptionsTypes);
+  return sign(
+    { email, address: normalizedAddress, subscriptions },
+    SubscriptionsTypes
+  );
 }
 
 /**
@@ -100,7 +131,8 @@ export function verifyUpdate(
   subscriptions: string[],
   signature: string
 ) {
-  const normalizedAddress = address && address.length > 0 ? getAddress(address) : wallet.address;
+  const normalizedAddress =
+    address && address.length > 0 ? getAddress(address) : wallet.address;
 
   return verify(
     { email, address: normalizedAddress, subscriptions },

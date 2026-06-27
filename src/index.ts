@@ -1,15 +1,15 @@
 import 'dotenv/config';
 import './instrument';
-import express from 'express';
+import { fallbackLogger } from '@snapshot-labs/snapshot-sentry';
 import compression from 'compression';
 import cors from 'cors';
-import { fallbackLogger } from '@snapshot-labs/snapshot-sentry';
-import rpc from './rpc';
+import express from 'express';
+import initMetrics from './helpers/metrics';
+import { rpcError } from './helpers/utils';
 import preview from './preview';
 import send from './preview/send';
-import { start as startQueue, shutdown as shutdownQueue } from './queues';
-import { rpcError } from './helpers/utils';
-import initMetrics from './helpers/metrics';
+import { shutdown as shutdownQueue, start as startQueue } from './queues';
+import rpc from './rpc';
 
 const app = express();
 const PORT = process.env.PORT || 3006;
@@ -33,7 +33,9 @@ app.use((_, res) => {
   rpcError(res, 'RECORD_NOT_FOUND', '');
 });
 
-const server = app.listen(PORT, () => console.log(`[http] Listening at http://localhost:${PORT}`));
+const server = app.listen(PORT, () =>
+  console.log(`[http] Listening at http://localhost:${PORT}`)
+);
 
 function shutdown() {
   if (server.listening) {

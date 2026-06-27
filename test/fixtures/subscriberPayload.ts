@@ -11,7 +11,10 @@ export const subscriberPayload = {
     email: `b${email}`,
     address: '0x54C8b17E5c46B97d25498205182e0382234B2532'
   },
-  unverifiedUser: { email: `c${email}`, address: '0xc766c83C362E6D1Da8151F6aB588de7C79d03B8d' },
+  unverifiedUser: {
+    email: `c${email}`,
+    address: '0xc766c83C362E6D1Da8151F6aB588de7C79d03B8d'
+  },
   timestamp
 };
 

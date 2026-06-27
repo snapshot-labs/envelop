@@ -3,8 +3,8 @@ import db from '../src/helpers/mysql';
 const setup = async () => {
   try {
     await db.queryAsync('SELECT 1 + 1');
-  } catch (e: any) {
-    if (e.code === 'ER_BAD_DB_ERROR') {
+  } catch (err: any) {
+    if (err.code === 'ER_BAD_DB_ERROR') {
       console.error('Test database not setup, please run `yarn test:setup`');
       throw new Error('Test database not setup');
     }

@@ -1,11 +1,11 @@
-import mysql from 'mysql';
-// @ts-ignore
-import Pool from 'mysql/lib/Pool';
-// @ts-ignore
-import Connection from 'mysql/lib/Connection';
+import fs from 'fs';
 import bluebird from 'bluebird';
 import { ConnectionString } from 'connection-string';
-import fs from 'fs';
+import mysql from 'mysql';
+// @ts-ignore
+import Connection from 'mysql/lib/Connection';
+import Pool from 'mysql/lib/Pool';
+// @ts-ignore
 
 // @ts-ignore
 const config = new ConnectionString(process.env.DATABASE_URL || '');
@@ -59,8 +59,8 @@ async function run() {
   try {
     await run();
     process.exit(0);
-  } catch (e) {
-    console.error(e);
+  } catch (err) {
+    console.error(err);
     process.exit(1);
   }
 })();

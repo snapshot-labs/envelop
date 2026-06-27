@@ -1,8 +1,8 @@
 import request from 'supertest';
 import db from '../../src/helpers/mysql';
 import { signVerify } from '../../src/sign';
+import { bootstrapData, verifyPayload } from '../fixtures/verifyPayload';
 import { cleanupSubscribersDb, insertSubscribers } from '../utils';
-import { verifyPayload, bootstrapData } from '../fixtures/verifyPayload';
 
 describe('POST verify', () => {
   const {
@@ -82,7 +82,9 @@ describe('POST verify', () => {
       );
 
       expect(response.statusCode).toBe(400);
-      expect(response.body.error.message).toBe('ADDRESS_ALREADY_VERIFIED_WITH_ANOTHER_EMAIL');
+      expect(response.body.error.message).toBe(
+        'ADDRESS_ALREADY_VERIFIED_WITH_ANOTHER_EMAIL'
+      );
       expect(result[0].verified).toBe(0);
     });
   });
@@ -91,7 +93,9 @@ describe('POST verify', () => {
     it('returns an error', async () => {
       const response = await request(process.env.HOST)
         .post('/')
-        .send(await payload('test-not-exist@test.com', addressForNotExistEmail));
+        .send(
+          await payload('test-not-exist@test.com', addressForNotExistEmail)
+        );
 
       expect(response.statusCode).toBe(404);
       expect(response.body.error.message).toBe('RECORD_NOT_FOUND');

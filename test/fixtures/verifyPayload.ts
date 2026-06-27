@@ -13,13 +13,22 @@ export const verifyPayload = {
     email: 'test-verify-c@test.com',
     address: verifiedAddress
   },
-  unverifiedUserForVerifiedAddress: { email: 'test-verify-b@test.com', address: verifiedAddress },
+  unverifiedUserForVerifiedAddress: {
+    email: 'test-verify-b@test.com',
+    address: verifiedAddress
+  },
   addressForNotExistEmail,
   timestamp
 };
 
 export const bootstrapData = [
-  [timestamp, verifyPayload.unverifiedUser.email, verifyPayload.unverifiedUser.address, subs, 0],
+  [
+    timestamp,
+    verifyPayload.unverifiedUser.email,
+    verifyPayload.unverifiedUser.address,
+    subs,
+    0
+  ],
   [
     timestamp,
     verifyPayload.unverifiedUserForVerifiedAddress.email,
@@ -27,5 +36,11 @@ export const bootstrapData = [
     subs,
     0
   ],
-  [timestamp, verifyPayload.verifiedUser.email, verifyPayload.verifiedUser.address, subs, 1]
+  [
+    timestamp,
+    verifyPayload.verifiedUser.email,
+    verifyPayload.verifiedUser.address,
+    subs,
+    1
+  ]
 ];

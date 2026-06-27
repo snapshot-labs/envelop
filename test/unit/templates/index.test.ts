@@ -1,5 +1,8 @@
 import buildMessage from '../../../src/templates/builder';
-import { unsubscribeLink, updateSubscriptionsLink } from '../../../src/templates/utils';
+import {
+  unsubscribeLink,
+  updateSubscriptionsLink
+} from '../../../src/templates/utils';
 
 describe('templates', () => {
   const email = 'test@test.com';
@@ -11,7 +14,6 @@ describe('templates', () => {
 
     expect(result.text).toContain(link);
     expect(result.html).toContain(escapedLink);
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(result.headers!['List-Unsubscribe']).toEqual(`<${link}>`);
   });
 
@@ -33,7 +35,9 @@ describe('templates', () => {
   });
 
   it('creates a valid update subscriptions link', async () => {
-    const link = new URL((await updateSubscriptionsLink(email)).replace('#/', ''));
+    const link = new URL(
+      (await updateSubscriptionsLink(email)).replace('#/', '')
+    );
 
     expect(link.origin).toBe(process.env.FRONT_HOST);
     expect(link.searchParams.get('signature')).toMatch(/^0x[a-f0-9]{130}$/gi);

@@ -1,13 +1,20 @@
 import request from 'supertest';
 import db from '../../src/helpers/mysql';
+import { NOT_SUBSCRIBED, UNVERIFIED, VERIFIED } from '../../src/helpers/utils';
 import { SUBSCRIPTION_TYPE } from '../../src/templates';
+import {
+  bootstrapData,
+  subscriberPayload
+} from '../fixtures/subscriberPayload';
 import { cleanupSubscribersDb, insertSubscribers } from '../utils';
-import { VERIFIED, UNVERIFIED, NOT_SUBSCRIBED } from '../../src/helpers/utils';
-import { subscriberPayload, bootstrapData } from '../fixtures/subscriberPayload';
 
 describe('POST subscriber', () => {
-  const { verifiedUser, verifiedUserWithEmptySubscription, unverifiedUser, timestamp } =
-    subscriberPayload;
+  const {
+    verifiedUser,
+    verifiedUserWithEmptySubscription,
+    unverifiedUser,
+    timestamp
+  } = subscriberPayload;
 
   beforeAll(async () => {
     await cleanupSubscribersDb(timestamp);
@@ -23,13 +30,17 @@ describe('POST subscriber', () => {
     const { address } = verifiedUser;
 
     it('returns a 200 response', async () => {
-      const response = await request(process.env.HOST).post('/subscriber').send({ address });
+      const response = await request(process.env.HOST)
+        .post('/subscriber')
+        .send({ address });
 
       expect(response.statusCode).toBe(200);
     });
 
     it('returns a list of subscriptions', async () => {
-      const response = await request(process.env.HOST).post('/subscriber').send({ address });
+      const response = await request(process.env.HOST)
+        .post('/subscriber')
+        .send({ address });
 
       expect(response.body.subscriptions).toEqual(['summary']);
     });
@@ -43,7 +54,9 @@ describe('POST subscriber', () => {
     });
 
     it('returns a VEFIFIED state if the email is verified', async () => {
-      const response = await request(process.env.HOST).post('/subscriber').send({ address });
+      const response = await request(process.env.HOST)
+        .post('/subscriber')
+        .send({ address });
 
       expect(response.body.status).toEqual(VERIFIED);
     });
