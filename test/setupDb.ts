@@ -59,8 +59,8 @@ async function run() {
   try {
     await run();
     process.exit(0);
-  } catch (e) {
-    console.error(e);
+  } catch (err) {
+    console.error(err);
     process.exit(1);
   }
 })();

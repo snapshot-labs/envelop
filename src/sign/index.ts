@@ -25,7 +25,7 @@ function verify(
 ) {
   try {
     return signer === verifyTypedData(domain, type, message, signature);
-  } catch (e) {
+  } catch {
     return false;
   }
 }
