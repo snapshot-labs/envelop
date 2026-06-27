@@ -11,7 +11,6 @@ describe('templates', () => {
 
     expect(result.text).toContain(link);
     expect(result.html).toContain(escapedLink);
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(result.headers!['List-Unsubscribe']).toEqual(`<${link}>`);
   });
 

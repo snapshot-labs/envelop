@@ -15,7 +15,7 @@ router.get('/preview/:template', async (req, res) => {
       sendDate: req.query.sendDate ? new Date(req.query.sendDate as string) : new Date(),
       id: req.query.id
     });
-  } catch (e) {
+  } catch {
     return rpcError(res, 'RECORD_NOT_FOUND', '');
   }
 
