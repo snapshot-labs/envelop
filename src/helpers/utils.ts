@@ -1,7 +1,7 @@
+import { Response } from 'express';
+import { OkPacket } from 'mysql';
 import db, { SqlRow } from './mysql';
 import { SUBSCRIPTION_TYPE } from '../templates';
-import type { Response } from 'express';
-import type { OkPacket } from 'mysql';
 
 type Subscriber = {
   email: string;
@@ -25,7 +25,11 @@ export function rpcSuccess(res: Response, result: string, id: string | number) {
   });
 }
 
-export function rpcError(res: Response, e: Error | string, id: string | number) {
+export function rpcError(
+  res: Response,
+  e: Error | string,
+  id: string | number
+) {
   const message = e instanceof Error ? e.message : e;
   const ERROR_CODES: Record<string, number> = {
     INVALID_PARAMS: 400,
@@ -54,10 +58,15 @@ export function sanitizeSubscriptions(list?: string | string[]) {
 }
 
 export async function subscribe(email: string, address: string) {
-  const subscriber: Subscriber = { email, address, created: currentTimestamp() };
-  const insertResponse = (await db.queryAsync('INSERT IGNORE INTO subscribers SET ?', [
-    subscriber
-  ])) as unknown as OkPacket;
+  const subscriber: Subscriber = {
+    email,
+    address,
+    created: currentTimestamp()
+  };
+  const insertResponse = (await db.queryAsync(
+    'INSERT IGNORE INTO subscribers SET ?',
+    [subscriber]
+  )) as unknown as OkPacket;
 
   if (insertResponse.affectedRows > 0) {
     return subscriber;
@@ -92,7 +101,11 @@ export async function verify(email: string, address: string, salt: string) {
   return true;
 }
 
-export async function update(email: string, address: string, subscriptions: string[]) {
+export async function update(
+  email: string,
+  address: string,
+  subscriptions: string[]
+) {
   const fields: Record<string, string> = {};
   if (email && email.length > 0) {
     fields['email = ?'] = email;
@@ -134,7 +147,10 @@ export async function unsubscribe(email: string, address: string) {
   );
 }
 
-export async function getVerifiedSubscriptions(subscription: string, batchSize = 1000) {
+export async function getVerifiedSubscriptions(
+  subscription: string,
+  batchSize = 1000
+) {
   let page = 0;
   let results: SqlRow[] = [];
   const sub = sanitizeSubscriptions(subscription)[0];

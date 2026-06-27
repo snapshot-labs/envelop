@@ -1,8 +1,8 @@
 import request from 'supertest';
 import db from '../../src/helpers/mysql';
 import { signUpdate } from '../../src/sign';
+import { bootstrapData, updatePayload } from '../fixtures/updatePayload';
 import { cleanupSubscribersDb, insertSubscribers } from '../utils';
-import { updatePayload, bootstrapData } from '../fixtures/updatePayload';
 
 describe('POST update', () => {
   const { email, address, timestamp } = updatePayload;
@@ -90,15 +90,18 @@ describe('POST update', () => {
             signature: await signUpdate('', address, ['newProposal'])
           }
         });
-      const result = await db.queryAsync('SELECT * FROM subscribers WHERE address = ?', [address]);
+      const result = await db.queryAsync(
+        'SELECT * FROM subscribers WHERE address = ?',
+        [address]
+      );
 
       expect(response.statusCode).toBe(200);
-      expect(result.filter(r => (r.verified as number) > 0)[0].subscriptions).toEqual(
-        JSON.stringify(['newProposal'])
-      );
-      expect(result.filter(r => (r.verified as number) === 0)[0].subscriptions).toEqual(
-        JSON.stringify(['summary'])
-      );
+      expect(
+        result.filter(r => (r.verified as number) > 0)[0].subscriptions
+      ).toEqual(JSON.stringify(['newProposal']));
+      expect(
+        result.filter(r => (r.verified as number) === 0)[0].subscriptions
+      ).toEqual(JSON.stringify(['summary']));
     });
   });
 
@@ -126,7 +129,9 @@ describe('POST update', () => {
 
       expect(response.statusCode).toBe(200);
       expect(unverified[0].subscriptions).toEqual(JSON.stringify(['summary']));
-      expect(verified[0].subscriptions).toEqual(JSON.stringify(['newProposal']));
+      expect(verified[0].subscriptions).toEqual(
+        JSON.stringify(['newProposal'])
+      );
     });
   });
 
@@ -142,7 +147,10 @@ describe('POST update', () => {
           signature: 'not-valid'
         }
       });
-    const result = await db.queryAsync('SELECT * FROM subscribers WHERE email = ?', [email]);
+    const result = await db.queryAsync(
+      'SELECT * FROM subscribers WHERE email = ?',
+      [email]
+    );
 
     expect(response.statusCode).toBe(401);
     expect(result.length).toBe(3);

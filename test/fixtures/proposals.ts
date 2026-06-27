@@ -1,4 +1,4 @@
-import type { Proposal, Vote } from '../../src/helpers/snapshot';
+import { Proposal, Vote } from '../../src/helpers/snapshot';
 
 export const proposals: Proposal[] = [
   {
@@ -9,7 +9,12 @@ export const proposals: Proposal[] = [
     end: 1678243620,
     state: 'active',
     link: 'https://snapshot.box/#/s:spaceone.eth/proposal/0xda05f86b3d7305e5a31b9f23a02c3625edcae5e73ac717a99fa2bf36bcdd0144',
-    space: { id: 'spaceone.eth', name: 'TestDAO', verified: true, flagged: false },
+    space: {
+      id: 'spaceone.eth',
+      name: 'TestDAO',
+      verified: true,
+      flagged: false
+    },
     flagged: false
   },
   {
@@ -20,7 +25,12 @@ export const proposals: Proposal[] = [
     end: 1678243620,
     state: 'active',
     link: 'https://snapshot.box/#/s:spaceone.eth/proposal/0xda05f86b3d7305e5a31b9f23a02c3625edcae5e73ac717a99fa2bf36bcdd0144',
-    space: { id: 'spaceone.eth', name: 'TestDAO', verified: true, flagged: false },
+    space: {
+      id: 'spaceone.eth',
+      name: 'TestDAO',
+      verified: true,
+      flagged: false
+    },
     flagged: false
   },
   {
@@ -31,7 +41,12 @@ export const proposals: Proposal[] = [
     end: 1678243620,
     state: 'active',
     link: 'https://snapshot.box/#/s:spacetwo.eth/proposal/0xda05f86b3d7305e5a31b9f23a02c3625edcae5e73ac717a99fa2bf36bcdd0144',
-    space: { id: 'spacetwo.eth', name: 'TestDAO', verified: true, flagged: false },
+    space: {
+      id: 'spacetwo.eth',
+      name: 'TestDAO',
+      verified: true,
+      flagged: false
+    },
     flagged: false
   },
   {
@@ -42,7 +57,12 @@ export const proposals: Proposal[] = [
     end: 1678243620,
     state: 'pending',
     link: 'https://snapshot.box/#/s:testsnap.eth/proposal/0xda05f86b3d7305e5a31b9f23a02c3625edcae5e73ac717a99fa2bf36bcdd0144',
-    space: { id: 'testsnap.eth', name: 'TestDAO', verified: true, flagged: false },
+    space: {
+      id: 'testsnap.eth',
+      name: 'TestDAO',
+      verified: true,
+      flagged: false
+    },
     flagged: false
   },
   {
@@ -53,7 +73,12 @@ export const proposals: Proposal[] = [
     end: 1678243620,
     state: 'closed',
     link: 'https://snapshot.box/#/s:testsnap.eth/proposal/0xda05f86b3d7305e5a31b9f23a02c3625edcae5e73ac717a99fa2bf36bcdd0144',
-    space: { id: 'testsnap.eth', name: 'TestDAO', verified: true, flagged: false },
+    space: {
+      id: 'testsnap.eth',
+      name: 'TestDAO',
+      verified: true,
+      flagged: false
+    },
     flagged: false
   }
 ];
@@ -71,7 +96,10 @@ export const expectedProposalsByStatus = {
 
 export const expectedProposalsBySpace = {
   active: [
-    { space: proposals[0].space.id, proposals: [proposals[0].id, proposals[1].id] },
+    {
+      space: proposals[0].space.id,
+      proposals: [proposals[0].id, proposals[1].id]
+    },
     { space: proposals[2].space.id, proposals: [proposals[2].id] }
   ],
   pending: [{ space: proposals[3].space.id, proposals: [proposals[3].id] }],

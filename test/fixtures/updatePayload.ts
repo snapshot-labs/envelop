@@ -20,5 +20,11 @@ export const bootstrapData = [
     JSON.stringify(['summary']),
     timestamp
   ],
-  [timestamp, email, '0xc2E7Ba8b2D297CE5c227B79D82AD1c11B5596307', JSON.stringify(['summary']), 0]
+  [
+    timestamp,
+    email,
+    '0xc2E7Ba8b2D297CE5c227B79D82AD1c11B5596307',
+    JSON.stringify(['summary']),
+    0
+  ]
 ];

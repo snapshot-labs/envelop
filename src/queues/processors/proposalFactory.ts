@@ -1,9 +1,9 @@
+import { Job } from 'bull';
 import chunk from 'lodash.chunk';
-import { mailerQueue } from '../index';
 import { getFollows, getProposal } from '../../helpers/snapshot';
 import { getVerifiedSubscriptions } from '../../helpers/utils';
+import { mailerQueue } from '../index';
 import { proposalDelay } from '../utils';
-import type { Job } from 'bull';
 
 function eventToTemplate(event: string) {
   switch (event) {
@@ -19,12 +19,13 @@ function eventToTemplate(event: string) {
 /**
  * Return a list of email, for all subscribers following the given spaceId
  */
-async function getSubscribersEmailFollowingSpace(templateId: string, spaceId: string) {
+async function getSubscribersEmailFollowingSpace(
+  templateId: string,
+  spaceId: string
+) {
   const subscriberEntries = await getVerifiedSubscriptions(templateId);
-  const subscriberKeyValuePairs: Iterable<[string, string]> = subscriberEntries.map(row => [
-    row.address as string,
-    row.email as string
-  ]);
+  const subscriberKeyValuePairs: Iterable<[string, string]> =
+    subscriberEntries.map(row => [row.address as string, row.email as string]);
   const subscribers = new Map(subscriberKeyValuePairs);
   const results = [];
 
@@ -32,7 +33,9 @@ async function getSubscribersEmailFollowingSpace(templateId: string, spaceId: st
   const addressesChunks = chunk(Array.from(subscribers.keys()), 100);
   for (const addressChunk of addressesChunks) {
     const follows = await getFollows(addressChunk, spaceId);
-    results.push(...follows.map(follow => subscribers.get(follow.follower) as string));
+    results.push(
+      ...follows.map(follow => subscribers.get(follow.follower) as string)
+    );
   }
 
   return results;
@@ -48,7 +51,10 @@ export default async (job: Job): Promise<number> => {
     return 0;
   }
 
-  const emails = await getSubscribersEmailFollowingSpace(templateId, proposal.space.id);
+  const emails = await getSubscribersEmailFollowingSpace(
+    templateId,
+    proposal.space.id
+  );
   await mailerQueue.addBulk(
     emails.map(email => ({
       name: templateId,

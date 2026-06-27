@@ -4,7 +4,10 @@ export function cleanupSubscribersDb(value: any, field = 'created') {
   const path = config.path;
 
   if (path) {
-    return db.queryAsync(`DELETE FROM ${path[0]}.subscribers where ${field} = ?`, value);
+    return db.queryAsync(
+      `DELETE FROM ${path[0]}.subscribers where ${field} = ?`,
+      value
+    );
   }
 }
 

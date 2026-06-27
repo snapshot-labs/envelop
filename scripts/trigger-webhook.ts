@@ -4,14 +4,19 @@ import proposalFactory from '../src/queues/processors/proposalFactory';
 
 async function main() {
   if (process.argv.length < 3) {
-    console.error(`Usage: yarn ts-node scripts/trigger-webhook.ts [EVENT] [ID]`);
+    console.error(
+      `Usage: yarn ts-node scripts/trigger-webhook.ts [EVENT] [ID]`
+    );
     return process.exit(1);
   }
   const [, , event, id] = process.argv;
 
   const count = await proposalFactory({
     name: 'proposalFactory',
-    data: { event: event.replace('proposal/', ''), id: id.replace('proposal/', '') }
+    data: {
+      event: event.replace('proposal/', ''),
+      id: id.replace('proposal/', '')
+    }
   } as Job);
 
   console.log(`Queued ${count} email jobs`);

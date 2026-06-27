@@ -1,4 +1,4 @@
-import type { Proposal } from '../helpers/snapshot';
+import { Proposal } from '../helpers/snapshot';
 
 export const MAX_PROPOSAL_DELAY = 2 * 60 * 60 * 1000; // 2 hours
 
