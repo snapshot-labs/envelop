@@ -1,11 +1,12 @@
 import { randomTimestamp } from '../utils';
+import type { NewSubscriber } from '../../src/schema';
 
 const email = 'test-verify@test.com';
 const address = '0xDBDd4c5473692Fa0490bfF6AAbf1181f29Ca851e';
 const verifiedAddress = '0x54C8b17E5c46B97d25498205182e0382234B2532';
 const addressForNotExistEmail = '0xeF91cf65Ed49804B4b54f4cB9af6aC793f1CC32c';
-const timestamp = randomTimestamp().toString();
-const subs = JSON.stringify([]);
+const timestamp = randomTimestamp();
+const subs: string[] = [];
 
 export const verifyPayload = {
   unverifiedUser: { email, address },
@@ -18,14 +19,26 @@ export const verifyPayload = {
   timestamp
 };
 
-export const bootstrapData = [
-  [timestamp, verifyPayload.unverifiedUser.email, verifyPayload.unverifiedUser.address, subs, 0],
-  [
-    timestamp,
-    verifyPayload.unverifiedUserForVerifiedAddress.email,
-    verifyPayload.unverifiedUserForVerifiedAddress.address,
-    subs,
-    0
-  ],
-  [timestamp, verifyPayload.verifiedUser.email, verifyPayload.verifiedUser.address, subs, 1]
+export const bootstrapData: NewSubscriber[] = [
+  {
+    created: timestamp,
+    email: verifyPayload.unverifiedUser.email,
+    address: verifyPayload.unverifiedUser.address,
+    subscriptions: subs,
+    verified: 0
+  },
+  {
+    created: timestamp,
+    email: verifyPayload.unverifiedUserForVerifiedAddress.email,
+    address: verifyPayload.unverifiedUserForVerifiedAddress.address,
+    subscriptions: subs,
+    verified: 0
+  },
+  {
+    created: timestamp,
+    email: verifyPayload.verifiedUser.email,
+    address: verifyPayload.verifiedUser.address,
+    subscriptions: subs,
+    verified: 1
+  }
 ];

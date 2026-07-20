@@ -1,13 +1,8 @@
-import db, { SqlRow } from './mysql';
+import { and, asc, desc, eq, gt, isNull, or, sql, type SQL } from 'drizzle-orm';
+import { db } from '../db';
+import { subscribers, type NewSubscriber } from '../schema';
 import { SUBSCRIPTION_TYPE } from '../templates';
 import type { Response } from 'express';
-import type { OkPacket } from 'mysql';
-
-type Subscriber = {
-  email: string;
-  address: string;
-  created: number;
-};
 
 function currentTimestamp() {
   return Math.round(Date.now() / 1e3);
@@ -54,12 +49,14 @@ export function sanitizeSubscriptions(list?: string | string[]) {
 }
 
 export async function subscribe(email: string, address: string) {
-  const subscriber: Subscriber = { email, address, created: currentTimestamp() };
-  const insertResponse = (await db.queryAsync('INSERT IGNORE INTO subscribers SET ?', [
-    subscriber
-  ])) as unknown as OkPacket;
+  const subscriber: NewSubscriber = { email, address, created: currentTimestamp() };
+  const insertedRows = await db
+    .insert(subscribers)
+    .values(subscriber)
+    .onConflictDoNothing()
+    .returning({ email: subscribers.email });
 
-  if (insertResponse.affectedRows > 0) {
+  if (insertedRows.length > 0) {
     return subscriber;
   }
 
@@ -68,11 +65,15 @@ export async function subscribe(email: string, address: string) {
 
 export async function verify(email: string, address: string, salt: string) {
   const existingVerifiedEmail = (
-    await db.queryAsync(
-      `SELECT email FROM subscribers WHERE address = ? AND created = ? AND verified > 0 LIMIT 1`,
-      [address, salt]
-    )
-  )[0]?.email;
+    await db.query.subscribers.findFirst({
+      columns: { email: true },
+      where: and(
+        eq(subscribers.address, address),
+        eq(subscribers.created, Number(salt)),
+        gt(subscribers.verified, 0)
+      )
+    })
+  )?.email;
 
   if (existingVerifiedEmail === email) {
     return true;
@@ -80,104 +81,89 @@ export async function verify(email: string, address: string, salt: string) {
     throw new Error('ADDRESS_ALREADY_VERIFIED_WITH_ANOTHER_EMAIL');
   }
 
-  const updateResult = (await db.queryAsync(
-    'UPDATE subscribers SET verified = ? WHERE email = ? AND address = ? AND created = ? AND verified = ? LIMIT 1',
-    [currentTimestamp(), email, address, salt, 0]
-  )) as unknown as OkPacket;
+  const updatedRows = await db
+    .update(subscribers)
+    .set({ verified: currentTimestamp() })
+    .where(
+      and(
+        eq(subscribers.email, email),
+        eq(subscribers.address, address),
+        eq(subscribers.created, Number(salt)),
+        eq(subscribers.verified, 0)
+      )
+    )
+    .returning({ email: subscribers.email });
 
-  if (updateResult.changedRows === 0) {
+  if (updatedRows.length === 0) {
     throw new Error('RECORD_NOT_FOUND');
   }
 
   return true;
 }
 
-export async function update(email: string, address: string, subscriptions: string[]) {
-  const fields: Record<string, string> = {};
+function subscriberFilters(email: string, address: string) {
+  const conditions: SQL[] = [];
   if (email && email.length > 0) {
-    fields['email = ?'] = email;
+    conditions.push(eq(subscribers.email, email));
   }
   if (address && address.length > 0) {
-    fields['address = ?'] = address;
+    conditions.push(eq(subscribers.address, address));
   }
 
-  if (Object.keys(fields).length === 0) {
+  if (conditions.length === 0) {
     throw new Error('INVALID_PARAMS');
   }
 
-  const subs = sanitizeSubscriptions(subscriptions);
-  const whereQueryChunk = Object.keys(fields).join(' AND ');
-  const stringifiedSubs = JSON.stringify(subs);
+  return conditions;
+}
 
-  return db.queryAsync(
-    `UPDATE subscribers SET subscriptions = ? WHERE ${whereQueryChunk} AND verified > 0`,
-    [stringifiedSubs, ...Object.values(fields)]
-  );
+export async function update(email: string, address: string, subscriptions: string[]) {
+  const subs = sanitizeSubscriptions(subscriptions);
+
+  return db
+    .update(subscribers)
+    .set({ subscriptions: subs })
+    .where(and(...subscriberFilters(email, address), gt(subscribers.verified, 0)));
 }
 
 export async function unsubscribe(email: string, address: string) {
-  const fields: Record<string, string> = {};
-  if (email && email.length > 0) {
-    fields['email = ?'] = email;
-  }
-  if (address && address.length > 0) {
-    fields['address = ?'] = address;
-  }
-
-  if (Object.keys(fields).length === 0) {
-    throw new Error('INVALID_PARAMS');
-  }
-
-  return await db.queryAsync(
-    `DELETE FROM subscribers WHERE ${Object.keys(fields).join(' AND ')}`,
-    Object.values(fields)
-  );
+  return db.delete(subscribers).where(and(...subscriberFilters(email, address)));
 }
 
-export async function getVerifiedSubscriptions(subscription: string, batchSize = 1000) {
-  let page = 0;
-  let results: SqlRow[] = [];
+export async function getVerifiedSubscriptions(subscription: string) {
   const sub = sanitizeSubscriptions(subscription)[0];
 
   if (!sub) {
     throw new Error('Invalid subscription type');
   }
 
-  while (true) {
-    const result = await db.queryAsync(
-      'SELECT email, address, subscriptions FROM subscribers WHERE verified > 0 ' +
-        `AND (JSON_CONTAINS(subscriptions, ?) OR subscriptions IS NULL) ORDER BY created LIMIT ? OFFSET ?`,
-      [JSON.stringify(sub), batchSize, page * batchSize]
-    );
-
-    if (result.length === 0) {
-      break;
-    }
-
-    page += 1;
-    results = results.concat(result);
-  }
-
-  return results;
+  return db.query.subscribers.findMany({
+    columns: { email: true, address: true, subscriptions: true },
+    where: and(
+      gt(subscribers.verified, 0),
+      or(
+        sql`${subscribers.subscriptions} @> ${JSON.stringify(sub)}::jsonb`,
+        isNull(subscribers.subscriptions)
+      )
+    ),
+    orderBy: asc(subscribers.created)
+  });
 }
 
 export async function getSubscriber(address: string) {
-  const subscriber = (
-    await db.queryAsync(
-      'SELECT email, verified, subscriptions from subscribers WHERE address = ? ORDER BY verified DESC, created DESC LIMIT 1',
-      [address]
-    )
-  )[0];
+  const subscriber = await db.query.subscribers.findFirst({
+    columns: { email: true, verified: true, subscriptions: true },
+    where: eq(subscribers.address, address),
+    orderBy: [desc(subscribers.verified), desc(subscribers.created)]
+  });
 
   if (!subscriber) {
     throw new Error('RECORD_NOT_FOUND');
   }
 
   return {
-    status: (subscriber.verified as number) > 0 ? VERIFIED : UNVERIFIED,
-    subscriptions: !subscriber.subscriptions
-      ? SUBSCRIPTION_TYPE
-      : JSON.parse(subscriber.subscriptions as string)
+    status: subscriber.verified > 0 ? VERIFIED : UNVERIFIED,
+    subscriptions: subscriber.subscriptions || SUBSCRIPTION_TYPE
   };
 }
 

@@ -1,7 +1,9 @@
 import type { Express } from 'express';
 import init, { client } from '@snapshot-labs/snapshot-metrics';
 import { capture } from '@snapshot-labs/snapshot-sentry';
-import db from './mysql';
+import { and, eq, gt, isNull, or, sql } from 'drizzle-orm';
+import { db } from '../db';
+import { subscribers } from '../schema';
 import { SUBSCRIPTION_TYPE } from '../templates';
 import { mailerQueue } from '../queues';
 
@@ -17,8 +19,7 @@ export default function initMetrics(app: Express) {
       /^\/(preview|send)\/.*$/,
       /^\/(webhook|subscriber|subscriptionsList)$/
     ],
-    errorHandler: capture,
-    db
+    errorHandler: capture
   });
 }
 
@@ -27,16 +28,13 @@ new client.Gauge({
   help: 'Number of subscribers per status',
   labelNames: ['status'],
   async collect() {
-    [
-      ['VERIFIED', 'verified > 0'],
-      ['UNVERIFIED', 'verified = 0']
-    ].forEach(async function callback(this: any, data: any) {
-      this.set(
-        { status: data[0] },
-        (await db.queryAsync(`SELECT count(*) as count FROM subscribers WHERE ${data[1]}`))[0]
-          .count as any
-      );
-    }, this);
+    const [verified, unverified] = await Promise.all([
+      db.$count(subscribers, gt(subscribers.verified, 0)),
+      db.$count(subscribers, eq(subscribers.verified, 0))
+    ]);
+
+    this.set({ status: 'VERIFIED' }, verified);
+    this.set({ status: 'UNVERIFIED' }, unverified);
   }
 });
 
@@ -45,17 +43,23 @@ new client.Gauge({
   help: 'Number of subscribers per subscription type',
   labelNames: ['type'],
   async collect() {
-    SUBSCRIPTION_TYPE.forEach(async function callback(this: any, type) {
-      this.set(
-        { type },
-        (
-          await db.queryAsync(
-            `SELECT count(*) as count FROM subscribers WHERE verified > 0 AND JSON_CONTAINS(subscriptions, ?) OR subscriptions IS NULL`,
-            JSON.stringify([type])
+    await Promise.all(
+      SUBSCRIPTION_TYPE.map(async type => {
+        this.set(
+          { type },
+          await db.$count(
+            subscribers,
+            and(
+              gt(subscribers.verified, 0),
+              or(
+                sql`${subscribers.subscriptions} @> ${JSON.stringify([type])}::jsonb`,
+                isNull(subscribers.subscriptions)
+              )
+            )
           )
-        )[0].count as any
-      );
-    }, this);
+        );
+      })
+    );
   }
 });
 

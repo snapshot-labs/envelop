@@ -1,8 +1,9 @@
 import { randomTimestamp } from '../utils';
+import type { NewSubscriber } from '../../src/schema';
 
 const email = 'test-subscriber@test.com';
 const address = '0xDBDd4c5473692Fa0490bfF6AAbf1181f29Ca851e';
-const timestamp = randomTimestamp().toString();
+const timestamp = randomTimestamp();
 
 export const subscriberPayload = {
   unverifiedUserForDuplicateVerified: { email: `a${email}`, address },
@@ -15,33 +16,33 @@ export const subscriberPayload = {
   timestamp
 };
 
-export const bootstrapData = [
-  [
-    timestamp,
-    subscriberPayload.unverifiedUserForDuplicateVerified.email,
-    subscriberPayload.unverifiedUserForDuplicateVerified.address,
-    JSON.stringify(['summary']),
-    0
-  ],
-  [
-    timestamp,
-    subscriberPayload.verifiedUser.email,
-    subscriberPayload.verifiedUser.address,
-    JSON.stringify(['summary']),
-    timestamp
-  ],
-  [
-    timestamp,
-    subscriberPayload.verifiedUserWithEmptySubscription.email,
-    subscriberPayload.verifiedUserWithEmptySubscription.address,
-    null,
-    timestamp
-  ],
-  [
-    timestamp,
-    subscriberPayload.unverifiedUser.email,
-    subscriberPayload.unverifiedUser.address,
-    null,
-    0
-  ]
+export const bootstrapData: NewSubscriber[] = [
+  {
+    created: timestamp,
+    email: subscriberPayload.unverifiedUserForDuplicateVerified.email,
+    address: subscriberPayload.unverifiedUserForDuplicateVerified.address,
+    subscriptions: ['summary'],
+    verified: 0
+  },
+  {
+    created: timestamp,
+    email: subscriberPayload.verifiedUser.email,
+    address: subscriberPayload.verifiedUser.address,
+    subscriptions: ['summary'],
+    verified: timestamp
+  },
+  {
+    created: timestamp,
+    email: subscriberPayload.verifiedUserWithEmptySubscription.email,
+    address: subscriberPayload.verifiedUserWithEmptySubscription.address,
+    subscriptions: null,
+    verified: timestamp
+  },
+  {
+    created: timestamp,
+    email: subscriberPayload.unverifiedUser.email,
+    address: subscriberPayload.unverifiedUser.address,
+    subscriptions: null,
+    verified: 0
+  }
 ];

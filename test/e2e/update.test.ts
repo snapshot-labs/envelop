@@ -1,5 +1,7 @@
 import request from 'supertest';
-import db from '../../src/helpers/mysql';
+import { and, eq, gt } from 'drizzle-orm';
+import { db } from '../../src/db';
+import { subscribers } from '../../src/schema';
 import { signUpdate } from '../../src/sign';
 import { cleanupSubscribersDb, insertSubscribers } from '../utils';
 import { updatePayload, bootstrapData } from '../fixtures/updatePayload';
@@ -26,7 +28,7 @@ describe('POST update', () => {
 
   afterAll(async () => {
     await cleanupSubscribersDb(timestamp);
-    await db.endAsync();
+    await db.$client.end();
   });
 
   describe('without subscriptions option', () => {
@@ -51,13 +53,19 @@ describe('POST update', () => {
       const response = await request(process.env.HOST)
         .post('/')
         .send(await payload([]));
-      const result = await db.queryAsync(
-        'SELECT DISTINCT(subscriptions) FROM subscribers WHERE email = ? and ADDRESS = ? AND verified > 0',
-        [email, address]
-      );
+      const result = await db
+        .selectDistinct({ subscriptions: subscribers.subscriptions })
+        .from(subscribers)
+        .where(
+          and(
+            eq(subscribers.email, email),
+            eq(subscribers.address, address),
+            gt(subscribers.verified, 0)
+          )
+        );
 
       expect(response.statusCode).toBe(200);
-      expect(result[0].subscriptions).toEqual(JSON.stringify([]));
+      expect(result[0].subscriptions).toEqual([]);
       expect(result.length).toBe(1);
     });
   });
@@ -67,13 +75,12 @@ describe('POST update', () => {
       const response = await request(process.env.HOST)
         .post('/')
         .send(await payload(['newProposal', 'invalid-type']));
-      const result = await db.queryAsync(
-        'SELECT * FROM subscribers WHERE email = ? and address = ? LIMIT 1',
-        [email, address]
-      );
+      const result = await db.query.subscribers.findFirst({
+        where: and(eq(subscribers.email, email), eq(subscribers.address, address))
+      });
 
       expect(response.statusCode).toBe(200);
-      expect(result[0].subscriptions).toEqual(JSON.stringify(['newProposal']));
+      expect(result?.subscriptions).toEqual(['newProposal']);
     });
   });
 
@@ -90,15 +97,17 @@ describe('POST update', () => {
             signature: await signUpdate('', address, ['newProposal'])
           }
         });
-      const result = await db.queryAsync('SELECT * FROM subscribers WHERE address = ?', [address]);
+      const result = await db.query.subscribers.findMany({
+        where: eq(subscribers.address, address)
+      });
 
       expect(response.statusCode).toBe(200);
-      expect(result.filter(r => (r.verified as number) > 0)[0].subscriptions).toEqual(
-        JSON.stringify(['newProposal'])
-      );
-      expect(result.filter(r => (r.verified as number) === 0)[0].subscriptions).toEqual(
-        JSON.stringify(['summary'])
-      );
+      expect(result.filter(r => (r.verified as number) > 0)[0].subscriptions).toEqual([
+        'newProposal'
+      ]);
+      expect(result.filter(r => (r.verified as number) === 0)[0].subscriptions).toEqual([
+        'summary'
+      ]);
     });
   });
 
@@ -115,18 +124,17 @@ describe('POST update', () => {
             signature: await signUpdate(email, '', [])
           }
         });
-      const unverified = await db.queryAsync(
-        'SELECT * FROM subscribers WHERE email = ? AND verified = 0',
-        [email]
-      );
-      const verified = await db.queryAsync(
-        'SELECT DISTINCT(subscriptions) FROM subscribers WHERE email = ? AND verified > 0',
-        [email]
-      );
+      const unverified = await db.query.subscribers.findMany({
+        where: and(eq(subscribers.email, email), eq(subscribers.verified, 0))
+      });
+      const verified = await db
+        .selectDistinct({ subscriptions: subscribers.subscriptions })
+        .from(subscribers)
+        .where(and(eq(subscribers.email, email), gt(subscribers.verified, 0)));
 
       expect(response.statusCode).toBe(200);
-      expect(unverified[0].subscriptions).toEqual(JSON.stringify(['summary']));
-      expect(verified[0].subscriptions).toEqual(JSON.stringify(['newProposal']));
+      expect(unverified[0].subscriptions).toEqual(['summary']);
+      expect(verified[0].subscriptions).toEqual(['newProposal']);
     });
   });
 
@@ -142,7 +150,7 @@ describe('POST update', () => {
           signature: 'not-valid'
         }
       });
-    const result = await db.queryAsync('SELECT * FROM subscribers WHERE email = ?', [email]);
+    const result = await db.query.subscribers.findMany({ where: eq(subscribers.email, email) });
 
     expect(response.statusCode).toBe(401);
     expect(result.length).toBe(3);

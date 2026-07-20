@@ -1,5 +1,7 @@
 import request from 'supertest';
-import db from '../../src/helpers/mysql';
+import { and, eq } from 'drizzle-orm';
+import { db } from '../../src/db';
+import { subscribers } from '../../src/schema';
 import { signVerify } from '../../src/sign';
 import { cleanupSubscribersDb, insertSubscribers } from '../utils';
 import { verifyPayload, bootstrapData } from '../fixtures/verifyPayload';
@@ -20,7 +22,7 @@ describe('POST verify', () => {
         email,
         address,
         salt: timestamp.toString(),
-        signature: signature || (await signVerify(email, address, timestamp))
+        signature: signature || (await signVerify(email, address, timestamp.toString()))
       }
     };
   }
@@ -32,7 +34,7 @@ describe('POST verify', () => {
 
   afterAll(async () => {
     await cleanupSubscribersDb(timestamp);
-    await db.endAsync();
+    await db.$client.end();
   });
 
   describe('when the email is not verified yet', () => {
@@ -42,13 +44,13 @@ describe('POST verify', () => {
       const response = await request(process.env.HOST)
         .post('/')
         .send(await payload(email, address));
-      const result = await db.queryAsync(
-        'SELECT verified FROM subscribers WHERE email = ? AND address = ? LIMIT 1',
-        [email, address]
-      );
+      const result = await db.query.subscribers.findFirst({
+        columns: { verified: true },
+        where: and(eq(subscribers.email, email), eq(subscribers.address, address))
+      });
 
       expect(response.statusCode).toBe(200);
-      expect(result[0].verified).toBeGreaterThanOrEqual(0);
+      expect(result?.verified).toBeGreaterThanOrEqual(0);
     });
   });
 
@@ -59,13 +61,13 @@ describe('POST verify', () => {
       const response = await request(process.env.HOST)
         .post('/')
         .send(await payload(email, address));
-      const result = await db.queryAsync(
-        'SELECT verified FROM subscribers WHERE email = ? AND address = ? LIMIT 1',
-        [email, address]
-      );
+      const result = await db.query.subscribers.findFirst({
+        columns: { verified: true },
+        where: and(eq(subscribers.email, email), eq(subscribers.address, address))
+      });
 
       expect(response.statusCode).toBe(200);
-      expect(result[0].verified).toBe(1);
+      expect(result?.verified).toBe(1);
     });
   });
 
@@ -76,14 +78,14 @@ describe('POST verify', () => {
       const response = await request(process.env.HOST)
         .post('/')
         .send(await payload(email, address));
-      const result = await db.queryAsync(
-        'SELECT verified FROM subscribers WHERE email = ? AND address = ? LIMIT 1',
-        [email, address]
-      );
+      const result = await db.query.subscribers.findFirst({
+        columns: { verified: true },
+        where: and(eq(subscribers.email, email), eq(subscribers.address, address))
+      });
 
       expect(response.statusCode).toBe(400);
       expect(response.body.error.message).toBe('ADDRESS_ALREADY_VERIFIED_WITH_ANOTHER_EMAIL');
-      expect(result[0].verified).toBe(0);
+      expect(result?.verified).toBe(0);
     });
   });
 
@@ -105,13 +107,13 @@ describe('POST verify', () => {
       const response = await request(process.env.HOST)
         .post('/')
         .send(await payload(email, address, 'not-valid'));
-      const result = await db.queryAsync(
-        'SELECT verified FROM subscribers WHERE email = ? AND address = ? LIMIT 1',
-        [email, address]
-      );
+      const result = await db.query.subscribers.findFirst({
+        columns: { verified: true },
+        where: and(eq(subscribers.email, email), eq(subscribers.address, address))
+      });
 
       expect(response.statusCode).toBe(401);
-      expect(result[0].verified).toBe(0);
+      expect(result?.verified).toBe(0);
     });
   });
 });

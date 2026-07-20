@@ -5,6 +5,7 @@
     "rootDir": "./",
     "outDir": "./dist",
     "esModuleInterop": true,
+    "skipLibCheck": true,
     "strict": true,
     "noImplicitAny": true,
     "resolveJsonModule": true,

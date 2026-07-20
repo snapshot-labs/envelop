@@ -8,5 +8,5 @@ export const unsubscribePayload = {
   email: 'test-unsubscribe@test.com',
   address: wallet.address,
   wallet,
-  timestamp: randomTimestamp().toString()
+  timestamp: randomTimestamp()
 };
