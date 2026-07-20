@@ -21,7 +21,8 @@ export const subscribers = pgTable(
     primaryKey({ columns: [table.email, table.address] }),
     uniqueIndex('subscribers_address_email_idx').on(table.address, table.email),
     index('subscribers_created_idx').on(table.created),
-    index('subscribers_verified_idx').on(table.verified)
+    index('subscribers_verified_idx').on(table.verified),
+    index('subscribers_subscriptions_idx').using('gin', table.subscriptions)
   ]
 );
 
