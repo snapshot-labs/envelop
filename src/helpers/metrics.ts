@@ -1,9 +1,10 @@
 import type { Express } from 'express';
 import init, { client } from '@snapshot-labs/snapshot-metrics';
 import { capture } from '@snapshot-labs/snapshot-sentry';
-import { and, eq, gt, isNull, or, sql } from 'drizzle-orm';
+import { eq, gt } from 'drizzle-orm';
 import { db } from '../db';
 import { subscribers } from '../schema';
+import { subscribedTo } from './utils';
 import { SUBSCRIPTION_TYPE } from '../templates';
 import { mailerQueue } from '../queues';
 
@@ -45,19 +46,7 @@ new client.Gauge({
   async collect() {
     await Promise.all(
       SUBSCRIPTION_TYPE.map(async type => {
-        this.set(
-          { type },
-          await db.$count(
-            subscribers,
-            and(
-              gt(subscribers.verified, 0),
-              or(
-                sql`${subscribers.subscriptions} @> ${JSON.stringify([type])}::jsonb`,
-                isNull(subscribers.subscriptions)
-              )
-            )
-          )
-        );
+        this.set({ type }, await db.$count(subscribers, subscribedTo(type)));
       })
     );
   }

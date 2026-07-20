@@ -130,6 +130,16 @@ export async function unsubscribe(email: string, address: string) {
   return db.delete(subscribers).where(and(...subscriberFilters(email, address)));
 }
 
+export function subscribedTo(type: string) {
+  return and(
+    gt(subscribers.verified, 0),
+    or(
+      sql`${subscribers.subscriptions} @> ${JSON.stringify(type)}::jsonb`,
+      isNull(subscribers.subscriptions)
+    )
+  );
+}
+
 export async function getVerifiedSubscriptions(subscription: string) {
   const sub = sanitizeSubscriptions(subscription)[0];
 
@@ -139,13 +149,7 @@ export async function getVerifiedSubscriptions(subscription: string) {
 
   return db.query.subscribers.findMany({
     columns: { email: true, address: true, subscriptions: true },
-    where: and(
-      gt(subscribers.verified, 0),
-      or(
-        sql`${subscribers.subscriptions} @> ${JSON.stringify(sub)}::jsonb`,
-        isNull(subscribers.subscriptions)
-      )
-    ),
+    where: subscribedTo(sub),
     orderBy: asc(subscribers.created)
   });
 }
