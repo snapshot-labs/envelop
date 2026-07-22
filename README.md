@@ -13,7 +13,7 @@ This service is API only, and should be used together with [Envelop-UI](https://
 This service depends on a couple of services:
 
 - Node.js 18.x
-- MySQL 5+
+- PostgreSQL 14+
 - Redis
 - A [sendgrid](https://sendgrid.com/) account (email provider)
 - An [Envelop-UI](https://github.com/snapshot-labs/envelop-ui) instance
@@ -34,7 +34,7 @@ Make a copy of `.env.example` and rename it as `.env`. Then update the credentia
 | `FRONT_HOST`               | Hostname of the envelop-ui instance                                                                  | `http://localhost:8080`                    |
 | `HUB_URL`                  | Hostname of snapshot's hub service                                                                   | `https://hub.snapshot.org`                 |
 | `WALLET_PRIVATE_KEY`       | Private key of the wallet used to sign the emails                                                    | `0x...`                                    |
-| `DATABASE_URL`             | URL of the MySQL database                                                                            | `mysql://root:root@localhost:3306/envelop` |
+| `DATABASE_URL`             | URL of the PostgreSQL database                                                                       | `postgres://postgres:postgres@localhost:5432/envelop` |
 | `REDIS_URL`                | URL of the Redis database                                                                            | `redis://localhost:6379`                   |
 | `SENDGRID_API_KEY`         | API key of the sendgrid account                                                                      | `SG.1234567890`                            |
 | `WEBHOOK_AUTH_SECRET`      | Authentication header sent by snapshot's [webhook service](https://docs.snapshot.box/tools/webhooks) | `abc123`                                   |
@@ -55,11 +55,13 @@ All tests are run using their own .env (`test/.env.test`).
 
 #### Setup
 
+Create an empty test database (its name must end with `_test`):
+
 ```bash
-yarn test:setup
+createdb envelop_test
 ```
 
-This task should also be ran after each schema.sql change, to ensure your test database schema is up-to-date.
+The app applies its own migrations at startup, so the database only needs to exist. After each schema change (`src/schema.ts`), run `yarn db:generate` to generate the matching migration.
 
 #### Unit tests
 

@@ -1,5 +1,7 @@
 import request from 'supertest';
-import db from '../../src/helpers/mysql';
+import { and, eq } from 'drizzle-orm';
+import { db } from '../../src/db';
+import { subscribers } from '../../src/schema';
 import { subscribePayload } from '../fixtures/subscribePayload';
 import { cleanupSubscribersDb, insertSubscribers } from '../utils';
 
@@ -23,15 +25,14 @@ describe('POST subscribe', () => {
 
   afterAll(async () => {
     await cleanupSubscribersDb(email, 'email');
-    await db.endAsync();
+    await db.$client.end();
   });
 
   it('adds the email and address in the database as not verified', async () => {
     const response = await request(process.env.HOST).post('/').send(payload());
-    const result = await db.queryAsync(
-      'SELECT * FROM subscribers WHERE email = ? and address = ?',
-      [email, address]
-    );
+    const result = await db.query.subscribers.findMany({
+      where: and(eq(subscribers.email, email), eq(subscribers.address, address))
+    });
 
     expect(response.statusCode).toBe(200);
     expect(result.length).toBe(1);
@@ -39,12 +40,13 @@ describe('POST subscribe', () => {
   });
 
   it('returns a success code if the email already exists', async () => {
-    await insertSubscribers([[+new Date() / 1e3, email, address, null, 0]]);
+    await insertSubscribers([
+      { created: Math.floor(+new Date() / 1e3), email, address, subscriptions: null, verified: 0 }
+    ]);
     const response = await request(process.env.HOST).post('/').send(payload());
-    const result = await db.queryAsync(
-      'SELECT * FROM subscribers WHERE email = ? and address = ?',
-      [email, address]
-    );
+    const result = await db.query.subscribers.findMany({
+      where: and(eq(subscribers.email, email), eq(subscribers.address, address))
+    });
 
     expect(response.statusCode).toBe(200);
     expect(result.length).toBe(1);

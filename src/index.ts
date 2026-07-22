@@ -3,11 +3,12 @@ import './instrument';
 import express from 'express';
 import compression from 'compression';
 import cors from 'cors';
-import { fallbackLogger } from '@snapshot-labs/snapshot-sentry';
+import { capture, fallbackLogger } from '@snapshot-labs/snapshot-sentry';
 import rpc from './rpc';
 import preview from './preview';
 import send from './preview/send';
 import { start as startQueue, shutdown as shutdownQueue } from './queues';
+import { runMigrations } from './db';
 import { rpcError } from './helpers/utils';
 import initMetrics from './helpers/metrics';
 
@@ -15,8 +16,6 @@ const app = express();
 const PORT = process.env.PORT || 3006;
 
 initMetrics(app);
-
-startQueue();
 
 app.use(express.json({ limit: '4mb' }));
 app.use(express.urlencoded({ limit: '4mb', extended: false }));
@@ -33,10 +32,22 @@ app.use((_, res) => {
   rpcError(res, 'RECORD_NOT_FOUND', '');
 });
 
-const server = app.listen(PORT, () => console.log(`[http] Listening at http://localhost:${PORT}`));
+let server: ReturnType<typeof app.listen>;
+
+async function start() {
+  await runMigrations();
+  startQueue();
+  server = app.listen(PORT, () => console.log(`[http] Listening at http://localhost:${PORT}`));
+}
+
+start().catch(err => {
+  console.error('Failed to start', err);
+  capture(err);
+  process.exit(1);
+});
 
 function shutdown() {
-  if (server.listening) {
+  if (server?.listening) {
     server.close(async () => {
       await Promise.all(shutdownQueue());
       process.exit(0);

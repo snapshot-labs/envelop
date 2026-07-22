@@ -1,5 +1,7 @@
 import request from 'supertest';
-import db from '../../src/helpers/mysql';
+import { eq } from 'drizzle-orm';
+import { db } from '../../src/db';
+import { subscribers } from '../../src/schema';
 import { domain, signUnsubscribe } from '../../src/sign';
 import { UnsubscribeTypes } from '../../src/sign/types';
 import { cleanupSubscribersDb, insertSubscribers } from '../utils';
@@ -23,15 +25,27 @@ describe('POST unsubscribe', () => {
   beforeEach(async () => {
     await cleanupSubscribersDb(timestamp);
     return insertSubscribers([
-      [timestamp, email, address, JSON.stringify(['summary']), timestamp],
-      [timestamp, `a${email}`, address, JSON.stringify(['summary']), timestamp],
-      [timestamp, email, '0x0', JSON.stringify(['summary']), timestamp]
+      { created: timestamp, email, address, subscriptions: ['summary'], verified: timestamp },
+      {
+        created: timestamp,
+        email: `a${email}`,
+        address,
+        subscriptions: ['summary'],
+        verified: timestamp
+      },
+      {
+        created: timestamp,
+        email,
+        address: '0x0',
+        subscriptions: ['summary'],
+        verified: timestamp
+      }
     ]);
   });
 
   afterAll(async () => {
     await cleanupSubscribersDb(timestamp);
-    await db.endAsync();
+    await db.$client.end();
   });
 
   describe('when the signature is valid', () => {
@@ -40,7 +54,7 @@ describe('POST unsubscribe', () => {
         const response = await request(process.env.HOST)
           .post('/')
           .send(await payload());
-        const result = await db.queryAsync('SELECT * FROM subscribers WHERE email = ?', [email]);
+        const result = await db.query.subscribers.findMany({ where: eq(subscribers.email, email) });
 
         expect(response.statusCode).toBe(200);
         expect(result.length).toBe(0);
@@ -76,15 +90,17 @@ describe('POST unsubscribe', () => {
       });
 
       it('removes the address and all its associated emails from the database', async () => {
-        const toBeDeleted = await db.queryAsync('SELECT * FROM subscribers WHERE address', [
-          address
-        ]);
+        const toBeDeleted = await db.query.subscribers.findMany({
+          where: eq(subscribers.address, address)
+        });
 
         expect(toBeDeleted.length).toBe(0);
       });
 
       it('keeps all other emails not associated with the given address', async () => {
-        const toBeKept = await db.queryAsync('SELECT * FROM subscribers WHERE email = ?', [email]);
+        const toBeKept = await db.query.subscribers.findMany({
+          where: eq(subscribers.email, email)
+        });
         expect(toBeKept.length).toBe(1);
       });
     });
@@ -92,7 +108,9 @@ describe('POST unsubscribe', () => {
 
   describe('when the signature is not valid', () => {
     it('returns an error code', async () => {
-      const beforeRun = await db.queryAsync('SELECT * FROM subscribers WHERE email = ?', [email]);
+      const beforeRun = await db.query.subscribers.findMany({
+        where: eq(subscribers.email, email)
+      });
       const response = await request(process.env.HOST)
         .post('/')
         .send({
@@ -102,7 +120,7 @@ describe('POST unsubscribe', () => {
             signature: 'not-valid'
           }
         });
-      const afterRun = await db.queryAsync('SELECT * FROM subscribers WHERE email = ?', [email]);
+      const afterRun = await db.query.subscribers.findMany({ where: eq(subscribers.email, email) });
 
       expect(response.statusCode).toBe(401);
       expect(beforeRun).toEqual(afterRun);

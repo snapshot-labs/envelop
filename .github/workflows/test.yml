@@ -10,6 +10,7 @@ jobs:
     uses: snapshot-labs/actions/.github/workflows/test.yml@main
     secrets: inherit
     with:
-      mysql_database_name: envelop_test
+      postgres_database_name: envelop_test
+      postgres_schema_path: ''
       redis: true
       target: ${{ matrix.target }}

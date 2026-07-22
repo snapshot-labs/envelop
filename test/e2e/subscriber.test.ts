@@ -1,5 +1,5 @@
 import request from 'supertest';
-import db from '../../src/helpers/mysql';
+import { db } from '../../src/db';
 import { SUBSCRIPTION_TYPE } from '../../src/templates';
 import { cleanupSubscribersDb, insertSubscribers } from '../utils';
 import { VERIFIED, UNVERIFIED, NOT_SUBSCRIBED } from '../../src/helpers/utils';
@@ -16,7 +16,7 @@ describe('POST subscriber', () => {
 
   afterAll(async () => {
     await cleanupSubscribersDb(timestamp);
-    await db.endAsync();
+    await db.$client.end();
   });
 
   describe('when the address exists', () => {
