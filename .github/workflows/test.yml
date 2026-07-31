@@ -12,5 +12,4 @@ jobs:
     with:
       postgres_database_name: envelop_test
       postgres_schema_path: ''
-      redis: true
       target: ${{ matrix.target }}

@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { Job } from 'bull';
+import type { Job } from 'pg-boss';
 import verification from '../src/queues/processors/verification';
 
 async function main() {

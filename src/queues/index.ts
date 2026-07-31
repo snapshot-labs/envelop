@@ -1,5 +1,5 @@
-import Queue from 'bull';
-import Redis from 'ioredis';
+import { PgBoss, type Job, type JobWithMetadata } from 'pg-boss';
+import { eq } from 'drizzle-orm';
 import summaryProcessor from './processors/summary';
 import schedulerProcessor from './processors/scheduler';
 import constants from '../helpers/constants.json';
@@ -9,90 +9,91 @@ import newProposalProcessor from './processors/newProposal';
 import closedProposalProcessor from './processors/closedProposal';
 import { countSentEmails } from '../helpers/metrics';
 import { capture } from '@snapshot-labs/snapshot-sentry';
+import { db } from '../db';
+import { sentEmails } from '../schema';
 
-const REDIS_URL = (process.env.REDIS_URL as string) || 'redis://127.0.0.1:6379';
-const REDIS_OPTS = { maxRetriesPerRequest: null, enableReadyCheck: false };
+export const MAILER_QUEUES = ['summary', 'verification', 'newProposal', 'closedProposal'];
+const QUEUES = [...MAILER_QUEUES, 'scheduler', 'proposal-activities'];
 
-const client = new Redis(REDIS_URL, REDIS_OPTS);
-const subscriber = new Redis(REDIS_URL, REDIS_OPTS);
+// Same retry profile as the previous Bull config: 3 total attempts,
+// exponential backoff starting at 20s
+const RETRY_OPTS = { retryLimit: 2, retryDelay: 20, retryBackoff: true };
 
-const opts = {
-  createClient: function (type: string) {
-    switch (type) {
-      case 'client':
-        return client;
-      case 'subscriber':
-        return subscriber;
-      default:
-        return new Redis(REDIS_URL, REDIS_OPTS);
+export const boss = new PgBoss(process.env.DATABASE_URL as string);
+
+boss.on('error', capture);
+
+type Processor = (job: Job<any>) => Promise<any>;
+
+// Mailer jobs carry a singletonKey used as a permanent idempotency key:
+// pg-boss singletonKey only dedups jobs while they are queued, so completed
+// sends are recorded in sent_emails to prevent re-sending on re-enqueue
+async function alreadySent(key: string) {
+  return (await db.$count(sentEmails, eq(sentEmails.id, key))) > 0;
+}
+
+function markSent(key: string) {
+  return db.insert(sentEmails).values({ id: key, created: Date.now() }).onConflictDoNothing();
+}
+
+function work(queueName: string, processor: Processor, { isMailer = false } = {}) {
+  return boss.work(queueName, { includeMetadata: true }, async ([job]: JobWithMetadata<any>[]) => {
+    try {
+      if (isMailer && job.singletonKey && (await alreadySent(job.singletonKey))) {
+        return 'Skipped';
+      }
+
+      const result = await processor(job);
+
+      if (isMailer) {
+        if (job.singletonKey) await markSent(job.singletonKey);
+        countSentEmails.inc({ type: queueName });
+      }
+
+      return result;
+    } catch (e: any) {
+      if (job.retryCount >= job.retryLimit) {
+        capture(e, {
+          queue: queueName,
+          jobId: job.id,
+          jobData: job.data
+        });
+      }
+      throw e;
     }
-  }
-};
-
-const defaultJobOptions = {
-  attempts: 3,
-  backoff: { type: 'exponential', delay: 20000 },
-  removeOnComplete: { age: 7 * 24 * 3600, count: 10000 },
-  removeOnFail: { age: 14 * 24 * 3600, count: 5000 }
-};
-
-export const mailerQueue = new Queue('mailer', {
-  ...opts,
-  defaultJobOptions
-});
-export const scheduleQueue = new Queue('scheduler', {
-  ...opts,
-  defaultJobOptions
-});
-export const proposalActivityQueue = new Queue('proposal-activities', {
-  ...opts,
-  defaultJobOptions
-});
-
-mailerQueue.on('completed', job => {
-  countSentEmails.inc({ type: job.name });
-});
-
-const queues = [mailerQueue, scheduleQueue, proposalActivityQueue];
-
-for (const queue of queues) {
-  queue.on('failed', (job, error) => {
-    if (job && job.attemptsMade < (job.opts.attempts ?? 1)) return;
-
-    capture(error, {
-      queue: queue.name,
-      jobId: job?.id,
-      jobName: job?.name,
-      jobData: job?.data
-    });
   });
 }
 
-export function start() {
+export async function start() {
   console.log('[queue-mailer] Starting queue mailer');
 
-  mailerQueue.process('summary', summaryProcessor);
-  mailerQueue.process('verification', verificationProcessor);
-  scheduleQueue.process(schedulerProcessor);
-  proposalActivityQueue.process('proposalFactory', proposalFactoryProcessor);
-  mailerQueue.process('newProposal', newProposalProcessor);
-  mailerQueue.process('closedProposal', closedProposalProcessor);
+  await boss.start();
+  await Promise.all(QUEUES.map(name => boss.createQueue(name, RETRY_OPTS)));
 
-  queueScheduler({ repeat: { cron: '0 1 * * MON', tz: constants.summary.timezone } });
+  await Promise.all([
+    work('summary', summaryProcessor, { isMailer: true }),
+    work('verification', verificationProcessor, { isMailer: true }),
+    work('newProposal', newProposalProcessor, { isMailer: true }),
+    work('closedProposal', closedProposalProcessor, { isMailer: true }),
+    work('scheduler', schedulerProcessor),
+    work('proposal-activities', proposalFactoryProcessor)
+  ]);
+
+  await boss.schedule('scheduler', '0 1 * * MON', {}, { tz: constants.summary.timezone });
 }
 
 export function shutdown() {
-  return [mailerQueue.close(), scheduleQueue.close(), proposalActivityQueue.close()];
+  return [boss.stop()];
 }
 
-export function queueScheduler(options: Queue.JobOptions = {}) {
-  return scheduleQueue.add({}, options);
+export function queueScheduler() {
+  return boss.send('scheduler', {});
 }
 
 export function queueVerify(email: string, address: string, salt: string) {
-  return mailerQueue.add('verification', { email, address, salt });
+  return boss.send('verification', { email, address, salt });
 }
 
 export function queueProposalActivity(event: string, id: string) {
-  return proposalActivityQueue.add('proposalFactory', { event, id });
+  return boss.send('proposal-activities', { event, id });
 }
