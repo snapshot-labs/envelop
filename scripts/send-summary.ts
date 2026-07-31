@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { Job } from 'bull';
+import type { Job } from 'pg-boss';
 import summary from '../src/queues/processors/summary';
 import { previousWeek } from '../src/helpers/date';
 import constants from '../src/helpers/constants.json';

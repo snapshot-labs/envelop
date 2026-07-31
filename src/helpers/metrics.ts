@@ -6,7 +6,7 @@ import { db } from '../db';
 import { subscribers } from '../schema';
 import { subscribedTo } from './utils';
 import { SUBSCRIPTION_TYPE } from '../templates';
-import { mailerQueue } from '../queues';
+import { boss, MAILER_QUEUES } from '../queues';
 
 export default function initMetrics(app: Express) {
   init(app, {
@@ -56,7 +56,8 @@ new client.Gauge({
   name: 'mailing_queued_jobs_count',
   help: 'Number of emails in the queue, pending sending',
   async collect() {
-    this.set(await mailerQueue.count());
+    const queues = await boss.getQueues(MAILER_QUEUES);
+    this.set(queues.reduce((sum, queue) => sum + queue.queuedCount, 0));
   }
 });
 

@@ -36,7 +36,7 @@ let server: ReturnType<typeof app.listen>;
 
 async function start() {
   await runMigrations();
-  startQueue();
+  await startQueue();
   server = app.listen(PORT, () => console.log(`[http] Listening at http://localhost:${PORT}`));
 }
 

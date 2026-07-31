@@ -26,4 +26,9 @@ export const subscribers = pgTable(
   ]
 );
 
+export const sentEmails = pgTable('sent_emails', {
+  id: varchar({ length: 512 }).primaryKey(),
+  created: bigint({ mode: 'number' }).notNull()
+});
+
 export type NewSubscriber = typeof subscribers.$inferInsert;

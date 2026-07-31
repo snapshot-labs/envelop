@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { Job } from 'bull';
+import type { Job } from 'pg-boss';
 import newProposal from '../src/queues/processors/newProposal';
 
 async function main() {

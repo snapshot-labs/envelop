@@ -1,9 +1,9 @@
 import chunk from 'lodash.chunk';
-import { mailerQueue } from '../index';
+import { boss } from '../index';
 import { getFollows, getProposal } from '../../helpers/snapshot';
 import { getVerifiedSubscriptions } from '../../helpers/utils';
 import { proposalDelay } from '../utils';
-import type { Job } from 'bull';
+import type { Job } from 'pg-boss';
 
 function eventToTemplate(event: string) {
   switch (event) {
@@ -38,7 +38,7 @@ async function getSubscribersEmailFollowingSpace(templateId: string, spaceId: st
   return results;
 }
 
-export default async (job: Job): Promise<number> => {
+export default async (job: Job<any>): Promise<number> => {
   const { event, id } = job.data;
   const templateId = eventToTemplate(event);
 
@@ -49,19 +49,21 @@ export default async (job: Job): Promise<number> => {
   }
 
   const emails = await getSubscribersEmailFollowingSpace(templateId, proposal.space.id);
-  await mailerQueue.addBulk(
-    emails.map(email => ({
-      name: templateId,
-      data: {
-        email,
-        id
-      },
-      opts: {
-        jobId: `${templateId}-${email}-${id}`,
-        delay: templateId === 'newProposal' ? proposalDelay(proposal) : 0
-      }
-    }))
-  );
+
+  if (emails.length > 0) {
+    await boss.insert(
+      templateId,
+      emails.map(email => ({
+        data: {
+          email,
+          id
+        },
+        singletonKey: `${templateId}-${email}-${id}`,
+        startAfter:
+          templateId === 'newProposal' ? new Date(Date.now() + proposalDelay(proposal)) : undefined
+      }))
+    );
+  }
 
   return emails.length;
 };
