@@ -1,5 +1,6 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
+import { capture } from '@snapshot-labs/snapshot-sentry';
 import * as schema from './schema';
 
 if (!process.env.DATABASE_URL) {
@@ -17,7 +18,7 @@ export const db = drizzle({
   schema
 });
 
-db.$client.on('error', err => console.log('[db] pool error', err));
+db.$client.on('error', err => capture(err));
 
 export async function runMigrations() {
   await migrate(db, { migrationsFolder: 'drizzle' });
