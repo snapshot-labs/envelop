@@ -22,7 +22,8 @@ describe('POST verify', () => {
         email,
         address,
         salt: timestamp.toString(),
-        signature: signature || (await signVerify(email, address, timestamp.toString()))
+        signature:
+          signature || (await signVerify(email, address, timestamp.toString()))
       }
     };
   }
@@ -46,7 +47,10 @@ describe('POST verify', () => {
         .send(await payload(email, address));
       const result = await db.query.subscribers.findFirst({
         columns: { verified: true },
-        where: and(eq(subscribers.email, email), eq(subscribers.address, address))
+        where: and(
+          eq(subscribers.email, email),
+          eq(subscribers.address, address)
+        )
       });
 
       expect(response.statusCode).toBe(200);
@@ -63,7 +67,10 @@ describe('POST verify', () => {
         .send(await payload(email, address));
       const result = await db.query.subscribers.findFirst({
         columns: { verified: true },
-        where: and(eq(subscribers.email, email), eq(subscribers.address, address))
+        where: and(
+          eq(subscribers.email, email),
+          eq(subscribers.address, address)
+        )
       });
 
       expect(response.statusCode).toBe(200);
@@ -80,11 +87,16 @@ describe('POST verify', () => {
         .send(await payload(email, address));
       const result = await db.query.subscribers.findFirst({
         columns: { verified: true },
-        where: and(eq(subscribers.email, email), eq(subscribers.address, address))
+        where: and(
+          eq(subscribers.email, email),
+          eq(subscribers.address, address)
+        )
       });
 
       expect(response.statusCode).toBe(400);
-      expect(response.body.error.message).toBe('ADDRESS_ALREADY_VERIFIED_WITH_ANOTHER_EMAIL');
+      expect(response.body.error.message).toBe(
+        'ADDRESS_ALREADY_VERIFIED_WITH_ANOTHER_EMAIL'
+      );
       expect(result?.verified).toBe(0);
     });
   });
@@ -93,7 +105,9 @@ describe('POST verify', () => {
     it('returns an error', async () => {
       const response = await request(process.env.HOST)
         .post('/')
-        .send(await payload('test-not-exist@test.com', addressForNotExistEmail));
+        .send(
+          await payload('test-not-exist@test.com', addressForNotExistEmail)
+        );
 
       expect(response.statusCode).toBe(404);
       expect(response.body.error.message).toBe('RECORD_NOT_FOUND');
@@ -109,7 +123,10 @@ describe('POST verify', () => {
         .send(await payload(email, address, 'not-valid'));
       const result = await db.query.subscribers.findFirst({
         columns: { verified: true },
-        where: and(eq(subscribers.email, email), eq(subscribers.address, address))
+        where: and(
+          eq(subscribers.email, email),
+          eq(subscribers.address, address)
+        )
       });
 
       expect(response.statusCode).toBe(401);

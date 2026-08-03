@@ -1,4 +1,7 @@
-import { isValidEmail, sanitizeSubscriptions } from '../../../src/helpers/utils';
+import {
+  isValidEmail,
+  sanitizeSubscriptions
+} from '../../../src/helpers/utils';
 
 describe('utils', () => {
   describe('isvalidEmail', () => {

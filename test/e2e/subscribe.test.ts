@@ -41,7 +41,13 @@ describe('POST subscribe', () => {
 
   it('returns a success code if the email already exists', async () => {
     await insertSubscribers([
-      { created: Math.floor(+new Date() / 1e3), email, address, subscriptions: null, verified: 0 }
+      {
+        created: Math.floor(+new Date() / 1e3),
+        email,
+        address,
+        subscriptions: null,
+        verified: 0
+      }
     ]);
     const response = await request(process.env.HOST).post('/').send(payload());
     const result = await db.query.subscribers.findMany({

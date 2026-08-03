@@ -2,7 +2,10 @@ import { eq } from 'drizzle-orm';
 import { db } from '../src/db';
 import { subscribers, type NewSubscriber } from '../src/schema';
 
-export function cleanupSubscribersDb(value: any, field: 'created' | 'email' = 'created') {
+export function cleanupSubscribersDb(
+  value: any,
+  field: 'created' | 'email' = 'created'
+) {
   return db.delete(subscribers).where(eq(subscribers[field], value));
 }
 
