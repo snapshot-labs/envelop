@@ -17,10 +17,16 @@ export type Template = {
   text: string;
   preheader: string;
   html: string;
-  prepare: (params: TemplatePrepareParams) => Promise<Message | Record<string, never>>;
+  prepare: (
+    params: TemplatePrepareParams
+  ) => Promise<Message | Record<string, never>>;
 };
 
 export type TemplatePrepareParams = Record<string, any>;
 
-export type TemplateId = 'summary' | 'verification' | 'newProposal' | 'closedProposal';
+export type TemplateId =
+  | 'summary'
+  | 'verification'
+  | 'newProposal'
+  | 'closedProposal';
 export type Templates = Record<TemplateId, Template>;

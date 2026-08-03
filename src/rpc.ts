@@ -12,7 +12,12 @@ import {
   getSubscriber,
   NOT_SUBSCRIBED
 } from './helpers/utils';
-import { verifySubscribe, verifyUnsubscribe, verifyVerify, verifyUpdate } from './sign';
+import {
+  verifySubscribe,
+  verifyUnsubscribe,
+  verifyVerify,
+  verifyUpdate
+} from './sign';
 import { queueVerify, queueProposalActivity } from './queues';
 import { SUBSCRIPTION_TYPE, default as templates } from './templates';
 
@@ -39,14 +44,25 @@ router.post('/', async (req, res) => {
       if (verifySubscribe(params.email, params.address, params.signature)) {
         const subscriber = await subscribe(params.email, params.address);
         if (subscriber) {
-          queueVerify(subscriber.email, subscriber.address, subscriber.created.toString());
+          queueVerify(
+            subscriber.email,
+            subscriber.address,
+            subscriber.created.toString()
+          );
         }
         return rpcSuccess(res, 'OK', id);
       }
 
       return rpcError(res, 'UNAUTHORIZED', id);
     } else if (method === 'snapshot.verify') {
-      if (verifyVerify(params.email, params.address, params.salt, params.signature)) {
+      if (
+        verifyVerify(
+          params.email,
+          params.address,
+          params.salt,
+          params.signature
+        )
+      ) {
         await verify(params.email, params.address, params.salt);
         return rpcSuccess(res, 'OK', id);
       }
@@ -91,7 +107,9 @@ router.post('/webhook', async (req, res) => {
   const event = body.event?.toString() ?? '';
   const id = body.id?.toString().replace('proposal/', '') ?? '';
 
-  if (req.headers['authentication'] !== `${process.env.WEBHOOK_AUTH_TOKEN || ''}`) {
+  if (
+    req.headers['authentication'] !== `${process.env.WEBHOOK_AUTH_TOKEN || ''}`
+  ) {
     return rpcError(res, 'UNAUTHORIZED', id);
   }
 

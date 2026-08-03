@@ -25,7 +25,13 @@ describe('POST unsubscribe', () => {
   beforeEach(async () => {
     await cleanupSubscribersDb(timestamp);
     return insertSubscribers([
-      { created: timestamp, email, address, subscriptions: ['summary'], verified: timestamp },
+      {
+        created: timestamp,
+        email,
+        address,
+        subscriptions: ['summary'],
+        verified: timestamp
+      },
       {
         created: timestamp,
         email: `a${email}`,
@@ -54,7 +60,9 @@ describe('POST unsubscribe', () => {
         const response = await request(process.env.HOST)
           .post('/')
           .send(await payload());
-        const result = await db.query.subscribers.findMany({ where: eq(subscribers.email, email) });
+        const result = await db.query.subscribers.findMany({
+          where: eq(subscribers.email, email)
+        });
 
         expect(response.statusCode).toBe(200);
         expect(result.length).toBe(0);
@@ -120,7 +128,9 @@ describe('POST unsubscribe', () => {
             signature: 'not-valid'
           }
         });
-      const afterRun = await db.query.subscribers.findMany({ where: eq(subscribers.email, email) });
+      const afterRun = await db.query.subscribers.findMany({
+        where: eq(subscribers.email, email)
+      });
 
       expect(response.statusCode).toBe(401);
       expect(beforeRun).toEqual(afterRun);

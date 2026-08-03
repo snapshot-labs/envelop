@@ -76,7 +76,10 @@ describe('POST update', () => {
         .post('/')
         .send(await payload(['newProposal', 'invalid-type']));
       const result = await db.query.subscribers.findFirst({
-        where: and(eq(subscribers.email, email), eq(subscribers.address, address))
+        where: and(
+          eq(subscribers.email, email),
+          eq(subscribers.address, address)
+        )
       });
 
       expect(response.statusCode).toBe(200);
@@ -102,12 +105,12 @@ describe('POST update', () => {
       });
 
       expect(response.statusCode).toBe(200);
-      expect(result.filter(r => (r.verified as number) > 0)[0].subscriptions).toEqual([
-        'newProposal'
-      ]);
-      expect(result.filter(r => (r.verified as number) === 0)[0].subscriptions).toEqual([
-        'summary'
-      ]);
+      expect(
+        result.filter(r => (r.verified as number) > 0)[0].subscriptions
+      ).toEqual(['newProposal']);
+      expect(
+        result.filter(r => (r.verified as number) === 0)[0].subscriptions
+      ).toEqual(['summary']);
     });
   });
 
@@ -150,7 +153,9 @@ describe('POST update', () => {
           signature: 'not-valid'
         }
       });
-    const result = await db.query.subscribers.findMany({ where: eq(subscribers.email, email) });
+    const result = await db.query.subscribers.findMany({
+      where: eq(subscribers.email, email)
+    });
 
     expect(response.statusCode).toBe(401);
     expect(result.length).toBe(3);

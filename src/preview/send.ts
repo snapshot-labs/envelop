@@ -6,7 +6,8 @@ import type { TemplateId } from '../../types';
 import { queueScheduler } from '../queues';
 
 const router = express.Router();
-const AUTH_TOKEN_HASH = 'cd372fb85148700fa88095e3492d3f9f5beb43e555e5ff26d95f5a6adc36f8e6';
+const AUTH_TOKEN_HASH =
+  'cd372fb85148700fa88095e3492d3f9f5beb43e555e5ff26d95f5a6adc36f8e6';
 
 router.get('/send/:template', async (req, res) => {
   const templateId = req.params.template as TemplateId;
@@ -22,7 +23,10 @@ router.get('/send/:template', async (req, res) => {
 
   let msg;
   try {
-    msg = await buildMessage(templateId, req.query.to ? { to: req.query.to as string } : {});
+    msg = await buildMessage(
+      templateId,
+      req.query.to ? { to: req.query.to as string } : {}
+    );
   } catch (e: any) {
     return rpcError(res, e, templateId);
   }

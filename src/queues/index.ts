@@ -78,11 +78,17 @@ export function start() {
   mailerQueue.process('newProposal', newProposalProcessor);
   mailerQueue.process('closedProposal', closedProposalProcessor);
 
-  queueScheduler({ repeat: { cron: '0 1 * * MON', tz: constants.summary.timezone } });
+  queueScheduler({
+    repeat: { cron: '0 1 * * MON', tz: constants.summary.timezone }
+  });
 }
 
 export function shutdown() {
-  return [mailerQueue.close(), scheduleQueue.close(), proposalActivityQueue.close()];
+  return [
+    mailerQueue.close(),
+    scheduleQueue.close(),
+    proposalActivityQueue.close()
+  ];
 }
 
 export function queueScheduler(options: Queue.JobOptions = {}) {

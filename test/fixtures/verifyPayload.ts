@@ -14,7 +14,10 @@ export const verifyPayload = {
     email: 'test-verify-c@test.com',
     address: verifiedAddress
   },
-  unverifiedUserForVerifiedAddress: { email: 'test-verify-b@test.com', address: verifiedAddress },
+  unverifiedUserForVerifiedAddress: {
+    email: 'test-verify-b@test.com',
+    address: verifiedAddress
+  },
   addressForNotExistEmail,
   timestamp
 };

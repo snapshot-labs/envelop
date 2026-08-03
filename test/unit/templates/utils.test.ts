@@ -1,19 +1,28 @@
-import { linkWithTracker, truncateProposalBody } from '../../../src/templates/utils';
+import {
+  linkWithTracker,
+  truncateProposalBody
+} from '../../../src/templates/utils';
 
 describe('utils', () => {
   describe('truncateProposalBody', () => {
     it('cuts at the nearest word boundary before max length', () => {
-      expect(truncateProposalBody('This proposal keeps complete words near the limit', 36)).toEqual(
-        {
-          body: 'This proposal keeps complete words',
-          isTruncated: true
-        }
-      );
+      expect(
+        truncateProposalBody(
+          'This proposal keeps complete words near the limit',
+          36
+        )
+      ).toEqual({
+        body: 'This proposal keeps complete words',
+        isTruncated: true
+      });
     });
 
     it('uses the last word boundary before max length', () => {
       expect(
-        truncateProposalBody('This proposal should keep as much readable text as possible', 46)
+        truncateProposalBody(
+          'This proposal should keep as much readable text as possible',
+          46
+        )
       ).toEqual({
         body: 'This proposal should keep as much readable',
         isTruncated: true
@@ -21,7 +30,9 @@ describe('utils', () => {
     });
 
     it('preserves leading whitespace while trimming the cut boundary', () => {
-      expect(truncateProposalBody('  Leading whitespace is preserved here', 25)).toEqual({
+      expect(
+        truncateProposalBody('  Leading whitespace is preserved here', 25)
+      ).toEqual({
         body: '  Leading whitespace is',
         isTruncated: true
       });
@@ -60,25 +71,25 @@ describe('utils', () => {
 
     describe('with a vuejs link with hash', () => {
       it('appends the tracker query params', () => {
-        expect(linkWithTracker('https://snapshot.box/#/proposal/some-id')).toEqual(
-          'https://snapshot.box/#/proposal/some-id?app=envelop'
-        );
+        expect(
+          linkWithTracker('https://snapshot.box/#/proposal/some-id')
+        ).toEqual('https://snapshot.box/#/proposal/some-id?app=envelop');
       });
     });
 
     describe('with a vuejs link with hash and query params', () => {
       it('appends the tracker query params', () => {
-        expect(linkWithTracker('https://snapshot.box/#/proposal/some-id?test=a')).toEqual(
-          'https://snapshot.box/#/proposal/some-id?test=a&app=envelop'
-        );
+        expect(
+          linkWithTracker('https://snapshot.box/#/proposal/some-id?test=a')
+        ).toEqual('https://snapshot.box/#/proposal/some-id?test=a&app=envelop');
       });
     });
 
     describe('when the tracker link already exists', () => {
       it('does not append the tracker link', () => {
-        expect(linkWithTracker('https://snapshot.box/#/proposal/some-id?app=envelop')).toEqual(
-          'https://snapshot.box/#/proposal/some-id?app=envelop'
-        );
+        expect(
+          linkWithTracker('https://snapshot.box/#/proposal/some-id?app=envelop')
+        ).toEqual('https://snapshot.box/#/proposal/some-id?app=envelop');
       });
     });
   });
