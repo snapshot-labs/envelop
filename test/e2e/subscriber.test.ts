@@ -1,12 +1,12 @@
 import request from 'supertest';
 import { db } from '../../src/db';
+import { NOT_SUBSCRIBED, UNVERIFIED, VERIFIED } from '../../src/helpers/utils';
 import { SUBSCRIPTION_TYPE } from '../../src/templates';
-import { cleanupSubscribersDb, insertSubscribers } from '../utils';
-import { VERIFIED, UNVERIFIED, NOT_SUBSCRIBED } from '../../src/helpers/utils';
 import {
-  subscriberPayload,
-  bootstrapData
+  bootstrapData,
+  subscriberPayload
 } from '../fixtures/subscriberPayload';
+import { cleanupSubscribersDb, insertSubscribers } from '../utils';
 
 describe('POST subscriber', () => {
   const {

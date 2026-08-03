@@ -1,5 +1,5 @@
+import { NewSubscriber } from '../../src/schema';
 import { randomTimestamp } from '../utils';
-import type { NewSubscriber } from '../../src/schema';
 
 const email = 'test-subscriber@test.com';
 const address = '0xDBDd4c5473692Fa0490bfF6AAbf1181f29Ca851e';

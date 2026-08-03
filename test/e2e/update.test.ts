@@ -1,10 +1,10 @@
-import request from 'supertest';
 import { and, eq, gt } from 'drizzle-orm';
+import request from 'supertest';
 import { db } from '../../src/db';
 import { subscribers } from '../../src/schema';
 import { signUpdate } from '../../src/sign';
+import { bootstrapData, updatePayload } from '../fixtures/updatePayload';
 import { cleanupSubscribersDb, insertSubscribers } from '../utils';
-import { updatePayload, bootstrapData } from '../fixtures/updatePayload';
 
 describe('POST update', () => {
   const { email, address, timestamp } = updatePayload;

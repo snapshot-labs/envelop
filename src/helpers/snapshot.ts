@@ -1,8 +1,8 @@
 import {
-  gql,
   ApolloClient,
-  InMemoryCache,
-  HttpLink
+  gql,
+  HttpLink,
+  InMemoryCache
 } from '@apollo/client/core';
 
 const hub_url = new URL(process.env.HUB_URL || 'https://hub.snapshot.org');

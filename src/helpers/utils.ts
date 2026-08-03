@@ -1,8 +1,8 @@
-import { and, asc, desc, eq, gt, isNull, or, sql, type SQL } from 'drizzle-orm';
+import { and, asc, desc, eq, gt, isNull, or, sql, SQL } from 'drizzle-orm';
+import { Response } from 'express';
 import { db } from '../db';
-import { subscribers, type NewSubscriber } from '../schema';
+import { NewSubscriber, subscribers } from '../schema';
 import { SUBSCRIPTION_TYPE } from '../templates';
-import type { Response } from 'express';
 
 function currentTimestamp() {
   return Math.round(Date.now() / 1e3);

@@ -1,4 +1,4 @@
-import type { Proposal, Vote } from '../../src/helpers/snapshot';
+import { Proposal, Vote } from '../../src/helpers/snapshot';
 
 export const proposals: Proposal[] = [
   {
