@@ -1,6 +1,10 @@
 import 'dotenv/config';
 import './instrument';
-import { capture, fallbackLogger } from '@snapshot-labs/snapshot-sentry';
+import {
+  capture,
+  fallbackLogger,
+  Sentry
+} from '@snapshot-labs/snapshot-sentry';
 import compression from 'compression';
 import cors from 'cors';
 import express from 'express';
@@ -42,9 +46,10 @@ async function start() {
   );
 }
 
-start().catch(err => {
+start().catch(async err => {
   console.error('Failed to start', err);
   capture(err);
+  await Sentry.close(2000);
   process.exit(1);
 });
 
@@ -52,6 +57,7 @@ function shutdown() {
   if (server?.listening) {
     server.close(async () => {
       await Promise.all(shutdownQueue());
+      await Sentry.close(2000);
       process.exit(0);
     });
   }
