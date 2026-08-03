@@ -1,8 +1,8 @@
 import 'dotenv/config';
 import { Job } from 'bull';
-import summary from '../src/queues/processors/summary';
-import { previousWeek } from '../src/helpers/date';
 import constants from '../src/helpers/constants.json';
+import { previousWeek } from '../src/helpers/date';
+import summary from '../src/queues/processors/summary';
 
 async function main() {
   if (process.argv.length < 3) {
@@ -32,8 +32,8 @@ async function main() {
   try {
     await main();
     process.exit(0);
-  } catch (e) {
-    console.error(e);
+  } catch (err) {
+    console.error(err);
     process.exit(1);
   }
 })();

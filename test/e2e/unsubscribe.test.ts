@@ -1,12 +1,12 @@
-import request from 'supertest';
+import { TypedDataField } from '@ethersproject/abstract-signer';
 import { eq } from 'drizzle-orm';
+import request from 'supertest';
 import { db } from '../../src/db';
 import { subscribers } from '../../src/schema';
 import { domain, signUnsubscribe } from '../../src/sign';
 import { UnsubscribeTypes } from '../../src/sign/types';
-import { cleanupSubscribersDb, insertSubscribers } from '../utils';
-import type { TypedDataField } from '@ethersproject/abstract-signer';
 import { unsubscribePayload } from '../fixtures/unsubscribePayload';
+import { cleanupSubscribersDb, insertSubscribers } from '../utils';
 
 describe('POST unsubscribe', () => {
   const { email, address, wallet, timestamp } = unsubscribePayload;

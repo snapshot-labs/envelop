@@ -1,5 +1,5 @@
-import request from 'supertest';
 import { and, eq } from 'drizzle-orm';
+import request from 'supertest';
 import { db } from '../../src/db';
 import { subscribers } from '../../src/schema';
 import { subscribePayload } from '../fixtures/subscribePayload';
