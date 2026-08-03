@@ -1,6 +1,6 @@
+import { capture } from '@snapshot-labs/snapshot-sentry';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
-import { capture } from '@snapshot-labs/snapshot-sentry';
 import * as schema from './schema';
 
 if (!process.env.DATABASE_URL) {

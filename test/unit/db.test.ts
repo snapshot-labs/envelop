@@ -10,12 +10,17 @@ describe('db', () => {
     it('does not throw when the pool emits an error', () => {
       expect(db.$client.listenerCount('error')).toBe(1);
       expect(() =>
-        db.$client.emit('error', new Error('terminating connection due to administrator command'))
+        db.$client.emit(
+          'error',
+          new Error('terminating connection due to administrator command')
+        )
       ).not.toThrow();
     });
 
     it('captures the pool error unchanged, including a 57P01 shutdown', () => {
-      const err: any = new Error('terminating connection due to administrator command');
+      const err: any = new Error(
+        'terminating connection due to administrator command'
+      );
       err.code = '57P01';
       err.severity = 'FATAL';
 
