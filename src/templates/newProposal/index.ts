@@ -11,8 +11,8 @@ import {
 export default async function prepare(params: TemplatePrepareParams) {
   const proposal = await getProposal(params.id);
 
-  if (!proposal || !proposal.space.verified) {
-    throw new Error('Proposal not found');
+  if (!proposal || !proposal.space.verified || proposal.flagged) {
+    return {};
   }
 
   const BODY_LENGTH = 1000;
