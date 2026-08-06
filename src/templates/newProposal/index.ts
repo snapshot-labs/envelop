@@ -1,5 +1,8 @@
 import { TemplatePrepareParams } from '../../../types';
-import { getProposal } from '../../helpers/snapshot';
+import {
+  getProposal,
+  isProposalEligibleForEmail
+} from '../../helpers/snapshot';
 import buildMessage from '../builder';
 import {
   formatProposalHtmlBody,
@@ -11,7 +14,7 @@ import {
 export default async function prepare(params: TemplatePrepareParams) {
   const proposal = await getProposal(params.id);
 
-  if (!proposal || !proposal.space.verified || proposal.flagged) {
+  if (!isProposalEligibleForEmail(proposal)) {
     return {};
   }
 

@@ -1,6 +1,6 @@
 import { getProposal } from '../../../src/helpers/snapshot';
 import buildMessage from '../../../src/templates/builder';
-import prepareNewProposal from '../../../src/templates/newProposal';
+import prepareClosedProposal from '../../../src/templates/closedProposal';
 import { proposals } from '../../fixtures/proposals';
 
 jest.mock('../../../src/helpers/snapshot', () => ({
@@ -13,9 +13,15 @@ jest.mock('../../../src/templates/builder', () => ({
   default: jest.fn()
 }));
 
-const eligible = proposals[0];
+const eligible = {
+  ...proposals[4],
+  choices: ['For', 'Against'],
+  scores: [2, 1],
+  scores_total: 3,
+  votes: 3
+};
 
-describe('newProposal template', () => {
+describe('closedProposal template', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -23,7 +29,7 @@ describe('newProposal template', () => {
   it('builds a message when the proposal is eligible', async () => {
     (getProposal as jest.Mock).mockResolvedValue({ ...eligible });
 
-    await prepareNewProposal({ id: eligible.id });
+    await prepareClosedProposal({ id: eligible.id });
 
     expect(buildMessage).toHaveBeenCalled();
   });
@@ -42,7 +48,7 @@ describe('newProposal template', () => {
   ])('skips when the proposal is %s', async (_state, proposal) => {
     (getProposal as jest.Mock).mockResolvedValue(proposal);
 
-    const result = await prepareNewProposal({ id: 'proposal-id' });
+    const result = await prepareClosedProposal({ id: 'proposal-id' });
 
     expect(result).toEqual({});
     expect(buildMessage).not.toHaveBeenCalled();

@@ -132,6 +132,24 @@ export type Vote = {
   proposal: Pick<Proposal, 'id'>;
 };
 
+/**
+ * Whether a proposal is eligible for a notification email.
+ *
+ * Moderation can happen after the proposal activity event has been dispatched,
+ * so this needs to be re-evaluated when the delayed job fires, not only when
+ * it is enqueued.
+ */
+export function isProposalEligibleForEmail(
+  proposal: Proposal | null
+): proposal is Proposal {
+  return (
+    !!proposal &&
+    !proposal.flagged &&
+    proposal.space.verified &&
+    !proposal.space.flagged
+  );
+}
+
 export async function getProposal(id: string) {
   const {
     data: { proposal }

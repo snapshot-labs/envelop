@@ -10,5 +10,9 @@ export default async (job: Job): Promise<any> => {
     id
   });
 
+  if (Object.keys(msg).length === 0) {
+    return Promise.resolve('Skipped');
+  }
+
   return send(msg as Message);
 };
