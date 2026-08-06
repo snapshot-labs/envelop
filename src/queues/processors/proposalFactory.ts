@@ -1,6 +1,10 @@
 import { Job } from 'bull';
 import chunk from 'lodash.chunk';
-import { getFollows, getProposal } from '../../helpers/snapshot';
+import {
+  getFollows,
+  getProposal,
+  isProposalEligibleForEmail
+} from '../../helpers/snapshot';
 import { getVerifiedSubscriptions } from '../../helpers/utils';
 import { mailerQueue } from '../index';
 import { proposalDelay } from '../utils';
@@ -47,7 +51,7 @@ export default async (job: Job): Promise<number> => {
 
   const proposal = await getProposal(id);
 
-  if (!proposal || !proposal.space.verified || proposal.flagged) {
+  if (!isProposalEligibleForEmail(proposal)) {
     return 0;
   }
 
