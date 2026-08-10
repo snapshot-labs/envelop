@@ -1772,10 +1772,10 @@
   resolved "https://registry.yarnpkg.com/@snapshot-labs/prettier-config/-/prettier-config-0.1.0.tgz#f0eafa4a3aed6a7fabaf88c016659f3343041071"
   integrity sha512-8MYAHuewlAdJs55f94qQtEs/WLFmjgYfuIVb1iJPa9gUZauHEXMzbVpKZfnkQsgpwwcXxq9hzg0S/OeOkgj3+w==
 
-"@snapshot-labs/snapshot-metrics@^1.4.2":
-  version "1.4.2"
-  resolved "https://registry.yarnpkg.com/@snapshot-labs/snapshot-metrics/-/snapshot-metrics-1.4.2.tgz#b137e92befcc8b5b17744e98afd92c4f9c572dea"
-  integrity sha512-84kb5zpmQ9Sf6p/BSGaHl+iUYQqH5VNsB5ftrp+x/t8Gcg/Tf/UIzTBOtcwkwq5YnLnBgFdxHrU+cLAyaNjhSQ==
+"@snapshot-labs/snapshot-metrics@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@snapshot-labs/snapshot-metrics/-/snapshot-metrics-2.0.0.tgz#7064279cb69037778644a854aaabc089eb0fb831"
+  integrity sha512-lxbHwDNCCuaWeh537c1anpPlurEEbxIkCEy3wOVJbNhmIZ0PjOuQYrguQ22J3be0Jjr5uJm5VuXkKH3Pj30HRg==
   dependencies:
     express-prom-bundle "^6.6.0"
     node-fetch "^2.7.0"
@@ -5203,14 +5203,7 @@ neo-async@^2.6.2:
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
-node-fetch@^2.6.0:
-  version "2.6.12"
-  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.12.tgz#02eb8e22074018e3d5a83016649d04df0e348fba"
-  integrity sha512-C/fGU2E8ToujUivIO0H+tpQ6HWo4eEmchoPIoXtxCrVghxdKq+QOHqEZW7tuP3KlV3bC8FRMO5nMCC7Zm1VP6g==
-  dependencies:
-    whatwg-url "^5.0.0"
-
-node-fetch@^2.7.0:
+node-fetch@^2.6.0, node-fetch@^2.7.0:
   version "2.7.0"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.7.0.tgz#d0f0fa6e3e2dc1d27efcd8ad99d550bda94d187d"
   integrity sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A==
