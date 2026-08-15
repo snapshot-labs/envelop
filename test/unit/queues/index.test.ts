@@ -31,17 +31,32 @@ jest.mock('../../../src/helpers/metrics', () => ({
   countSkippedEmails: { inc: jest.fn() }
 }));
 
-describe('mailer queue completed handler', () => {
-  let onCompleted: (job: any, result: unknown) => void;
+// Both are read before the first test runs, as clearMocks wipes the calls
+// made while src/queues was being evaluated.
+let queueProposalFanOut: (event: string, id: string, delay: number) => unknown;
+let onCompleted: (job: any, result: unknown) => void;
 
-  beforeAll(async () => {
-    await import('../../../src/queues');
+beforeAll(async () => {
+  ({ queueProposalFanOut } = await import('../../../src/queues'));
 
-    onCompleted = mockQueues.mailer.on.mock.calls.find(
-      (call: any[]) => call[0] === 'completed'
-    )[1];
+  onCompleted = mockQueues.mailer.on.mock.calls.find(
+    (call: any[]) => call[0] === 'completed'
+  )[1];
+});
+
+describe('queueProposalFanOut', () => {
+  it('schedules a single delayed fan-out job', () => {
+    queueProposalFanOut('created', '0x1', 7200000);
+
+    expect(mockQueues['proposal-activities'].add).toHaveBeenCalledWith(
+      'proposalFactory',
+      { event: 'created', id: '0x1', fanOut: true },
+      { jobId: 'proposalFanOut-created-0x1', delay: 7200000 }
+    );
   });
+});
 
+describe('mailer queue completed handler', () => {
   it('counts a job that sent an email', () => {
     // processors resolve with the result of helpers/mail send(), which is void
     onCompleted({ name: 'newProposal' }, undefined);

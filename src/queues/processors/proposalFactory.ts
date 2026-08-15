@@ -6,7 +6,7 @@ import {
   isProposalEligibleForEmail
 } from '../../helpers/snapshot';
 import { getVerifiedSubscriptions } from '../../helpers/utils';
-import { mailerQueue } from '../index';
+import { mailerQueue, queueProposalFanOut } from '../index';
 import { proposalDelay } from '../utils';
 
 function eventToTemplate(event: string) {
@@ -46,12 +46,22 @@ async function getSubscribersEmailFollowingSpace(
 }
 
 export default async (job: Job): Promise<number> => {
-  const { event, id } = job.data;
+  const { event, id, fanOut } = job.data;
   const templateId = eventToTemplate(event);
 
   const proposal = await getProposal(id);
 
   if (!isProposalEligibleForEmail(proposal)) {
+    return 0;
+  }
+
+  const delay = templateId === 'newProposal' ? proposalDelay(proposal) : 0;
+
+  // Subscriptions keep changing while a new proposal email waits out its
+  // delay, and queued jobs are not revisited when they do, so delay the
+  // fan-out rather than each of the mails it produces.
+  if (!fanOut && delay > 0) {
+    await queueProposalFanOut(event, id, delay);
     return 0;
   }
 
@@ -67,8 +77,7 @@ export default async (job: Job): Promise<number> => {
         id
       },
       opts: {
-        jobId: `${templateId}-${email}-${id}`,
-        delay: templateId === 'newProposal' ? proposalDelay(proposal) : 0
+        jobId: `${templateId}-${email}-${id}`
       }
     }))
   );
