@@ -1,6 +1,7 @@
 import { capture } from '@snapshot-labs/snapshot-sentry';
 import Queue from 'bull';
 import Redis from 'ioredis';
+import bouncesProcessor from './processors/bounces';
 import closedProposalProcessor from './processors/closedProposal';
 import schedulerProcessor from './processors/scheduler';
 import summaryProcessor from './processors/summary';
@@ -82,6 +83,7 @@ export function start() {
   mailerQueue.process('summary', summaryProcessor);
   mailerQueue.process('verification', verificationProcessor);
   scheduleQueue.process(schedulerProcessor);
+  scheduleQueue.process('bounces', bouncesProcessor);
   proposalActivityQueue.process('proposalFactory', proposalFactoryProcessor);
   mailerQueue.process('newProposal', newProposalProcessor);
   mailerQueue.process('closedProposal', closedProposalProcessor);
@@ -89,6 +91,7 @@ export function start() {
   queueScheduler({
     repeat: { cron: '0 1 * * MON', tz: constants.summary.timezone }
   });
+  queueBounceSweep({ repeat: { cron: '0 3 * * *' } });
 }
 
 export function shutdown() {
@@ -101,6 +104,10 @@ export function shutdown() {
 
 export function queueScheduler(options: Queue.JobOptions = {}) {
   return scheduleQueue.add({}, options);
+}
+
+export function queueBounceSweep(options: Queue.JobOptions = {}) {
+  return scheduleQueue.add('bounces', {}, options);
 }
 
 export function queueVerify(email: string, address: string, salt: string) {

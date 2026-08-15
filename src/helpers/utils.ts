@@ -58,17 +58,26 @@ export async function subscribe(email: string, address: string) {
     address,
     created: currentTimestamp()
   };
-  const insertedRows = await db
+
+  // Subscribing again is the way back from a bounce: it clears the flag and
+  // drops the row back to unverified, so mail only resumes once the address
+  // has accepted a verification email. An address that is not bounced keeps
+  // its row untouched, and returns nothing so no second email is sent.
+  const rows = await db
     .insert(subscribers)
     .values(subscriber)
-    .onConflictDoNothing()
-    .returning({ email: subscribers.email });
+    .onConflictDoUpdate({
+      target: [subscribers.email, subscribers.address],
+      set: { verified: 0, bounced: 0 },
+      setWhere: gt(subscribers.bounced, 0)
+    })
+    .returning({
+      email: subscribers.email,
+      address: subscribers.address,
+      created: subscribers.created
+    });
 
-  if (insertedRows.length > 0) {
-    return subscriber;
-  }
-
-  return null;
+  return rows[0] ?? null;
 }
 
 export async function verify(email: string, address: string, salt: string) {
@@ -89,9 +98,11 @@ export async function verify(email: string, address: string, salt: string) {
     throw new Error('ADDRESS_ALREADY_VERIFIED_WITH_ANOTHER_EMAIL');
   }
 
+  // Reaching the verification link is proof that the address accepts mail
+  // again, so it clears an earlier bounce.
   const updatedRows = await db
     .update(subscribers)
-    .set({ verified: currentTimestamp() })
+    .set({ verified: currentTimestamp(), bounced: 0 })
     .where(
       and(
         eq(subscribers.email, email),
@@ -146,9 +157,42 @@ export async function unsubscribe(email: string, address: string) {
     .where(and(...subscriberFilters(email, address)));
 }
 
+/**
+ * Flag every subscriber whose address an email provider has rejected, and
+ * return how many were newly flagged. Rows are kept rather than deleted, so
+ * that the address can be recovered by subscribing again, and re-flagging an
+ * already flagged row is a no-op that keeps the original timestamp.
+ *
+ * Takes plain addresses rather than a provider payload, so that any source of
+ * bounces can feed it.
+ */
+export async function markBounced(emails: string[]) {
+  if (emails.length === 0) {
+    return 0;
+  }
+
+  // Addresses are stored as the subscriber typed them, and are not
+  // necessarily reported back in the same case.
+  const normalized = [...new Set(emails.map(email => email.toLowerCase()))];
+
+  const updatedRows = await db
+    .update(subscribers)
+    .set({ bounced: currentTimestamp() })
+    .where(
+      and(
+        eq(subscribers.bounced, 0),
+        sql`lower(${subscribers.email}) = ANY(${sql.param(normalized)})`
+      )
+    )
+    .returning({ email: subscribers.email });
+
+  return updatedRows.length;
+}
+
 export function subscribedTo(type: string) {
   return and(
     gt(subscribers.verified, 0),
+    eq(subscribers.bounced, 0),
     or(
       sql`${subscribers.subscriptions} @> ${JSON.stringify(type)}::jsonb`,
       isNull(subscribers.subscriptions)

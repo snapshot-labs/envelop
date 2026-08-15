@@ -15,7 +15,8 @@ export const subscribers = pgTable(
     address: varchar({ length: 256 }).notNull(),
     subscriptions: jsonb().$type<string[]>(),
     created: bigint({ mode: 'number' }).notNull(),
-    verified: bigint({ mode: 'number' }).notNull().default(0)
+    verified: bigint({ mode: 'number' }).notNull().default(0),
+    bounced: bigint({ mode: 'number' }).notNull().default(0)
   },
   table => [
     primaryKey({ columns: [table.email, table.address] }),

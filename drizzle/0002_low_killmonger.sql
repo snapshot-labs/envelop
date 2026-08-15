@@ -1,0 +1,1 @@
+ALTER TABLE "subscribers" ADD COLUMN "bounced" bigint DEFAULT 0 NOT NULL;

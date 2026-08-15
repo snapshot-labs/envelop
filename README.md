@@ -36,7 +36,7 @@ Make a copy of `.env.example` and rename it as `.env`. Then update the credentia
 | `WALLET_PRIVATE_KEY`       | Private key of the wallet used to sign the emails                                                    | `0x...`                                    |
 | `DATABASE_URL`             | URL of the PostgreSQL database                                                                       | `postgres://postgres:postgres@localhost:5432/envelop` |
 | `REDIS_URL`                | URL of the Redis database                                                                            | `redis://localhost:6379`                   |
-| `SENDGRID_API_KEY`         | API key of the sendgrid account                                                                      | `SG.1234567890`                            |
+| `SENDGRID_API_KEY`         | API key of the sendgrid account, needs the `Suppressions` scope, see [Bounced addresses](#bounced-addresses) | `SG.1234567890`                            |
 | `WEBHOOK_AUTH_SECRET`      | Authentication header sent by snapshot's [webhook service](https://docs.snapshot.box/tools/webhooks) | `abc123`                                   |
 | `SENTRY_DSN`               | Sentry DSN key                                                                                       | `https://public@sentry.example.com/1`      |
 | `SENTRY_TRACE_SAMPLE_RATE` | Sentry trace sample rate, nunmber between 0 and 1                                                    | `0.1`                                      |
@@ -276,6 +276,16 @@ All endpoints will respond with a [JSON-RPC 2.0](https://www.jsonrpc.org/specifi
 | Server error                                                    | 500    | SERVER_ERROR                                |
 
 Take advantage of the `MESSAGE` code to show meaningful error message to your end user.
+
+## Bounced addresses
+
+SendGrid keeps every address an email provider has rejected on its bounce suppression list, and stops delivering to it. It still accepts the send and charges a credit for it, and never reports the address again, so envelop reads that list itself and skips those subscribers.
+
+A daily job pulls the list and flags the matching subscribers, which excludes them from every mailing. The row is kept rather than deleted: subscribing again clears the flag and sends a new verification email, so mail only resumes once the address has accepted one.
+
+This needs `SENDGRID_API_KEY` to have the `Suppressions` scope, which is set per key under **Settings > API Keys** in the SendGrid console. Without it the job fails with a message saying so, and no subscriber is ever flagged.
+
+The number of flagged subscribers is exposed as the `BOUNCED` status of the `subscribers_per_status_count` metric. It overlaps `VERIFIED` and `UNVERIFIED` rather than being a third state of the same field.
 
 ## Sending test emails
 

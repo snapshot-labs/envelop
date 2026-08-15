@@ -29,13 +29,18 @@ new client.Gauge({
   help: 'Number of subscribers per status',
   labelNames: ['status'],
   async collect() {
-    const [verified, unverified] = await Promise.all([
+    const [verified, unverified, bounced] = await Promise.all([
       db.$count(subscribers, gt(subscribers.verified, 0)),
-      db.$count(subscribers, eq(subscribers.verified, 0))
+      db.$count(subscribers, eq(subscribers.verified, 0)),
+      db.$count(subscribers, gt(subscribers.bounced, 0))
     ]);
 
     this.set({ status: 'VERIFIED' }, verified);
     this.set({ status: 'UNVERIFIED' }, unverified);
+    // Overlaps the two above rather than partitioning with them, so that their
+    // existing meaning is unchanged. Explains a drop in the subscription
+    // counts, which no longer include bounced addresses.
+    this.set({ status: 'BOUNCED' }, bounced);
   }
 });
 

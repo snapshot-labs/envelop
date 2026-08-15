@@ -15,6 +15,13 @@
       "when": 1784522507292,
       "tag": "0001_flowery_mojo",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1786770268700,
+      "tag": "0002_low_killmonger",
+      "breakpoints": true
     }
   ]
 }
