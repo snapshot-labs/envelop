@@ -7,7 +7,7 @@ import {
 } from '../../helpers/snapshot';
 import { getVerifiedSubscriptions } from '../../helpers/utils';
 import { mailerQueue, queueProposalFanOut } from '../index';
-import { proposalDelay } from '../utils';
+import { FAN_OUT_SCHEDULED, proposalDelay } from '../utils';
 
 function eventToTemplate(event: string) {
   switch (event) {
@@ -55,14 +55,15 @@ export default async (job: Job): Promise<number> => {
     return 0;
   }
 
-  const delay = templateId === 'newProposal' ? proposalDelay(proposal) : 0;
+  const delay =
+    !fanOut && templateId === 'newProposal' ? proposalDelay(proposal) : 0;
 
   // Subscriptions keep changing while a new proposal email waits out its
   // delay, and queued jobs are not revisited when they do, so delay the
   // fan-out rather than each of the mails it produces.
-  if (!fanOut && delay > 0) {
+  if (delay > 0) {
     await queueProposalFanOut(event, id, delay);
-    return 0;
+    return FAN_OUT_SCHEDULED;
   }
 
   const emails = await getSubscribersEmailFollowingSpace(

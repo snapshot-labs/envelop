@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import { Job } from 'bull';
 import proposalFactory from '../src/queues/processors/proposalFactory';
+import { FAN_OUT_SCHEDULED } from '../src/queues/utils';
 
 async function main() {
   if (process.argv.length < 3) {
@@ -18,6 +19,13 @@ async function main() {
       id: id.replace('proposal/', '')
     }
   } as Job);
+
+  if (count === FAN_OUT_SCHEDULED) {
+    console.log(
+      'Fan-out scheduled, recipients are resolved when the mail is due'
+    );
+    return;
+  }
 
   console.log(`Queued ${count} email jobs`);
 }
