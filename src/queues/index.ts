@@ -8,6 +8,7 @@ import constants from '../helpers/constants.json';
 import newProposalProcessor from './processors/newProposal';
 import proposalFactoryProcessor from './processors/proposalFactory';
 import verificationProcessor from './processors/verification';
+import { SKIPPED } from './utils';
 import { countSentEmails } from '../helpers/metrics';
 
 const REDIS_URL = (process.env.REDIS_URL as string) || 'redis://127.0.0.1:6379';
@@ -49,7 +50,11 @@ export const proposalActivityQueue = new Queue('proposal-activities', {
   defaultJobOptions
 });
 
-mailerQueue.on('completed', job => {
+mailerQueue.on('completed', (job, result) => {
+  // A skipped job completed without sending anything, so it must not be
+  // counted as a sent email.
+  if (result === SKIPPED) return;
+
   countSentEmails.inc({ type: job.name });
 });
 

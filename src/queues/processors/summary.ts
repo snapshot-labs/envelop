@@ -2,6 +2,7 @@ import { Job } from 'bull';
 import { Message } from '../../../types';
 import { send } from '../../helpers/mail';
 import templates from '../../templates';
+import { SKIPPED } from '../utils';
 
 export default async (job: Job) => {
   const { email, addresses, startTimestamp, endTimestamp } = job.data;
@@ -13,7 +14,7 @@ export default async (job: Job) => {
   });
 
   if (Object.keys(msg).length === 0) {
-    return Promise.resolve('Skipped');
+    return Promise.resolve(SKIPPED);
   }
 
   return await send(msg as Message);
