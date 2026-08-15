@@ -133,8 +133,6 @@ export type Vote = {
 };
 
 /**
- * Whether a proposal is eligible for a notification email.
- *
  * Moderation can happen after the proposal activity event has been dispatched,
  * so this needs to be re-evaluated when the delayed job fires, not only when
  * it is enqueued.
