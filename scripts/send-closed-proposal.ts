@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import { Job } from 'bull';
 import closedProposal from '../src/queues/processors/closedProposal';
+import { SKIPPED } from '../src/queues/utils';
 
 async function main() {
   if (process.argv.length < 3) {
@@ -19,7 +20,13 @@ async function main() {
 
 (async () => {
   try {
-    await main();
+    const result = await main();
+
+    if (result === SKIPPED) {
+      console.error('Proposal was skipped, no email sent');
+      return process.exit(1);
+    }
+
     process.exit(0);
   } catch (err) {
     console.error(err);
