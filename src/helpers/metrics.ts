@@ -65,3 +65,9 @@ export const countSentEmails = new client.Counter({
   help: 'Number of sent emails, per type',
   labelNames: ['type']
 });
+
+export const countSkippedEmails = new client.Counter({
+  name: 'mailing_skipped_count',
+  help: 'Number of mail jobs skipped without sending, per type',
+  labelNames: ['type']
+});

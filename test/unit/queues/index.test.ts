@@ -1,4 +1,7 @@
-import { countSentEmails } from '../../../src/helpers/metrics';
+import {
+  countSentEmails,
+  countSkippedEmails
+} from '../../../src/helpers/metrics';
 import { SKIPPED } from '../../../src/queues/utils';
 
 const mockQueues: Record<string, any> = {};
@@ -24,7 +27,8 @@ jest.mock('ioredis', () =>
 );
 
 jest.mock('../../../src/helpers/metrics', () => ({
-  countSentEmails: { inc: jest.fn() }
+  countSentEmails: { inc: jest.fn() },
+  countSkippedEmails: { inc: jest.fn() }
 }));
 
 describe('mailer queue completed handler', () => {
@@ -43,11 +47,20 @@ describe('mailer queue completed handler', () => {
     onCompleted({ name: 'newProposal' }, undefined);
 
     expect(countSentEmails.inc).toHaveBeenCalledWith({ type: 'newProposal' });
+    expect(countSkippedEmails.inc).not.toHaveBeenCalled();
   });
 
   it('does not count a job that was skipped', () => {
     onCompleted({ name: 'newProposal' }, SKIPPED);
 
     expect(countSentEmails.inc).not.toHaveBeenCalled();
+  });
+
+  it('counts a job that was skipped', () => {
+    onCompleted({ name: 'closedProposal' }, SKIPPED);
+
+    expect(countSkippedEmails.inc).toHaveBeenCalledWith({
+      type: 'closedProposal'
+    });
   });
 });
