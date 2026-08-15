@@ -16,6 +16,21 @@ jest.mock('../../../../src/templates', () => ({
 }));
 
 describe('newProposal processor', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('sends the email when the proposal is eligible', async () => {
+    const msg = { to: 'test@example.com', subject: 'New proposal' };
+    (templates.newProposal.prepare as jest.Mock).mockResolvedValue(msg);
+
+    await newProposalProcessor({
+      data: { email: 'test@example.com', id: 'proposal-id' }
+    } as any);
+
+    expect(send).toHaveBeenCalledWith(msg);
+  });
+
   it('skips proposals that are no longer eligible', async () => {
     (templates.newProposal.prepare as jest.Mock).mockResolvedValue({});
 
