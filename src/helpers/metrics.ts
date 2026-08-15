@@ -5,7 +5,7 @@ import { Express } from 'express';
 import { db } from '../db';
 import { subscribers } from '../schema';
 import { subscribedTo } from './utils';
-import { mailerQueue } from '../queues';
+import { mailerQueue, proposalActivityQueue } from '../queues';
 import { SUBSCRIPTION_TYPE } from '../templates';
 
 export default function initMetrics(app: Express) {
@@ -57,6 +57,16 @@ new client.Gauge({
   help: 'Number of emails in the queue, pending sending',
   async collect() {
     this.set(await mailerQueue.count());
+  }
+});
+
+// New proposal mail waits on a fan-out job rather than on the mails
+// themselves, so this backlog does not show up in mailing_queued_jobs_count.
+new client.Gauge({
+  name: 'mailing_pending_fanout_count',
+  help: 'Number of proposal fan-out jobs pending recipient resolution',
+  async collect() {
+    this.set(await proposalActivityQueue.count());
   }
 });
 

@@ -2,7 +2,10 @@ import { getFollows, getProposal } from '../../../../src/helpers/snapshot';
 import { getVerifiedSubscriptions } from '../../../../src/helpers/utils';
 import { mailerQueue, queueProposalFanOut } from '../../../../src/queues';
 import proposalFactoryProcessor from '../../../../src/queues/processors/proposalFactory';
-import { MAX_PROPOSAL_DELAY } from '../../../../src/queues/utils';
+import {
+  FAN_OUT_SCHEDULED,
+  MAX_PROPOSAL_DELAY
+} from '../../../../src/queues/utils';
 import { proposals } from '../../../fixtures/proposals';
 
 jest.mock('../../../../src/helpers/snapshot', () => ({
@@ -46,7 +49,7 @@ describe('proposalFactory processor', () => {
   it('schedules the fan-out when a new proposal is eligible', async () => {
     (getProposal as jest.Mock).mockResolvedValue(eligible);
 
-    expect(await proposalFactoryProcessor(job)).toBe(0);
+    expect(await proposalFactoryProcessor(job)).toBe(FAN_OUT_SCHEDULED);
     expect(queueProposalFanOut).toHaveBeenCalledWith(
       'created',
       eligible.id,
