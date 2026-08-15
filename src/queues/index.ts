@@ -110,3 +110,15 @@ export function queueVerify(email: string, address: string, salt: string) {
 export function queueProposalActivity(event: string, id: string) {
   return proposalActivityQueue.add('proposalFactory', { event, id });
 }
+
+/**
+ * Schedule the fan-out itself, so that the recipient list is resolved when the
+ * mail is due instead of when the proposal event arrived.
+ */
+export function queueProposalFanOut(event: string, id: string, delay: number) {
+  return proposalActivityQueue.add(
+    'proposalFactory',
+    { event, id, fanOut: true },
+    { jobId: `proposalFanOut-${event}-${id}`, delay }
+  );
+}
