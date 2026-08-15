@@ -3,6 +3,7 @@ import { Job } from 'bull';
 import constants from '../src/helpers/constants.json';
 import { previousWeek } from '../src/helpers/date';
 import summary from '../src/queues/processors/summary';
+import { SKIPPED } from '../src/queues/utils';
 
 async function main() {
   if (process.argv.length < 3) {
@@ -30,7 +31,14 @@ async function main() {
 
 (async () => {
   try {
-    await main();
+    const result = await main();
+
+    // Unlike the proposal mails, an empty summary is the ordinary "nothing
+    // happened this week" outcome rather than a fault, so it still exits 0.
+    if (result === SKIPPED) {
+      console.log('No proposals in the period, no email sent');
+    }
+
     process.exit(0);
   } catch (err) {
     console.error(err);
