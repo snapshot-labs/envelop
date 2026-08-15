@@ -20,7 +20,8 @@ export default function initMetrics(app: Express) {
       /^\/(preview|send)\/.*$/,
       /^\/(webhook|subscriber|subscriptionsList)$/
     ],
-    errorHandler: capture
+    errorHandler: capture,
+    db: db.$client
   });
 }
 
