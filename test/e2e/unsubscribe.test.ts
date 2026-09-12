@@ -22,6 +22,13 @@ describe('POST unsubscribe', () => {
     };
   }
 
+  async function signUnsubscribeFromUserWallet(
+    message: Record<string, any>,
+    type: Record<string, Array<TypedDataField>>
+  ) {
+    return await wallet._signTypedData(domain, type, message);
+  }
+
   beforeEach(async () => {
     await cleanupSubscribersDb(timestamp);
     return insertSubscribers([
@@ -70,13 +77,6 @@ describe('POST unsubscribe', () => {
     });
 
     describe('when only passing an address', () => {
-      async function signUnsubscribeFromUserWallet(
-        message: Record<string, any>,
-        type: Record<string, Array<TypedDataField>>
-      ) {
-        return await wallet._signTypedData(domain, type, message);
-      }
-
       let response: any;
       beforeEach(async () => {
         response = await request(process.env.HOST)
@@ -110,6 +110,30 @@ describe('POST unsubscribe', () => {
           where: eq(subscribers.email, email)
         });
         expect(toBeKept.length).toBe(1);
+      });
+    });
+
+    describe('when the address is submitted with different casing than it was stored', () => {
+      it('removes the address and all its associated emails from the database', async () => {
+        const differentlyCasedAddress = address.toLowerCase();
+        const response = await request(process.env.HOST)
+          .post('/')
+          .send(
+            await payload({
+              email: '',
+              address: differentlyCasedAddress,
+              signature: await signUnsubscribeFromUserWallet(
+                { email: '', address },
+                UnsubscribeTypes
+              )
+            })
+          );
+        const toBeDeleted = await db.query.subscribers.findMany({
+          where: eq(subscribers.address, address)
+        });
+
+        expect(response.statusCode).toBe(200);
+        expect(toBeDeleted.length).toBe(0);
       });
     });
   });

@@ -71,7 +71,7 @@ export async function subscribe(email: string, address: string) {
   return null;
 }
 
-export async function verify(email: string, address: string, salt: string) {
+export async function verify(email: string, address: string, salt: number) {
   const ownRecord = await db.query.subscribers.findFirst({
     columns: { verified: true },
     where: and(eq(subscribers.email, email), eq(subscribers.address, address))
@@ -101,7 +101,7 @@ export async function verify(email: string, address: string, salt: string) {
       and(
         eq(subscribers.email, email),
         eq(subscribers.address, address),
-        eq(subscribers.created, Number(salt)),
+        eq(subscribers.created, salt),
         eq(subscribers.verified, 0)
       )
     )

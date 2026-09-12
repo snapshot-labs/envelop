@@ -37,15 +37,18 @@ router.post('/', async (req, res) => {
   const { id, method, params } = req.body;
 
   try {
+    const address =
+      params?.address && params.address.length > 0
+        ? getAddress(params.address)
+        : params?.address;
+
     if (method === 'snapshot.subscribe') {
       if (!isValidEmail(params.email)) {
         return rpcError(res, 'INVALID_PARAMS', id);
       }
 
-      const subscribeAddress = getAddress(params.address);
-
-      if (verifySubscribe(params.email, subscribeAddress, params.signature)) {
-        const subscriber = await subscribe(params.email, subscribeAddress);
+      if (verifySubscribe(params.email, address, params.signature)) {
+        const subscriber = await subscribe(params.email, address);
         if (subscriber) {
           queueVerify(
             subscriber.email,
@@ -58,23 +61,20 @@ router.post('/', async (req, res) => {
 
       return rpcError(res, 'UNAUTHORIZED', id);
     } else if (method === 'snapshot.verify') {
-      if (!Number.isInteger(Number(params.salt))) {
+      const salt = Number(params.salt);
+      if (!Number.isSafeInteger(salt)) {
         return rpcError(res, 'INVALID_PARAMS', id);
       }
 
-      const verifyAddress = getAddress(params.address);
-
-      if (
-        verifyVerify(params.email, verifyAddress, params.salt, params.signature)
-      ) {
-        await verify(params.email, verifyAddress, params.salt);
+      if (verifyVerify(params.email, address, params.salt, params.signature)) {
+        await verify(params.email, address, salt);
         return rpcSuccess(res, 'OK', id);
       }
 
       return rpcError(res, 'UNAUTHORIZED', id);
     } else if (method === 'snapshot.unsubscribe') {
-      if (verifyUnsubscribe(params.email, params.address, params.signature)) {
-        await unsubscribe(params.email, params.address);
+      if (verifyUnsubscribe(params.email, address, params.signature)) {
+        await unsubscribe(params.email, address);
         return rpcSuccess(res, 'OK', id);
       }
 
@@ -88,13 +88,13 @@ router.post('/', async (req, res) => {
       // envelop-ui, signed by backend
       const isValidSignature = verifyUpdate(
         params.email,
-        params.address,
-        params.address && params.address.length > 0 ? params.subscriptions : [],
+        address,
+        address && address.length > 0 ? params.subscriptions : [],
         params.signature
       );
 
       if (isValidSignature) {
-        await update(params.email, params.address, params.subscriptions);
+        await update(params.email, address, params.subscriptions);
         return rpcSuccess(res, 'OK', id);
       }
 
@@ -137,11 +137,11 @@ router.post('/subscriber', async (req, res) => {
   const { address } = req.body;
 
   try {
-    const result = await getSubscriber(address);
+    const result = await getSubscriber(getAddress(address));
 
     return res.json(result);
   } catch (err: any) {
-    if (err.message === 'RECORD_NOT_FOUND') {
+    if (err.message === 'RECORD_NOT_FOUND' || err.code === 'INVALID_ARGUMENT') {
       return res.json({ status: NOT_SUBSCRIBED });
     }
 

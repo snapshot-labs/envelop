@@ -138,6 +138,19 @@ describe('POST verify', () => {
     });
   });
 
+  describe('when the salt is outside the safe integer range', () => {
+    it('returns an error instead of a server error', async () => {
+      const { email, address } = unverifiedUser;
+
+      const response = await request(process.env.HOST)
+        .post('/')
+        .send(await payload(email, address, undefined, '1e21'));
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body.error.message).toBe('INVALID_PARAMS');
+    });
+  });
+
   describe('when the address is already verified with another email', () => {
     const {
       address,

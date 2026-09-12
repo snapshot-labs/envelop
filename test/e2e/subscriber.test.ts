@@ -68,6 +68,15 @@ describe('POST subscriber', () => {
 
       expect(response.body.status).toEqual(UNVERIFIED);
     });
+
+    it('is treated as the same address when submitted with different casing', async () => {
+      const response = await request(process.env.HOST)
+        .post('/subscriber')
+        .send({ address: address.toLowerCase() });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body.status).toEqual(VERIFIED);
+    });
   });
 
   describe('when the address does not exist', () => {
