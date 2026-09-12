@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, gt, isNull, or, sql, SQL } from 'drizzle-orm';
+import { and, asc, desc, eq, gt, isNull, ne, or, sql, SQL } from 'drizzle-orm';
 import { Response } from 'express';
 import { db } from '../db';
 import { NewSubscriber, subscribers } from '../schema';
@@ -72,16 +72,25 @@ export async function subscribe(email: string, address: string) {
 }
 
 export async function verify(email: string, address: string, salt: string) {
-  const existingVerifiedEmail = (
-    await db.query.subscribers.findFirst({
-      columns: { email: true },
-      where: and(eq(subscribers.address, address), gt(subscribers.verified, 0))
-    })
-  )?.email;
+  const ownRecord = await db.query.subscribers.findFirst({
+    columns: { verified: true },
+    where: and(eq(subscribers.email, email), eq(subscribers.address, address))
+  });
 
-  if (existingVerifiedEmail === email) {
+  if (ownRecord && ownRecord.verified > 0) {
     return true;
-  } else if (!!existingVerifiedEmail) {
+  }
+
+  const conflictingVerifiedEmail = await db.query.subscribers.findFirst({
+    columns: { email: true },
+    where: and(
+      eq(subscribers.address, address),
+      ne(subscribers.email, email),
+      gt(subscribers.verified, 0)
+    )
+  });
+
+  if (conflictingVerifiedEmail) {
     throw new Error('ADDRESS_ALREADY_VERIFIED_WITH_ANOTHER_EMAIL');
   }
 

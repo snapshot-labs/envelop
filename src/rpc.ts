@@ -1,3 +1,4 @@
+import { getAddress } from '@ethersproject/address';
 import { capture } from '@snapshot-labs/snapshot-sentry';
 import express from 'express';
 import { name, version } from '../package.json';
@@ -41,8 +42,10 @@ router.post('/', async (req, res) => {
         return rpcError(res, 'INVALID_PARAMS', id);
       }
 
-      if (verifySubscribe(params.email, params.address, params.signature)) {
-        const subscriber = await subscribe(params.email, params.address);
+      const subscribeAddress = getAddress(params.address);
+
+      if (verifySubscribe(params.email, subscribeAddress, params.signature)) {
+        const subscriber = await subscribe(params.email, subscribeAddress);
         if (subscriber) {
           queueVerify(
             subscriber.email,
@@ -55,15 +58,16 @@ router.post('/', async (req, res) => {
 
       return rpcError(res, 'UNAUTHORIZED', id);
     } else if (method === 'snapshot.verify') {
+      if (!Number.isInteger(Number(params.salt))) {
+        return rpcError(res, 'INVALID_PARAMS', id);
+      }
+
+      const verifyAddress = getAddress(params.address);
+
       if (
-        verifyVerify(
-          params.email,
-          params.address,
-          params.salt,
-          params.signature
-        )
+        verifyVerify(params.email, verifyAddress, params.salt, params.signature)
       ) {
-        await verify(params.email, params.address, params.salt);
+        await verify(params.email, verifyAddress, params.salt);
         return rpcSuccess(res, 'OK', id);
       }
 
