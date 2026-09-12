@@ -75,8 +75,8 @@ credentials in the file to the correct values for your local setup.
 | -------------------------- | -------- | ---------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
 | `DATABASE_URL`             | yes      | URL of the PostgreSQL database                                                                       | `postgres://postgres:postgres@localhost:5432/envelop` |
 | `WALLET_PRIVATE_KEY`       | yes      | Private key of the wallet used to sign the emails                                                    | `0x...`                                               |
-| `HOST`                     | yes      | Hostname of the current envelop instance, used for the image URLs in the mails                       | `http://localhost:3006`                               |
-| `FRONT_HOST`               | yes      | Hostname of the envelop-ui instance, used for the verify/update/unsubscribe links in the mails       | `http://localhost:8080`                               |
+| `HOST`                     | to send  | Hostname of the current envelop instance, used for the image URLs in the mails                       | `http://localhost:3006`                               |
+| `FRONT_HOST`               | to send  | Hostname of the envelop-ui instance, used for the verify/update/unsubscribe links in the mails       | `http://localhost:8080`                               |
 | `SENDGRID_API_KEY`         | to send  | API key of the sendgrid account                                                                      | `SG.1234567890`                                       |
 | `WEBHOOK_AUTH_TOKEN`       | to send  | Expected value of the `authentication` header on `POST /webhook`                                     | `abc123`                                              |
 | `REDIS_URL`                | no       | URL of the Redis database, defaults to `redis://127.0.0.1:6379`                                      | `redis://localhost:6379`                              |
@@ -182,6 +182,11 @@ with an `address`, the signature must come from that address. Sent with an empty
 one-click unsubscribe and manage-subscriptions links inside the mails work,
 since the recipient has no wallet at hand when clicking them.
 
+A backend-signed `snapshot.update` also signs a different payload from the request
+body: the signed `subscriptions` must be `[]`, not the array being saved. So
+envelop signs `{ address: <envelop wallet>, email, subscriptions: [] }` while the
+request still carries the real `subscriptions` to persist.
+
 `snapshot.verify` is always signed by envelop, never by the user. Its `salt` is
 the subscriber's creation timestamp. Both are handed to envelop-ui in the
 verification link, so there is nothing to produce by hand.
@@ -190,6 +195,11 @@ Producing a signature with [ethers](https://docs.ethers.org) v5:
 
 ```ts
 import { Wallet } from '@ethersproject/wallet';
+
+// Hardhat's well-known test account 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+const wallet = new Wallet(
+  '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
+);
 
 const domain = { name: 'snapshot', version: '0.1.4' };
 const types = {
@@ -258,8 +268,9 @@ curl -X POST localhost:3006/ -H "Content-Type: application/json" -d '{
 { "jsonrpc": "2.0", "result": "OK", "id": "1" }
 ```
 
-Subscribing an address that is already in the list is a no-op — it answers `OK`
-without queueing a second verification mail.
+Subscribing the same email and address pair again is a no-op — it answers `OK`
+without queueing a second verification mail. The same address with a *different*
+email is a new subscription, not a no-op.
 
 #### Verify the email
 
@@ -538,14 +549,17 @@ way to work on a template without sending anything. `:template` is `summary`,
 curl "localhost:3006/preview/newProposal?id=0x88583c43b196ec86cee45345611b582108f1d6933ab688a7cae992a6baa552a6"
 ```
 
-Returns the rendered HTML, or `RECORD_NOT_FOUND` when the template or the
-proposal does not exist. `verification` cannot be previewed: it needs a salt the
-preview does not supply, and answers `RECORD_NOT_FOUND`.
+Returns the rendered HTML. An unknown `:template` answers `RECORD_NOT_FOUND`; a
+proposal that does not exist, or one that is flagged or in a flagged/unverified
+space, answers `200` with the plain text `No preview available`. `verification`
+cannot be previewed: it needs a salt the preview does not supply, and answers
+`RECORD_NOT_FOUND`.
 
 #### `GET /send/:template`
 
 Actually send a template, for a smoke test against a real inbox. Gated by a
-shared token — it sends real mail.
+shared token — a fixed value whose hash lives in `src/preview/send.ts`, not an
+environment variable — and it sends real mail.
 
 | Query param | Description                                             |
 | ----------- | ------------------------------------------------------- |
@@ -587,7 +601,7 @@ curl -H "Authorization: Bearer $METRICS_AUTHORIZATION" localhost:3006/metrics
 
 ## Errors
 
-All endpoints will respond with a [JSON-RPC 2.0](https://www.jsonrpc.org/specification) error response on error:
+All API endpoints will respond with a [JSON-RPC 2.0](https://www.jsonrpc.org/specification) error response on error:
 
 ```json
 {
@@ -609,7 +623,7 @@ The HTTP status code matches `code`.
 | Verifying an address already attached to another verified email | 400    | ADDRESS_ALREADY_VERIFIED_WITH_ANOTHER_EMAIL |
 | Signature is not valid                                          | 401    | UNAUTHORIZED                                |
 | Address/email/record does not exist, or unknown route           | 404    | RECORD_NOT_FOUND                            |
-| Server error                                                    | 500    | SERVER_ERROR                                |
+| Unexpected server error                                         | 500    | (the underlying error message)              |
 
 Take advantage of the `MESSAGE` code to show meaningful error message to your end user.
 
@@ -666,8 +680,9 @@ yarn ts-node scripts/send-closed-proposal.ts [EMAIL] [PROPOSAL-ID]
 - `EMAIL`: your email address (not required to already exist in the database)
 - `PROPOSAL-ID`: a proposal ID
 
-Both proposal scripts exit `1` without sending when the proposal is flagged, or
-belongs to a flagged or unverified space — the same rule the webhook applies.
+Both proposal scripts exit `1` without sending when the proposal does not exist,
+is flagged, or belongs to a flagged or unverified space — the same rule the
+webhook applies.
 
 ### To trigger a `webhook` event
 
