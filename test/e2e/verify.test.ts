@@ -15,26 +15,32 @@ describe('POST verify', () => {
     timestamp
   } = verifyPayload;
 
-  async function payload(email: string, address: string, signature?: string) {
+  async function payload(
+    email: string,
+    address: string,
+    signature?: string,
+    salt: string = timestamp.toString()
+  ) {
     return {
       method: 'snapshot.verify',
       params: {
         email,
         address,
-        salt: timestamp.toString(),
-        signature:
-          signature || (await signVerify(email, address, timestamp.toString()))
+        salt,
+        signature: signature || (await signVerify(email, address, salt))
       }
     };
   }
 
   beforeEach(async () => {
     await cleanupSubscribersDb(timestamp);
+    await cleanupSubscribersDb(unverifiedUserForVerifiedAddress.timestamp);
     return insertSubscribers(bootstrapData);
   });
 
   afterAll(async () => {
     await cleanupSubscribersDb(timestamp);
+    await cleanupSubscribersDb(unverifiedUserForVerifiedAddress.timestamp);
     await db.$client.end();
   });
 
@@ -79,12 +85,16 @@ describe('POST verify', () => {
   });
 
   describe('when the address is already verified with another email', () => {
-    const { address, email } = unverifiedUserForVerifiedAddress;
+    const {
+      address,
+      email,
+      timestamp: salt
+    } = unverifiedUserForVerifiedAddress;
 
     it('returns an error', async () => {
       const response = await request(process.env.HOST)
         .post('/')
-        .send(await payload(email, address));
+        .send(await payload(email, address, undefined, salt.toString()));
       const result = await db.query.subscribers.findFirst({
         columns: { verified: true },
         where: and(

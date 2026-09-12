@@ -75,11 +75,7 @@ export async function verify(email: string, address: string, salt: string) {
   const existingVerifiedEmail = (
     await db.query.subscribers.findFirst({
       columns: { email: true },
-      where: and(
-        eq(subscribers.address, address),
-        eq(subscribers.created, Number(salt)),
-        gt(subscribers.verified, 0)
-      )
+      where: and(eq(subscribers.address, address), gt(subscribers.verified, 0))
     })
   )?.email;
 
