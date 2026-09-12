@@ -71,21 +71,21 @@ yarn
 Make a copy of `.env.example` and rename it as `.env`. Then update the
 credentials in the file to the correct values for your local setup.
 
-| Key                        | Required | Description                                                                                          | Example                                               |
-| -------------------------- | -------- | ---------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| `DATABASE_URL`             | yes      | URL of the PostgreSQL database                                                                       | `postgres://postgres:postgres@localhost:5432/envelop` |
-| `WALLET_PRIVATE_KEY`       | yes      | Private key of the wallet used to sign the emails                                                    | `0x...`                                               |
-| `HOST`                     | yes      | Hostname of the current envelop instance, used for the image URLs in the mails                       | `http://localhost:3006`                               |
-| `FRONT_HOST`               | yes      | Hostname of the envelop-ui instance, used for the verify/update/unsubscribe links in the mails       | `http://localhost:8080`                               |
-| `SENDGRID_API_KEY`         | to send  | API key of the sendgrid account                                                                      | `SG.1234567890`                                       |
-| `WEBHOOK_AUTH_TOKEN`       | to send  | Expected value of the `authentication` header on `POST /webhook`                                     | `abc123`                                              |
-| `REDIS_URL`                | no       | URL of the Redis database, defaults to `redis://127.0.0.1:6379`                                      | `redis://localhost:6379`                              |
-| `HUB_URL`                  | no       | Hostname of snapshot's hub service, defaults to `https://hub.snapshot.org`                           | `https://hub.snapshot.org`                            |
-| `PORT`                     | no       | Port the service listens on, defaults to `3006`                                                      | `3006`                                                |
-| `COMMIT_HASH`              | no       | Commit the instance runs, appended to the version returned by `GET /`                                | `a1b2c3d`                                             |
-| `METRICS_AUTHORIZATION`    | no       | Bearer token required on `GET /metrics`. Unset leaves the endpoint open                              | `abc123`                                              |
-| `SENTRY_DSN`               | no       | Sentry DSN key                                                                                       | `https://public@sentry.example.com/1`                 |
-| `SENTRY_TRACE_SAMPLE_RATE` | no       | Sentry trace sample rate, number between 0 and 1                                                     | `0.1`                                                 |
+| Key                        | Required | Description                                                                                    | Example                                               |
+| -------------------------- | -------- | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| `DATABASE_URL`             | yes      | URL of the PostgreSQL database                                                                 | `postgres://postgres:postgres@localhost:5432/envelop` |
+| `WALLET_PRIVATE_KEY`       | yes      | Private key of the wallet used to sign the emails                                              | `0x...`                                               |
+| `HOST`                     | yes      | Hostname of the current envelop instance, used for the image URLs in the mails                 | `http://localhost:3006`                               |
+| `FRONT_HOST`               | yes      | Hostname of the envelop-ui instance, used for the verify/update/unsubscribe links in the mails | `http://localhost:8080`                               |
+| `SENDGRID_API_KEY`         | to send  | API key of the sendgrid account                                                                | `SG.1234567890`                                       |
+| `WEBHOOK_AUTH_TOKEN`       | to send  | Expected value of the `authentication` header on `POST /webhook`                               | `abc123`                                              |
+| `REDIS_URL`                | no       | URL of the Redis database, defaults to `redis://127.0.0.1:6379`                                | `redis://localhost:6379`                              |
+| `HUB_URL`                  | no       | Hostname of snapshot's hub service, defaults to `https://hub.snapshot.org`                     | `https://hub.snapshot.org`                            |
+| `PORT`                     | no       | Port the service listens on, defaults to `3006`                                                | `3006`                                                |
+| `COMMIT_HASH`              | no       | Commit the instance runs, appended to the version returned by `GET /`                          | `a1b2c3d`                                             |
+| `METRICS_AUTHORIZATION`    | no       | Bearer token required on `GET /metrics`. Unset leaves the endpoint open                        | `abc123`                                              |
+| `SENTRY_DSN`               | no       | Sentry DSN key                                                                                 | `https://public@sentry.example.com/1`                 |
+| `SENTRY_TRACE_SAMPLE_RATE` | no       | Sentry trace sample rate, number between 0 and 1                                               | `0.1`                                                 |
 
 ### Database
 
@@ -166,12 +166,12 @@ The domain is the same for all messages, and has no `chainId` or
 
 The message types are defined in `src/sign/types.ts`:
 
-| Method                 | Type            | Fields                                     | Signed by                    |
-| ---------------------- | --------------- | ------------------------------------------ | ---------------------------- |
-| `snapshot.subscribe`   | `Subscribe`     | `address`, `email`                          | the subscriber               |
-| `snapshot.verify`      | `Verify`        | `address`, `email`, `salt`                  | envelop (`WALLET_PRIVATE_KEY`) |
-| `snapshot.update`      | `Subscriptions` | `address`, `email`, `subscriptions`         | the subscriber, or envelop   |
-| `snapshot.unsubscribe` | `Unsubscribe`   | `address`, `email`                          | the subscriber, or envelop   |
+| Method                 | Type            | Fields                              | Signed by                      |
+| ---------------------- | --------------- | ----------------------------------- | ------------------------------ |
+| `snapshot.subscribe`   | `Subscribe`     | `address`, `email`                  | the subscriber                 |
+| `snapshot.verify`      | `Verify`        | `address`, `email`, `salt`          | envelop (`WALLET_PRIVATE_KEY`) |
+| `snapshot.update`      | `Subscriptions` | `address`, `email`, `subscriptions` | the subscriber, or envelop     |
+| `snapshot.unsubscribe` | `Unsubscribe`   | `address`, `email`                  | the subscriber, or envelop     |
 
 `address` must be checksummed, and is recovered from the signature — a mismatch
 is what makes the request unauthorized.
@@ -232,11 +232,11 @@ This endpoint will trigger different action depending on the payload `method` pa
 Subscribe an email and a wallet address to the mailing list. The address is
 stored as unverified, and a verification mail is queued.
 
-| Param       | Description                                |
-| ----------- | ------------------------------------------ |
-| `email`     | Email address to subscribe                 |
+| Param       | Description                                  |
+| ----------- | -------------------------------------------- |
+| `email`     | Email address to subscribe                   |
 | `address`   | Checksummed wallet address of the subscriber |
-| `signature` | `Subscribe` signature, from `address`      |
+| `signature` | `Subscribe` signature, from `address`        |
 
 ##### Request example
 
@@ -266,12 +266,12 @@ without queueing a second verification mail.
 Email verification, triggered by the user via envelop-ui. Both `salt` and
 `signature` come from the verification link, and are produced by envelop.
 
-| Param       | Description                                    |
-| ----------- | ---------------------------------------------- |
-| `email`     | Email address being verified                   |
-| `address`   | Checksummed wallet address of the subscriber   |
-| `salt`      | Subscriber creation timestamp, from the link   |
-| `signature` | `Verify` signature, from envelop's own wallet  |
+| Param       | Description                                   |
+| ----------- | --------------------------------------------- |
+| `email`     | Email address being verified                  |
+| `address`   | Checksummed wallet address of the subscriber  |
+| `salt`      | Subscriber creation timestamp, from the link  |
+| `signature` | `Verify` signature, from envelop's own wallet |
 
 ##### Request example
 
@@ -304,12 +304,12 @@ Update an email's subscriptions. Only verified subscribers can be updated, and
 only the keys listed by `GET /subscriptionsList` are kept — anything else in
 the array is dropped silently.
 
-| Param           | Description                                                       |
-| --------------- | ----------------------------------------------------------------- |
-| `email`         | Email address to update                                           |
-| `address`       | Checksummed wallet address, or `""` for a backend-signed request   |
-| `subscriptions` | Array of subscription keys to keep                                |
-| `signature`     | `Subscriptions` signature                                         |
+| Param           | Description                                                      |
+| --------------- | ---------------------------------------------------------------- |
+| `email`         | Email address to update                                          |
+| `address`       | Checksummed wallet address, or `""` for a backend-signed request |
+| `subscriptions` | Array of subscription keys to keep                               |
+| `signature`     | `Subscriptions` signature                                        |
 
 ##### Request example
 
@@ -340,11 +340,11 @@ Delete the subscriber from the database. Sent without an `address`, it removes
 every address attached to that email — this is what the unsubscribe link in the
 mails does.
 
-| Param       | Description                                                     |
-| ----------- | --------------------------------------------------------------- |
-| `email`     | Email address to remove                                         |
+| Param       | Description                                                      |
+| ----------- | ---------------------------------------------------------------- |
+| `email`     | Email address to remove                                          |
 | `address`   | Checksummed wallet address, or `""` for a backend-signed request |
-| `signature` | `Unsubscribe` signature                                         |
+| `signature` | `Unsubscribe` signature                                          |
 
 ##### Request example
 
@@ -374,9 +374,9 @@ Unsubscribing an address that is not in the list is a no-op, and still answers
 Return a subscriber, given a wallet address. Unlike `POST /`, this endpoint
 needs no signature and returns a bare object rather than a JSON-RPC envelope.
 
-| Param     | Description                  |
-| --------- | ---------------------------- |
-| `address` | Wallet address to look up    |
+| Param     | Description               |
+| --------- | ------------------------- |
+| `address` | Wallet address to look up |
 
 ```ts
 // Response signature
@@ -464,10 +464,10 @@ Only `proposal/created` and `proposal/end` queue anything. Any other event is
 accepted and ignored, so the webhook service is not left retrying events this
 service has no use for.
 
-| Param   | Description                                                |
-| ------- | ---------------------------------------------------------- |
-| `event` | Webhook event name, e.g. `proposal/created`                |
-| `id`    | Webhook ID, e.g. `proposal/0x8858...`                      |
+| Param   | Description                                 |
+| ------- | ------------------------------------------- |
+| `event` | Webhook event name, e.g. `proposal/created` |
+| `id`    | Webhook ID, e.g. `proposal/0x8858...`       |
 
 The `proposal/` prefix is stripped from `id` before it is echoed back.
 
@@ -529,10 +529,10 @@ Render a mail template as HTML in the browser, with example data — the fastest
 way to work on a template without sending anything. `:template` is `summary`,
 `newProposal` or `closedProposal`.
 
-| Query param | Description                                                         |
-| ----------- | ------------------------------------------------------------------- |
-| `id`        | Proposal ID, or a wallet address for `summary`                       |
-| `sendDate`  | `yyyy-mm-dd`, emulates the date the mail is sent (`summary` only)     |
+| Query param | Description                                                       |
+| ----------- | ----------------------------------------------------------------- |
+| `id`        | Proposal ID, or a wallet address for `summary`                    |
+| `sendDate`  | `yyyy-mm-dd`, emulates the date the mail is sent (`summary` only) |
 
 ```bash
 curl "localhost:3006/preview/newProposal?id=0x88583c43b196ec86cee45345611b582108f1d6933ab688a7cae992a6baa552a6"
@@ -547,10 +547,10 @@ preview does not supply, and answers `RECORD_NOT_FOUND`.
 Actually send a template, for a smoke test against a real inbox. Gated by a
 shared token — it sends real mail.
 
-| Query param | Description                                             |
-| ----------- | ------------------------------------------------------- |
-| `token`     | Shared secret, required                                 |
-| `to`        | Recipient, defaults to the address in `constants.json`  |
+| Query param | Description                                            |
+| ----------- | ------------------------------------------------------ |
+| `token`     | Shared secret, required                                |
+| `to`        | Recipient, defaults to the address in `constants.json` |
 
 `summary` is a special case: instead of sending one mail it queues the weekly
 digest run for every subscriber, exactly as the Monday cron does.
@@ -569,14 +569,14 @@ curl "localhost:3006/send/newProposal?token=$TOKEN&to=test@snapshot.org"
 
 Prometheus metrics, including the default Node and HTTP ones plus:
 
-| Metric                                 | Description                                          |
-| -------------------------------------- | ---------------------------------------------------- |
-| `subscribers_per_status_count`         | Subscribers per `VERIFIED` / `UNVERIFIED` status      |
-| `subscribers_per_subscription_count`   | Subscribers per subscription type                     |
-| `mailing_queued_jobs_count`            | Mails queued, pending sending                         |
-| `mailing_pending_fanout_count`         | Proposal fan-out jobs pending recipient resolution     |
-| `mailing_sent_count`                   | Sent mails, per type                                  |
-| `mailing_skipped_count`                | Mail jobs skipped without sending, per type           |
+| Metric                               | Description                                        |
+| ------------------------------------ | -------------------------------------------------- |
+| `subscribers_per_status_count`       | Subscribers per `VERIFIED` / `UNVERIFIED` status   |
+| `subscribers_per_subscription_count` | Subscribers per subscription type                  |
+| `mailing_queued_jobs_count`          | Mails queued, pending sending                      |
+| `mailing_pending_fanout_count`       | Proposal fan-out jobs pending recipient resolution |
+| `mailing_sent_count`                 | Sent mails, per type                               |
+| `mailing_skipped_count`              | Mail jobs skipped without sending, per type        |
 
 Requires `Authorization: Bearer $METRICS_AUTHORIZATION` when that variable is
 set; the endpoint is open when it is not.
@@ -671,7 +671,9 @@ belongs to a flagged or unverified space — the same rule the webhook applies.
 
 ### To trigger a `webhook` event
 
-Emulate an incoming webhook event from snapshot's [webhook service](https://docs.snapshot.box/tools/webhooks). This one only queues jobs, so the service must be running (e.g. with `yarn dev`) for the mails to actually leave.
+Emulate an incoming webhook event from snapshot's [webhook service](https://docs.snapshot.box/tools/webhooks).
+This one only queues jobs, so the service must be running (e.g. with
+`yarn dev`) for the mails to actually leave.
 
 ```bash
 yarn ts-node scripts/trigger-webhook.ts [EVENT] [ID]
