@@ -10,6 +10,7 @@ describe('POST verify', () => {
   const {
     unverifiedUser,
     verifiedUser,
+    secondVerifiedUserSameAddress,
     unverifiedUserForVerifiedAddress,
     addressForNotExistEmail,
     timestamp
@@ -33,14 +34,18 @@ describe('POST verify', () => {
   }
 
   beforeEach(async () => {
-    await cleanupSubscribersDb(timestamp);
-    await cleanupSubscribersDb(unverifiedUserForVerifiedAddress.timestamp);
+    await cleanupSubscribersDb(unverifiedUser.email, 'email');
+    await cleanupSubscribersDb(verifiedUser.email, 'email');
+    await cleanupSubscribersDb(secondVerifiedUserSameAddress.email, 'email');
+    await cleanupSubscribersDb(unverifiedUserForVerifiedAddress.email, 'email');
     return insertSubscribers(bootstrapData);
   });
 
   afterAll(async () => {
-    await cleanupSubscribersDb(timestamp);
-    await cleanupSubscribersDb(unverifiedUserForVerifiedAddress.timestamp);
+    await cleanupSubscribersDb(unverifiedUser.email, 'email');
+    await cleanupSubscribersDb(verifiedUser.email, 'email');
+    await cleanupSubscribersDb(secondVerifiedUserSameAddress.email, 'email');
+    await cleanupSubscribersDb(unverifiedUserForVerifiedAddress.email, 'email');
     await db.$client.end();
   });
 
@@ -60,7 +65,7 @@ describe('POST verify', () => {
       });
 
       expect(response.statusCode).toBe(200);
-      expect(result?.verified).toBeGreaterThanOrEqual(0);
+      expect(result?.verified).toBeGreaterThan(0);
     });
   });
 
@@ -81,6 +86,55 @@ describe('POST verify', () => {
 
       expect(response.statusCode).toBe(200);
       expect(result?.verified).toBe(1);
+    });
+  });
+
+  describe('when the address has more than one verified email', () => {
+    it('lets each verified owner re-verify idempotently', async () => {
+      for (const { email, address } of [
+        verifiedUser,
+        secondVerifiedUserSameAddress
+      ]) {
+        const response = await request(process.env.HOST)
+          .post('/')
+          .send(await payload(email, address));
+
+        expect(response.statusCode).toBe(200);
+      }
+    });
+  });
+
+  describe('when the address is submitted with different casing than it was stored', () => {
+    it('is treated as the same address', async () => {
+      const { email, address } = unverifiedUser;
+      const differentlyCasedAddress = address.toLowerCase();
+
+      const response = await request(process.env.HOST)
+        .post('/')
+        .send(await payload(email, differentlyCasedAddress));
+      const result = await db.query.subscribers.findFirst({
+        columns: { verified: true },
+        where: and(
+          eq(subscribers.email, email),
+          eq(subscribers.address, address)
+        )
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(result?.verified).toBeGreaterThan(0);
+    });
+  });
+
+  describe('when the salt is not a number', () => {
+    it('returns an error instead of a server error', async () => {
+      const { email, address } = unverifiedUser;
+
+      const response = await request(process.env.HOST)
+        .post('/')
+        .send(await payload(email, address, undefined, 'not-a-number'));
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body.error.message).toBe('INVALID_PARAMS');
     });
   });
 
