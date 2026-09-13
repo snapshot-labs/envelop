@@ -1,3 +1,4 @@
+import { getAddress } from '@ethersproject/address';
 import { and, eq } from 'drizzle-orm';
 import request from 'supertest';
 import { db } from '../../src/db';
@@ -57,5 +58,21 @@ describe('POST subscribe', () => {
     expect(response.statusCode).toBe(200);
     expect(result.length).toBe(1);
     expect(result[0].verified).toBe(0);
+  });
+
+  it('stores the address in canonical form when submitted non-canonically', async () => {
+    const response = await request(process.env.HOST)
+      .post('/')
+      .send({
+        method: 'snapshot.subscribe',
+        params: { email, address: address.toLowerCase(), signature }
+      });
+    const result = await db.query.subscribers.findMany({
+      where: eq(subscribers.email, email)
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(result.length).toBe(1);
+    expect(result[0].address).toBe(getAddress(address));
   });
 });
